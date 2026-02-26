@@ -251,12 +251,12 @@ class DataDrivenItemBuilder extends ItemBuilder
                 });
             } elseif ($item instanceof TieredTool) {
                 $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, ...match (true) {
-                    $item->getToolTier() === ToolTier::WOOD => [VanillaBlocks::OAK_WOOD()->asItem(), VanillaBlocks::OAK_LOG()->asItem(), VanillaBlocks::BIRCH_LOG()->asItem(), VanillaBlocks::SPRUCE_LOG()->asItem(), VanillaBlocks::JUNGLE_LOG()->asItem(), VanillaBlocks::ACACIA_LOG()->asItem(), VanillaBlocks::DARK_OAK_LOG()->asItem()],
-                    $item->getToolTier() === ToolTier::STONE => [VanillaBlocks::COBBLESTONE()->asItem(), VanillaBlocks::STONE()->asItem()],
-                    $item->getToolTier() === ToolTier::IRON => [VanillaItems::IRON_INGOT()],
-                    $item->getToolTier() === ToolTier::GOLD => [VanillaItems::GOLD_INGOT()],
-                    $item->getToolTier() === ToolTier::DIAMOND => [VanillaItems::DIAMOND()],
-                    $item->getToolTier() === ToolTier::NETHERITE => [VanillaItems::NETHERITE_INGOT()],
+                    $item->getTier() === ToolTier::WOOD => [VanillaBlocks::OAK_WOOD()->asItem(), VanillaBlocks::OAK_LOG()->asItem(), VanillaBlocks::BIRCH_LOG()->asItem(), VanillaBlocks::SPRUCE_LOG()->asItem(), VanillaBlocks::JUNGLE_LOG()->asItem(), VanillaBlocks::ACACIA_LOG()->asItem(), VanillaBlocks::DARK_OAK_LOG()->asItem()],
+                    $item->getTier() === ToolTier::STONE => [VanillaBlocks::COBBLESTONE()->asItem(), VanillaBlocks::STONE()->asItem()],
+                    $item->getTier() === ToolTier::IRON => [VanillaItems::IRON_INGOT()],
+                    $item->getTier() === ToolTier::GOLD => [VanillaItems::GOLD_INGOT()],
+                    $item->getTier() === ToolTier::DIAMOND => [VanillaItems::DIAMOND()],
+                    $item->getTier() === ToolTier::NETHERITE => [VanillaItems::NETHERITE_INGOT()],
                     default => [VanillaItems::AIR()],
                 });
             }
