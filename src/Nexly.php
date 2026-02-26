@@ -2,8 +2,6 @@
 
 namespace Nexly;
 
-use Engine\Provider\Impl\Minecraft\Block\BlockIds;
-use Engine\Util\SingletonTrait;
 use Nexly\Blocks\AsyncInitialization;
 use Nexly\Blocks\BlockPalette;
 use Nexly\Events\Impl\BlockRegistryEvent;
