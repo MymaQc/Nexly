@@ -10,9 +10,6 @@ use Nexly\Items\Components\DataDriven\StorageWeightLimitItemComponent;
 use Nexly\Items\Components\DataDriven\StorageWeightModifierItemComponent;
 use Nexly\Items\Creative\CreativeGroup;
 use Nexly\Items\Creative\CreativeInfo;
-use Nexly\Recipes\Recipe;
-use Nexly\Recipes\RecipeBuilder;
-use Nexly\Recipes\Types\RecipeType;
 use Nexly\Recipes\Types\ShapelessRecipe;
 use pocketmine\crafting\ShapelessRecipeType;
 use pocketmine\inventory\CreativeCategory;
@@ -25,7 +22,7 @@ use pocketmine\utils\TextFormat;
 #[StorageWeightModifierItemComponent(4)]
 #[BundleInteractionItemComponent(12)]
 #[HoverTextColorProperty(TextFormat::GREEN)]
-#[CreativeInfo(CreativeCategory::EQUIPMENT, CreativeGroup::GROUP_BUNDLE)]
+#[CreativeInfo(CreativeCategory::EQUIPMENT, CreativeGroup::GROUP_BUNDLES)]
 
 #[ShapelessRecipe(ShapelessRecipeType::CRAFTING, ["ruby", "emerald"], ["ruby_bundle"])]
 class RubyBundle extends Item
