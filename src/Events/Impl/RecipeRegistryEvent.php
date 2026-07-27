@@ -8,6 +8,7 @@ use Nexly\Recipes\NexlyRecipes;
 use Nexly\Recipes\Types\ShapedRecipe;
 use Nexly\Recipes\Types\ShapelessRecipe;
 use pocketmine\crafting\ShapelessRecipeType;
+use pocketmine\item\Item;
 
 class RecipeRegistryEvent extends Event
 {
@@ -17,14 +18,14 @@ class RecipeRegistryEvent extends Event
     /**
      * Registers a shaped recipe.
      *
-     * @param MinecraftShape|string[] $shape
-     * @param array $ingredients
-     * @param array $outputs
+     * @param MinecraftShape|list<string> $shape
+     * @param array<string, Item|string> $ingredients
+     * @param list<Item|string> $outputs
      * @return self
      */
     public function registerShaped(MinecraftShape|array $shape, array $ingredients, array $outputs): self
     {
-        NexlyRecipes::getInstance()->addRecipe(fn () => new ShapedRecipe($shape, $ingredients, $outputs));
+        NexlyRecipes::getInstance()->addRecipe(fn (): ShapedRecipe => new ShapedRecipe($shape, $ingredients, $outputs));
         $this->shaped++;
         return $this;
     }
@@ -32,14 +33,14 @@ class RecipeRegistryEvent extends Event
     /**
      * Registers a shapeless recipe.
      *
-     * @param array $ingredients
-     * @param array $outputs
+     * @param list<Item|string> $ingredients
+     * @param list<Item|string> $outputs
      * @param ShapelessRecipeType $type
      * @return $this
      */
     public function registerShapeless(array $ingredients, array $outputs, ShapelessRecipeType $type = ShapelessRecipeType::CRAFTING): self
     {
-        NexlyRecipes::getInstance()->addRecipe(fn () => new ShapelessRecipe($type, $ingredients, $outputs));
+        NexlyRecipes::getInstance()->addRecipe(fn (): ShapelessRecipe => new ShapelessRecipe($type, $ingredients, $outputs));
         $this->shapeless++;
         return $this;
     }

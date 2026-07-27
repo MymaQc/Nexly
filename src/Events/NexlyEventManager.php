@@ -23,7 +23,7 @@ class NexlyEventManager
         EventPriority::MONITOR,
     ];
 
-    /** @var EventReflected[] */
+    /** @var array<class-string<Event>, array<int, list<EventReflected>>> */
     private array $handlerCaches = [];
 
     /**
@@ -34,7 +34,7 @@ class NexlyEventManager
      * @param object|null $instance
      * @return void
      */
-    public function listen(string $event, callable $callback, object $instance = null): void
+    public function listen(string $event, callable $callback, ?object $instance = null): void
     {
         if (!\class_exists($event) || !\is_subclass_of($event, Event::class)) {
             throw new \InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: {$event})");
@@ -61,8 +61,6 @@ class NexlyEventManager
         if (!$rf->isStatic() && $instance === null) {
             throw new \InvalidArgumentException("Cannot use non-static method without instance");
         }
-
-        $this->handlerCaches[$event] ??= [];
 
         $handleCancelled = false;
         $priority = EventPriority::NORMAL;
@@ -98,7 +96,7 @@ class NexlyEventManager
      * @return void
      * @throws ReflectionException
      */
-    public function deafen(string $event, callable $callback = null, object $instance = null): void
+    public function deafen(string $event, ?callable $callback = null, ?object $instance = null): void
     {
         if (!\class_exists($event) || !\is_subclass_of($event, Event::class)) {
             throw new \InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: {$event})");
@@ -112,7 +110,7 @@ class NexlyEventManager
             return;
         }
 
-        if ($callback === null && $instance !== null) {
+        if ($callback === null) {
             $iid = spl_object_id($instance);
             foreach (self::PRIORITY_ORDER as $p) {
                 if (!isset($this->handlerCaches[$event][$p])) {
@@ -120,7 +118,7 @@ class NexlyEventManager
                 }
                 $this->handlerCaches[$event][$p] = array_values(array_filter(
                     $this->handlerCaches[$event][$p],
-                    static fn (EventReflected $er) => $er->getInstanceId() !== $iid
+                    static fn (EventReflected $er): bool => $er->getInstanceId() !== $iid
                 ));
             }
             return;

@@ -9,17 +9,17 @@ use pocketmine\event\EventPriority as PMPriority;
 class HandlePriority
 {
     /**
-     * @param int|string $priority
+     * @param int $priority
      */
     public function __construct(
-        protected int|string $priority = PMPriority::NORMAL
+        protected int $priority = PMPriority::NORMAL
     ) {
     }
 
     /**
-     * @return int|string
+     * @return int
      */
-    public function getPriority(): int|string
+    public function getPriority(): int
     {
         return $this->priority;
     }

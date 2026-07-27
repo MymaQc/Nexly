@@ -7,14 +7,17 @@ use WeakReference;
 
 class EventReflected
 {
+    /**
+     * @param WeakReference<object>|null $instanceRef
+     */
     public function __construct(
-        private \Closure           $closure,
-        private ReflectionFunction $ref,
-        private bool               $isStatic,
-        private ?WeakReference     $instanceRef,
-        private ?int               $instanceId,
-        private int                $priority,
-        private bool               $handleCancelled,
+        private readonly \Closure           $closure,
+        private readonly ReflectionFunction $ref,
+        private readonly bool               $isStatic,
+        private readonly ?WeakReference     $instanceRef,
+        private readonly ?int               $instanceId,
+        private readonly int                $priority,
+        private readonly bool               $handleCancelled,
     ) {
     }
 
@@ -43,7 +46,7 @@ class EventReflected
     }
 
     /**
-     * @return WeakReference|null
+     * @return WeakReference<object>|null
      */
     public function getInstanceRef(): ?WeakReference
     {

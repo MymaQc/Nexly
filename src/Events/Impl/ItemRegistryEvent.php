@@ -17,7 +17,7 @@ class ItemRegistryEvent extends Event
      * @param CreativeInfo|null $creativeInfo
      * @return self
      */
-    public function register(string $stringId, Item $item, CreativeInfo $creativeInfo = null): self
+    public function register(string $stringId, Item $item, ?CreativeInfo $creativeInfo = null): self
     {
         NexlyItems::register($stringId, $item, $creativeInfo);
         $this->count++;
