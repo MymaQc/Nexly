@@ -5,11 +5,17 @@ namespace Nexly\Blocks\Components;
 use Attribute;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class PlacementFilterBlockComponent extends BlockComponent
 {
+    /**
+     * @param list<IntTag> $allowedFaces
+     * @param list<StringTag> $blockFilter
+     */
     public function __construct(
         private readonly array $allowedFaces = [],
         private readonly array $blockFilter = [],

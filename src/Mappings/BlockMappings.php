@@ -14,6 +14,8 @@ class BlockMappings
      * @var array<string, BlockMapping> Mapping of block string IDs to their BlockMapping instances.
      */
     private array $mappings = [];
+
+    /** @var list<BlockPaletteEntry> */
     private array $entries = [];
 
     /**
@@ -25,7 +27,7 @@ class BlockMappings
     }
 
     /**
-     * @return array
+     * @return array<string, BlockMapping>
      */
     public function getMappings(): array
     {
@@ -33,7 +35,7 @@ class BlockMappings
     }
 
     /**
-     * @param array $mappings
+     * @param array<string, BlockMapping> $mappings
      */
     public function setMappings(array $mappings): void
     {
@@ -41,7 +43,7 @@ class BlockMappings
     }
 
     /**
-     * @return array
+     * @return list<BlockPaletteEntry>
      */
     public function getEntries(): array
     {
@@ -49,7 +51,7 @@ class BlockMappings
     }
 
     /**
-     * @param array $entries
+     * @param list<BlockPaletteEntry> $entries
      */
     public function setEntries(array $entries): void
     {

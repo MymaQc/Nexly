@@ -71,8 +71,8 @@ final class NexlyPermutations
     public static function makeCrop(Builder $builder, Crops $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Crops $block) => SerializerHelper::encodeCrops($block, new Writer($stringId)));
-        $builder->setDeserializer(static fn (Reader $in) => DeserializerHelper::decodeCrops(clone $block, $in));
+        $builder->setSerializer(static fn (Crops $block): Writer => SerializerHelper::encodeCrops($block, new Writer($stringId)));
+        $builder->setDeserializer(static fn (Reader $in): Crops => DeserializerHelper::decodeCrops(clone $block, $in));
         $builder->addProperty(new BlockProperty(StateNames::GROWTH, $ages = range(0, $block::MAX_AGE)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::CROP->toString()));
         foreach ($ages as $age) {
@@ -92,8 +92,8 @@ final class NexlyPermutations
     public static function makeNetherPlant(Builder $builder, NetherWartPlant $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (NetherWartPlant $block) => (new Writer($stringId))->writeInt(StateNames::AGE, $block->getAge()));
-        $builder->setDeserializer(static fn (Reader $in) => (clone $block)->setAge($in->readBoundedInt(StateNames::AGE, 0, 3)));
+        $builder->setSerializer(static fn (NetherWartPlant $block): Writer => (new Writer($stringId))->writeInt(StateNames::AGE, $block->getAge()));
+        $builder->setDeserializer(static fn (Reader $in): NetherWartPlant => (clone $block)->setAge($in->readBoundedInt(StateNames::AGE, 0, 3)));
         $builder->addProperty(new BlockProperty(StateNames::AGE, $ages = range(0, $block::MAX_AGE)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::NETHER_WART->toString()));
         foreach ($ages as $age) {
@@ -113,13 +113,13 @@ final class NexlyPermutations
     public static function makeStair(Builder $builder, Stair $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static function (Stair $block) use ($stringId) {
+        $builder->setSerializer(static function (Stair $block) use ($stringId): Writer {
             return (new Writer($stringId))
                 ->writeBool(BlockStateNames::UPSIDE_DOWN_BIT, $block->isUpsideDown())
                 ->write5MinusHorizontalFacing($block->getFacing());
         });
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
+            static fn (Reader $in): Stair => (clone $block)
             ->setUpsideDown($in->readBool(BlockStateNames::UPSIDE_DOWN_BIT))
             ->setFacing($in->read5MinusHorizontalFacing())
         );
@@ -170,13 +170,13 @@ final class NexlyPermutations
     public static function makeSlab(Builder $builder, Slab $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Slab $block) => (new Writer($stringId))->writeString(StateNames::MC_VERTICAL_HALF, match ($block->getSlabType()) {
+        $builder->setSerializer(static fn (Slab $block): Writer => (new Writer($stringId))->writeString(StateNames::MC_VERTICAL_HALF, match ($block->getSlabType()) {
             SlabType::BOTTOM => StateValues::MC_VERTICAL_HALF_BOTTOM,
             SlabType::TOP => StateValues::MC_VERTICAL_HALF_TOP,
             SlabType::DOUBLE => "double",
 
         }));
-        $builder->setDeserializer(static fn (Reader $in) => (clone $block)->setSlabType(match ($in->readString(StateNames::MC_VERTICAL_HALF)) {
+        $builder->setDeserializer(static fn (Reader $in): Slab => (clone $block)->setSlabType(match ($in->readString(StateNames::MC_VERTICAL_HALF)) {
             StateValues::MC_VERTICAL_HALF_BOTTOM => SlabType::BOTTOM,
             StateValues::MC_VERTICAL_HALF_TOP => SlabType::TOP,
             "double" => SlabType::DOUBLE,
@@ -217,8 +217,8 @@ final class NexlyPermutations
     public static function makeDoor(Builder $builder, Door $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Door $block) => SerializerHelper::encodeDoor($block, Writer::create($stringId)));
-        $builder->setDeserializer(static fn (Reader $in) => DeserializerHelper::decodeDoor(clone $block, $in));
+        $builder->setSerializer(static fn (Door $block): Writer => SerializerHelper::encodeDoor($block, Writer::create($stringId)));
+        $builder->setDeserializer(static fn (Reader $in): Door => DeserializerHelper::decodeDoor(clone $block, $in));
 
         $builder->addProperty(new BlockProperty(StateNames::MC_CARDINAL_DIRECTION, $facings = [
             StateValues::MC_CARDINAL_DIRECTION_NORTH,
@@ -257,7 +257,6 @@ final class NexlyPermutations
                         StateValues::MC_CARDINAL_DIRECTION_SOUTH => new Vector3(0, 180, 0),
                         StateValues::MC_CARDINAL_DIRECTION_WEST => new Vector3(0, 90, 0),
                         StateValues::MC_CARDINAL_DIRECTION_EAST => new Vector3(0, 270, 0),
-                        default => throw new RuntimeException("Invalid direction")
                     }));
 
                     $builder->addPermutation($permutation);
@@ -295,16 +294,16 @@ final class NexlyPermutations
             $co = [];
 
             if ($in->readBool("mc:n")) {
-                $co[Facing::NORTH] = Facing::NORTH;
+                $co[Facing::NORTH] = true;
             }
             if ($in->readBool("mc:s")) {
-                $co[Facing::SOUTH] = Facing::SOUTH;
+                $co[Facing::SOUTH] = true;
             }
             if ($in->readBool("mc:w")) {
-                $co[Facing::WEST] = Facing::WEST;
+                $co[Facing::WEST] = true;
             }
             if ($in->readBool("mc:e")) {
-                $co[Facing::EAST] = Facing::EAST;
+                $co[Facing::EAST] = true;
             }
 
             $reflection = new ReflectionClass(Fence::class);
@@ -342,7 +341,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (FenceGate $block) => (new Writer($stringId))
+            static fn (FenceGate $block): Writer => (new Writer($stringId))
             ->writeString(StateNames::MC_CARDINAL_DIRECTION, match ($block->getFacing()) {
                 Facing::NORTH => StateValues::MC_CARDINAL_DIRECTION_NORTH,
                 Facing::SOUTH => StateValues::MC_CARDINAL_DIRECTION_SOUTH,
@@ -354,7 +353,7 @@ final class NexlyPermutations
             ->writeBool(StateNames::OPEN_BIT, $block->isOpen())
         );
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
+            static fn (Reader $in): FenceGate => (clone $block)
             ->setFacing(match ($in->readString(StateNames::MC_CARDINAL_DIRECTION)) {
                 StateValues::MC_CARDINAL_DIRECTION_NORTH => Facing::NORTH,
                 StateValues::MC_CARDINAL_DIRECTION_SOUTH => Facing::SOUTH,
@@ -400,7 +399,6 @@ final class NexlyPermutations
                         StateValues::MC_CARDINAL_DIRECTION_SOUTH => new Vector3(0, 180, 0),
                         StateValues::MC_CARDINAL_DIRECTION_EAST => new Vector3(0, 270, 0),
                         StateValues::MC_CARDINAL_DIRECTION_WEST => new Vector3(0, 90, 0),
-                        default => throw new RuntimeException("Invalid direction")
                     }, translation: match ($inWall) {
                         0 => new Vector3(0, 0, 0),
                         1 => new Vector3(0, -0.187, 0),
@@ -423,9 +421,9 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Wall $block) => (new Writer($stringId))
-            ->writeInt(StateNames::WALL_POST_BIT, $block->isPost())
-            ->writeInt(StateNames::WALL_CONNECTION_TYPE_NORTH, ($encode = static fn (WallConnectionType|null $v) => match ($v) {
+            static fn (Wall $block): Writer => (new Writer($stringId))
+            ->writeInt(StateNames::WALL_POST_BIT, $block->isPost() ? 1 : 0)
+            ->writeInt(StateNames::WALL_CONNECTION_TYPE_NORTH, ($encode = static fn (WallConnectionType|null $v): int => match ($v) {
                 default => 0,
                 WallConnectionType::SHORT => 1,
                 WallConnectionType::TALL => 2,
@@ -435,9 +433,9 @@ final class NexlyPermutations
             ->writeInt(StateNames::WALL_CONNECTION_TYPE_EAST, $encode($block->getConnection(Facing::EAST)))
         );
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
-            ->setPost($in->readInt(StateNames::WALL_POST_BIT))
-            ->setConnection(Facing::NORTH, ($decode = static fn (int $v) => match ($v) {
+            static fn (Reader $in): Wall => (clone $block)
+            ->setPost($in->readInt(StateNames::WALL_POST_BIT) !== 0)
+            ->setConnection(Facing::NORTH, ($decode = static fn (int $v): ?WallConnectionType => match ($v) {
                 1 => WallConnectionType::SHORT,
                 2 => WallConnectionType::TALL,
                 default => null,
@@ -481,16 +479,16 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Trapdoor $block) => (new Writer($stringId))
+            static fn (Trapdoor $block): Writer => (new Writer($stringId))
             ->write5MinusHorizontalFacing($block->getFacing())
-            ->writeInt(StateNames::UPSIDE_DOWN_BIT, $block->isTop())
-            ->writeInt(StateNames::OPEN_BIT, $block->isOpen())
+            ->writeInt(StateNames::UPSIDE_DOWN_BIT, $block->isTop() ? 1 : 0)
+            ->writeInt(StateNames::OPEN_BIT, $block->isOpen() ? 1 : 0)
         );
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
+            static fn (Reader $in): Trapdoor => (clone $block)
             ->setFacing($in->read5MinusHorizontalFacing())
-            ->setTop($in->readInt(StateNames::UPSIDE_DOWN_BIT))
-            ->setOpen($in->readInt(StateNames::OPEN_BIT))
+            ->setTop($in->readInt(StateNames::UPSIDE_DOWN_BIT) !== 0)
+            ->setOpen($in->readInt(StateNames::OPEN_BIT) !== 0)
         );
 
         $builder->addProperty(new BlockProperty(StateNames::DIRECTION, $facings = [0, 1, 2, 3])); // 0: East, 1: West, 2: South, 3: North
@@ -532,7 +530,6 @@ final class NexlyPermutations
                             1 => new Vector3(0, 0, 0),  // West
                             2 => new Vector3(0, 90, 0),   // South
                             3 => new Vector3(0, 270, 0),  // North
-                            default => throw new RuntimeException("Invalid direction")
                         }, translation: $translation));
 
                     $builder->addPermutation($permutation);
@@ -552,13 +549,13 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Hopper $block) => (new Writer($stringId))
-            ->writeInt(StateNames::TOGGLE_BIT, $block->isPowered())
+            static fn (Hopper $block): Writer => (new Writer($stringId))
+            ->writeInt(StateNames::TOGGLE_BIT, $block->isPowered() ? 1 : 0)
             ->writeFacingWithoutUp($block->getFacing())
         );
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
-            ->setPowered($in->readInt(StateNames::TOGGLE_BIT))
+            static fn (Reader $in): Hopper => (clone $block)
+            ->setPowered($in->readInt(StateNames::TOGGLE_BIT) !== 0)
             ->setFacing($in->readFacingWithoutUp())
         );
 
@@ -643,8 +640,8 @@ final class NexlyPermutations
     public static function makeLadder(Builder $builder, Ladder $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Ladder $b) => (new Writer($stringId))->writeHorizontalFacing($b->getFacing()));
-        $builder->setDeserializer(static fn (Reader $in) => (clone $block)->setFacing($in->readHorizontalFacing()));
+        $builder->setSerializer(static fn (Ladder $b): Writer => (new Writer($stringId))->writeHorizontalFacing($b->getFacing()));
+        $builder->setDeserializer(static fn (Reader $in): Ladder => (clone $block)->setFacing($in->readHorizontalFacing()));
 
         $builder->addProperty(new BlockProperty(StateNames::FACING_DIRECTION, $facings = range(2, 5)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::LADDER->toString()));
@@ -659,7 +656,6 @@ final class NexlyPermutations
                     3 => new Vector3(0, 180, 0),
                     4 => new Vector3(0, 90, 0),
                     5 => new Vector3(0, 270, 0),
-                    default => throw new RuntimeException("Invalid direction")
                 }))
             );
         }
@@ -675,8 +671,8 @@ final class NexlyPermutations
     public static function makeFarmland(Builder $builder, Farmland $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Farmland $b) => (new Writer($stringId))->writeInt(StateNames::MOISTURIZED_AMOUNT, $b->getWetness()));
-        $builder->setDeserializer(static fn (Reader $in) => (clone $block)->setWetness($in->readInt(StateNames::MOISTURIZED_AMOUNT)));
+        $builder->setSerializer(static fn (Farmland $b): Writer => (new Writer($stringId))->writeInt(StateNames::MOISTURIZED_AMOUNT, $b->getWetness()));
+        $builder->setDeserializer(static fn (Reader $in): Farmland => (clone $block)->setWetness($in->readInt(StateNames::MOISTURIZED_AMOUNT)));
 
         $builder->addProperty(new BlockProperty(StateNames::MOISTURIZED_AMOUNT, range(0, Farmland::MAX_WETNESS)));
 
@@ -738,26 +734,26 @@ final class NexlyPermutations
             $connections = $reflection->getProperty("connections");
             $co = $connections->getValue($block);
             return (new Writer($stringId))
-                ->writeInt("mc:n", isset($co[Facing::NORTH]))
-                ->writeInt("mc:s", isset($co[Facing::SOUTH]))
-                ->writeInt("mc:w", isset($co[Facing::WEST]))
-                ->writeInt("mc:e", isset($co[Facing::EAST]));
+                ->writeInt("mc:n", isset($co[Facing::NORTH]) ? 1 : 0)
+                ->writeInt("mc:s", isset($co[Facing::SOUTH]) ? 1 : 0)
+                ->writeInt("mc:w", isset($co[Facing::WEST]) ? 1 : 0)
+                ->writeInt("mc:e", isset($co[Facing::EAST]) ? 1 : 0);
         });
         $builder->setDeserializer(static function (Reader $in) use ($block): GlassPane {
             $cloned = clone $block;
             $co = [];
 
             if ($in->readInt("mc:n")) {
-                $co[Facing::NORTH] = Facing::NORTH;
+                $co[Facing::NORTH] = true;
             }
             if ($in->readInt("mc:s")) {
-                $co[Facing::SOUTH] = Facing::SOUTH;
+                $co[Facing::SOUTH] = true;
             }
             if ($in->readInt("mc:w")) {
-                $co[Facing::WEST] = Facing::WEST;
+                $co[Facing::WEST] = true;
             }
             if ($in->readInt("mc:e")) {
-                $co[Facing::EAST] = Facing::EAST;
+                $co[Facing::EAST] = true;
             }
 
             $reflection = new ReflectionClass(GlassPane::class);
@@ -798,7 +794,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Lever $block) => Writer::create($stringId)
+            static fn (Lever $block): Writer => Writer::create($stringId)
             ->writeBool(StateNames::OPEN_BIT, $block->isActivated())
             ->writeString(StateNames::LEVER_DIRECTION, match($block->getFacing()) {
                 LeverFacing::DOWN_AXIS_Z => StateValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH,
@@ -812,7 +808,7 @@ final class NexlyPermutations
             })
         );
         $builder->setDeserializer(
-            static fn (Reader $in) => (clone $block)
+            static fn (Reader $in): Lever => (clone $block)
             ->setActivated($in->readBool(StateNames::OPEN_BIT))
             ->setFacing(match($in->readString(StateNames::LEVER_DIRECTION)) {
                 StateValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH => LeverFacing::DOWN_AXIS_Z,
@@ -856,7 +852,7 @@ final class NexlyPermutations
                     StateValues::LEVER_DIRECTION_UP_EAST_WEST,
                     StateValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH,
                     StateValues::LEVER_DIRECTION_DOWN_EAST_WEST
-                ])) {
+                ], true)) {
                     $builder->addComponent(new SelectionBoxBlockComponent(true, [new BoxCollision(new Vector3(-4.0, 0.0, -4.0), new Vector3(8.0, 10.0, 8.0))]));
                 } else {
                     $builder->addComponent(new SelectionBoxBlockComponent(true, [new BoxCollision(new Vector3(-3.0, 0.0, -4.0), new Vector3(6.0, 6.0, 8.0))]));
@@ -873,7 +869,6 @@ final class NexlyPermutations
                         StateValues::LEVER_DIRECTION_SOUTH => new Vector3(90, 0, 0),
                         StateValues::LEVER_DIRECTION_EAST => new Vector3(90, 90, 0),
                         StateValues::LEVER_DIRECTION_WEST => new Vector3(90, 270, 0),
-                        default => throw new RuntimeException("Invalid lever direction"),
                     }
                 ));
 

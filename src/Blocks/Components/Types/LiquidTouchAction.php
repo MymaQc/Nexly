@@ -33,7 +33,7 @@ enum LiquidTouchAction: string
      * Creates a LiquidType from a string value.
      *
      * @param string $value
-     * @return LiquidType|null
+     * @return self|null
      */
     public static function fromString(string $value): ?self
     {

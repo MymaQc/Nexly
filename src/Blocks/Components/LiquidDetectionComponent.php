@@ -12,10 +12,10 @@ use pocketmine\nbt\tag\ListTag;
 class LiquidDetectionComponent extends BlockComponent
 {
     /**
-     * @param LiquidRule[] $rules
+     * @param list<LiquidRule> $rules
      */
     public function __construct(
-        private array $rules,
+        private readonly array $rules = [],
     ) {
     }
 
@@ -37,6 +37,6 @@ class LiquidDetectionComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("detectionRules", new ListTag(array_map(fn (LiquidRule $rule) => $rule->toNBT(), $this->rules), NBT::TAG_Compound));
+            ->setTag("detectionRules", new ListTag(array_map(fn (LiquidRule $rule): CompoundTag => $rule->toNBT(), $this->rules), NBT::TAG_Compound));
     }
 }

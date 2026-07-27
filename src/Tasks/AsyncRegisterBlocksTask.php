@@ -2,6 +2,7 @@
 
 namespace Nexly\Tasks;
 
+use Closure;
 use Nexly\Blocks\BlockPalette;
 use Nexly\Blocks\Components\AsyncBlockComponent;
 use Nexly\Blocks\NexlyBlocks;
@@ -16,6 +17,18 @@ use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter;
 use pocketmine\scheduler\AsyncTask;
 
+/**
+ * @phpstan-type AsyncBlockDefinition array{
+ *     int,
+ *     Closure(int): Block,
+ *     string,
+ *     string,
+ *     string,
+ *     string,
+ *     Closure(mixed...): BlockStateWriter,
+ *     Closure(BlockStateReader): Block
+ * }
+ */
 final class AsyncRegisterBlocksTask extends AsyncTask
 {
     private ThreadSafeArray $numericIds;
@@ -28,8 +41,7 @@ final class AsyncRegisterBlocksTask extends AsyncTask
     private ThreadSafeArray $deserializer;
 
     /**
-     * @param Closure[] $blocks
-     * @phpstan-param array<string, array{(Closure(int): Block), (Closure(BlockStateWriter): Block), (Closure(Block): BlockStateReader)}> $blocks
+     * @param array<string, AsyncBlockDefinition> $blocks
      */
     public function __construct(array $blocks)
     {
@@ -89,7 +101,7 @@ final class AsyncRegisterBlocksTask extends AsyncTask
                 }
 
                 $rotationOffset = $trait["rotationOffset"] ?? null;
-                if (!is_numeric($rotationOffset)) {
+                if (!is_int($rotationOffset) && !is_float($rotationOffset)) {
                     throw new \InvalidArgumentException("Invalid rotationOffset for trait " . $rotationOffset);
                 }
 

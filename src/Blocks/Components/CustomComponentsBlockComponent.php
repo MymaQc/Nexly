@@ -6,13 +6,18 @@ use Attribute;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 
+/**
+ * @internal Legacy client hook metadata retained for network compatibility.
+ * @deprecated minecraft:custom_components is no longer supported in current
+ *             custom-content definitions.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class CustomComponentsBlockComponent extends BlockComponent
 {
     public function __construct(
-        private bool $hasPlayerInteract = true,
-        private bool $hasPlayerPlacing = true,
-        private bool $isV1Component = true,
+        private readonly bool $hasPlayerInteract = true,
+        private readonly bool $hasPlayerPlacing = true,
+        private readonly bool $isV1Component = true,
     ) {
     }
 
@@ -34,8 +39,8 @@ class CustomComponentsBlockComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("hasPlayerInteract", new ByteTag($this->hasPlayerInteract))
-            ->setTag("hasPlayerPlacing", new ByteTag($this->hasPlayerPlacing))
-            ->setTag("isV1Component", new ByteTag($this->isV1Component));
+            ->setTag("hasPlayerInteract", new ByteTag($this->hasPlayerInteract ? 1 : 0))
+            ->setTag("hasPlayerPlacing", new ByteTag($this->hasPlayerPlacing ? 1 : 0))
+            ->setTag("isV1Component", new ByteTag($this->isV1Component ? 1 : 0));
     }
 }

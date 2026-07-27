@@ -33,7 +33,7 @@ final class BlockBreakingListener implements Listener
     private const MAX_BLOCK_ACTIONS = 100;
     private const MAX_DIST_SQ = 10_000;
 
-    /** @var WeakMap<Player, SurvivalBlockBreakHandler|null> */
+    /** @var WeakMap<Player, SurvivalBlockBreakHandler> */
     private WeakMap $breakHandlers;
 
     /** Réflexion mise en cache */

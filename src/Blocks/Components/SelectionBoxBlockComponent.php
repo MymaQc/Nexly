@@ -7,6 +7,7 @@ use Nexly\Blocks\Components\Types\BoxCollision;
 use pocketmine\block\Beetroot;
 use pocketmine\block\Block;
 use pocketmine\block\Carrot;
+use pocketmine\block\Crops;
 use pocketmine\block\NetherWartPlant;
 use pocketmine\block\Potato;
 use pocketmine\math\Vector3;
@@ -33,10 +34,10 @@ class SelectionBoxBlockComponent extends BlockComponent
      * Creates the component from a Block instance.
      *
      * @param int $age
-     * @param Block $block
+     * @param Crops|NetherWartPlant $block
      * @return self
      */
-    public static function fromCrops(Block $block, int $age): self
+    public static function fromCrops(Crops|NetherWartPlant $block, int $age): self
     {
         return new self(
             true,
@@ -47,7 +48,7 @@ class SelectionBoxBlockComponent extends BlockComponent
                         $block instanceof Carrot => new Vector3(16.0, (($age + 1.0) * (1 / $block::MAX_AGE)) * 0.7 * 16, 16.0),
                         $block instanceof Potato, $block instanceof Beetroot => new Vector3(16.0, (($age + 1.0) * (1 / $block::MAX_AGE)) * 0.6 * 16, 16.0),
                         $block instanceof NetherWartPlant => new Vector3(16.0, ($age + 1.0) * 0.25 * 16, 16.0),
-                        default => new Vector3(16.0, ($age + 1) * (1 / ($block::MAX_AGE ?? 7)) * 16, 16.0),
+                        default => new Vector3(16.0, ($age + 1) * (1 / $block::MAX_AGE) * 16, 16.0),
                     }
                 )
             ]
@@ -72,11 +73,9 @@ class SelectionBoxBlockComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         if (!$this->enabled) {
-            return CompoundTag::create()
-                ->setTag("enabled", new ByteTag($this->enabled));
+            return CompoundTag::create()->setTag("enabled", new ByteTag(0));
         }
 
-        return $this->collisions[array_key_first($this->collisions)]->toNBT(false)
-            ->setTag("enabled", new ByteTag($this->enabled));
+        return $this->collisions[array_key_first($this->collisions)]->toNBT(false)->setTag("enabled", new ByteTag(1));
     }
 }

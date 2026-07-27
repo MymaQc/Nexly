@@ -7,7 +7,7 @@ use pocketmine\nbt\tag\CompoundTag;
 
 final class Permutation
 {
-    /*** @var BlockComponent[] */
+    /** @var array<string, BlockComponent> */
     private array $components = [];
 
     public function __construct(
@@ -43,7 +43,7 @@ final class Permutation
     }
 
     /**
-     * @return array
+     * @return array<string, BlockComponent>
      */
     public function getComponents(): array
     {

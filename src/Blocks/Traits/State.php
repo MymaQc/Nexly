@@ -35,7 +35,7 @@ readonly class State
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("cardinal_direction", new ByteTag($this->cardinal))
-            ->setTag("facing_direction", new ByteTag($this->facing));
+            ->setTag("cardinal_direction", new ByteTag($this->cardinal ? 1 : 0))
+            ->setTag("facing_direction", new ByteTag($this->facing ? 1 : 0));
     }
 }

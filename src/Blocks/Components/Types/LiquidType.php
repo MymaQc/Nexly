@@ -5,7 +5,6 @@ namespace Nexly\Blocks\Components\Types;
 enum LiquidType: string
 {
     case WATER = "water";
-    case LAVA = "lava";
 
     /**
      * Returns the name of the liquid type.
@@ -37,7 +36,6 @@ enum LiquidType: string
     {
         return match ($value) {
             self::WATER->value => self::WATER,
-            self::LAVA->value => self::LAVA,
             default => null,
         };
     }

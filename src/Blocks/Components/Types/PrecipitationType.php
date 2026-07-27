@@ -2,12 +2,12 @@
 
 namespace Nexly\Blocks\Components\Types;
 
-enum PrecipitationType
+enum PrecipitationType: string
 {
-    case OBRAIN;
-    case OBSTRUCT_RAIN_ACCUMULATE_SNOW;
-    case ACCUMULATE_SNOW;
-    case NONE;
+    case OBSTRUCT_RAIN = "obstruct_rain";
+    case OBSTRUCT_RAIN_ACCUMULATE_SNOW = "obstruct_rain_accumulate_snow";
+    case SNOWLOGGING = "snowlogging";
+    case NONE = "none";
 
     /**
      * @return string
@@ -15,5 +15,10 @@ enum PrecipitationType
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
     }
 }

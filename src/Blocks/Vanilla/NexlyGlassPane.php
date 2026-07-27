@@ -35,7 +35,7 @@ class NexlyGlassPane extends GlassPane
             $block = $this->getSide($facing);
             if ($block instanceof Thin || $block instanceof Wall || $block->getSupportType(Facing::opposite($facing)) === SupportType::FULL) {
                 if (!isset($this->connections[$facing])) {
-                    $this->connections[$facing] = $facing;
+                    $this->connections[$facing] = true;
                     $changed++;
                 }
             } elseif (isset($this->connections[$facing])) {
@@ -54,11 +54,9 @@ class NexlyGlassPane extends GlassPane
      */
     protected function describeBlockOnlyState(RuntimeDataDescriber $w): void
     {
-        foreach ($this->connections as $facing => $zebi) {
-            $this->connections[$facing] = $facing;
-        }
-
-        $w->horizontalFacingFlags($this->connections);
+        $faces = array_keys($this->connections);
+        $w->horizontalFacingFlags($faces);
+        $this->connections = array_fill_keys(array_values($faces), true);
     }
 
     /**

@@ -7,11 +7,15 @@ use Nexly\Blocks\Components\Types\BreathabilityType;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 
+/**
+ * @internal Required only by the client block-definition NBT.
+ * @deprecated Not usable as a public custom-content component.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class BreathabilityBlockComponent extends BlockComponent
 {
     public function __construct(
-        private BreathabilityType $type,
+        private readonly BreathabilityType $type,
     ) {
     }
 

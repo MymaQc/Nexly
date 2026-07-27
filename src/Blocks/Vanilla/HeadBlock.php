@@ -10,13 +10,12 @@ use pocketmine\block\utils\MobHeadType;
 class HeadBlock extends MobHead
 {
     protected MobHeadType $mobHeadType = MobHeadType::PLAYER;
-    private int $textureIndex = 0;
 
     public function __construct(
-        BlockIdentifier $idInfo,
-        string          $name,
-        private string  $texture,
-        BlockTypeInfo   $typeInfo
+        BlockIdentifier         $idInfo,
+        string                  $name,
+        private readonly string $texture,
+        BlockTypeInfo           $typeInfo
     ) {
         parent::__construct($idInfo, $name, $typeInfo);
     }

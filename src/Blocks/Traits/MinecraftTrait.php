@@ -14,9 +14,9 @@ class MinecraftTrait
      * @param State $state
      */
     public function __construct(
-        private TraitIds $identifier,
-        private float  $rotationOffset,
-        private State $state,
+        private readonly TraitIds $identifier,
+        private readonly float    $rotationOffset,
+        private readonly State    $state,
     ) {
     }
 

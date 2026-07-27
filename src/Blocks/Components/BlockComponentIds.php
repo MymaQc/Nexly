@@ -4,8 +4,10 @@ namespace Nexly\Blocks\Components;
 
 enum BlockComponentIds: string
 {
+    /** @deprecated Internal client metadata, not a public block component. */
     case BREATHABILITY = "minecraft:breathability";
     case COLLISION_BOX = "minecraft:collision_box";
+    case CONNECTION_RULE = "minecraft:connection_rule";
     case DESTRUCTIBLE_BY_EXPLOSION = "minecraft:destructible_by_explosion";
     case DESTRUCTIBLE_BY_MINING = "minecraft:destructible_by_mining";
     case DISPLAY_NAME = "minecraft:display_name";
@@ -18,12 +20,15 @@ enum BlockComponentIds: string
     case LIGHT_EMISSION = "minecraft:light_emission";
     case LIQUID_DETECTION = "minecraft:liquid_detection";
     case MATERIAL_INSTANCES = "minecraft:material_instances";
+    /** @deprecated Use script event subscriptions instead. */
     case ON_INTERACT = "minecraft:on_interact";
+    /** @deprecated Use script event subscriptions instead. */
     case ON_PLAYER_PLACING = "minecraft:on_player_placing";
     case PLACEMENT_FILTER = "minecraft:placement_filter";
     case REPLACEABLE = "minecraft:replaceable";
     case SELECTION_BOX = "minecraft:selection_box";
     case TRANSFORMATION = "minecraft:transformation";
+    /** @deprecated Script custom_components is no longer supported. */
     case CUSTOM_COMPONENTS = "minecraft:custom_components";
     case FLOWER_POTTABLE = "minecraft:flower_pottable";
     case RANDOM_OFFSET = "minecraft:random_offset";

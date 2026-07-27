@@ -11,7 +11,7 @@ use pocketmine\nbt\tag\StringTag;
 class PrecipitationInteractionsBlockComponent extends BlockComponent
 {
     public function __construct(
-        private readonly PrecipitationType $precipitation,
+        private readonly PrecipitationType $precipitationBehavior,
     ) {
     }
 
@@ -31,6 +31,6 @@ class PrecipitationInteractionsBlockComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("precipitation_behavior", new StringTag(strtolower($this->precipitation->getName())));
+            ->setTag("precipitation_behavior", new StringTag($this->precipitationBehavior->getValue()));
     }
 }

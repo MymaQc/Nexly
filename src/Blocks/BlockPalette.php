@@ -17,7 +17,7 @@ final class BlockPalette
 {
     use SingletonTrait;
 
-    /** @var BlockStateDictionaryEntry[] */
+    /** @var list<BlockStateDictionaryEntry> */
     private array $states = [];
 
     public function __construct()
@@ -25,7 +25,7 @@ final class BlockPalette
     }
 
     /**
-     * @return BlockStateDictionaryEntry[]
+     * @return list<BlockStateDictionaryEntry>
      */
     public function getStates(): array
     {
@@ -45,6 +45,8 @@ final class BlockPalette
 
     /**
      * Inserts the provided state in to the correct position of the palette.
+     *
+     * @param list<BlockStateDictionaryEntry> $entries
      */
     public function insertStates(array $entries): void
     {
@@ -62,20 +64,13 @@ final class BlockPalette
     /**
      * Sorts the states using the fnv164 hash of their names.
      *
-     * @param array $states
-     * @param array|null $sortedStates
-     * @param array|null $stateDataToStateIdLookup
+     * @param array<string, list<BlockStateDictionaryEntry>> $states
+     * @param array<int, BlockStateDictionaryEntry> $sortedStates
+     * @param array<string, int|array<string, int>> $stateDataToStateIdLookup
      * @return void
      */
-    private function sort(array $states, ?array &$sortedStates, ?array &$stateDataToStateIdLookup): void
+    private function sort(array $states, array &$sortedStates, array &$stateDataToStateIdLookup): void
     {
-        if ($stateDataToStateIdLookup === null) {
-            $stateDataToStateIdLookup = [];
-        }
-        if ($sortedStates === null) {
-            $sortedStates = [];
-        }
-
         foreach ($states as $name => $blockStates) {
             $numberState = count($blockStates);
 
@@ -96,7 +91,12 @@ final class BlockPalette
                 if ($numberState === 1) {
                     $stateDataToStateIdLookup[$name] = $stateId;
                 } else {
-                    $stateDataToStateIdLookup[$name][$blockState->getRawStateProperties()] = $stateId;
+                    $lookup = $stateDataToStateIdLookup[$name] ?? [];
+                    if (!is_array($lookup)) {
+                        throw new \LogicException("Multiple states cannot share a scalar state lookup.");
+                    }
+                    $lookup[$blockState->getRawStateProperties()] = $stateId;
+                    $stateDataToStateIdLookup[$name] = $lookup;
                 }
 
                 $sortedStates[$stateId] = $blockState;
@@ -127,7 +127,7 @@ final class BlockPalette
     private static function fnv1a32(string $str): int
     {
         $hashHex = hash('fnv1a32', $str);
-        $hashInt = intval(hexdec($hashHex));
+        $hashInt = (int) hexdec($hashHex);
         if ($hashInt > 0x7FFFFFFF) {
             $hashInt -= 0x100000000;
         }

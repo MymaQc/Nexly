@@ -10,8 +10,11 @@ use pocketmine\nbt\tag\FloatTag;
 class DestructibleByExplosionBlockComponent extends BlockComponent
 {
     public function __construct(
-        private readonly float $resistance = 0.0,
+        private readonly float $explosionResistance = 0.0,
     ) {
+        if ($explosionResistance < 0.0) {
+            throw new \InvalidArgumentException("Explosion resistance cannot be negative.");
+        }
     }
 
     /**
@@ -32,6 +35,6 @@ class DestructibleByExplosionBlockComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("explosion_resistance", new FloatTag($this->resistance));
+            ->setTag("explosion_resistance", new FloatTag($this->explosionResistance));
     }
 }

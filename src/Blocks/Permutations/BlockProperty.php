@@ -10,14 +10,22 @@ use pocketmine\nbt\tag\StringTag;
 
 class BlockProperty
 {
+    /** @var non-empty-list<string|int|bool> */
+    private readonly array $values;
+
     /**
      * @param string $name
-     * @param array $values
+     * @param list<string|int|bool> $values
      */
     public function __construct(
         private readonly string $name,
-        private readonly array $values
+        array $values
     ) {
+        if ($values === []) {
+            throw new \InvalidArgumentException("A block property must define at least one possible value.");
+        }
+
+        $this->values = $values;
     }
 
     /**
@@ -29,23 +37,25 @@ class BlockProperty
     }
 
     /**
-     * @return array
+     * @return non-empty-list<string|int|bool>
      */
     public function getValues(): array
     {
         return $this->values;
     }
 
-    public function toNBT()
+    public function toNBT(): CompoundTag
     {
+        /** @var list<StringTag|IntTag|ByteTag> $values */
         $values = [];
         foreach ($this->values as $value) {
-            $values[] = match (true) {
-                is_string($value) => new StringTag($value),
-                is_int($value) => new IntTag($value),
-                is_bool($value) => new ByteTag($value),
-                default => throw new \InvalidArgumentException("Invalid value type for BlockProperty: " . gettype($value)),
-            };
+            if (is_string($value)) {
+                $values[] = new StringTag($value);
+            } elseif (is_int($value)) {
+                $values[] = new IntTag($value);
+            } else {
+                $values[] = new ByteTag($value ? 1 : 0);
+            }
         }
 
         return CompoundTag::create()

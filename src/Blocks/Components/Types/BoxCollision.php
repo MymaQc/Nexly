@@ -48,6 +48,7 @@ class BoxCollision
         private Vector3 $origin,
         private Vector3 $size,
     ) {
+        self::validate($origin, $size);
     }
 
     /**
@@ -63,6 +64,7 @@ class BoxCollision
      */
     public function setOrigin(Vector3 $origin): void
     {
+        self::validate($origin, $this->size);
         $this->origin = $origin;
     }
 
@@ -79,7 +81,28 @@ class BoxCollision
      */
     public function setSize(Vector3 $size): void
     {
+        self::validate($this->origin, $size);
         $this->size = $size;
+    }
+
+    private static function validate(Vector3 $origin, Vector3 $size): void
+    {
+        if (
+            $origin->getX() < -8 || $origin->getX() > 8
+            || $origin->getY() < 0 || $origin->getY() > 24
+            || $origin->getZ() < -8 || $origin->getZ() > 8
+        ) {
+            throw new \InvalidArgumentException("Collision-box origin is outside the supported Bedrock range.");
+        }
+
+        if (
+            $size->getX() < 0 || $size->getY() < 0 || $size->getZ() < 0
+            || $origin->getX() + $size->getX() > 8
+            || $origin->getY() + $size->getY() > 24
+            || $origin->getZ() + $size->getZ() > 8
+        ) {
+            throw new \InvalidArgumentException("Collision-box size exceeds the supported Bedrock bounds.");
+        }
     }
 
     /**
@@ -105,16 +128,8 @@ class BoxCollision
         }
 
         return CompoundTag::create()
-            ->setTag("origin", new ListTag([
-                new FloatTag($this->origin->getX()),
-                new FloatTag($this->origin->getY()),
-                new FloatTag($this->origin->getZ())
-            ], NBT::TAG_Float))
-            ->setTag("size", new ListTag([
-                new FloatTag($this->size->getX()),
-                new FloatTag($this->size->getY()),
-                new FloatTag($this->size->getZ())
-            ], NBT::TAG_Float));
+            ->setTag("origin", new ListTag([new FloatTag($this->origin->getX()), new FloatTag($this->origin->getY()), new FloatTag($this->origin->getZ())], NBT::TAG_Float))
+            ->setTag("size", new ListTag([new FloatTag($this->size->getX()), new FloatTag($this->size->getY()), new FloatTag($this->size->getZ())], NBT::TAG_Float));
     }
 }
 BoxCollision::checkInit();
