@@ -5,6 +5,7 @@ namespace Nexly\Recipes;
 use Nexly\Recipes\Types\Recipe;
 use Nexly\Recipes\Types\ShapedRecipe;
 use Nexly\Recipes\Types\ShapelessRecipe;
+use pocketmine\crafting\ShapedRecipe as ShapedRecipePM;
 use pocketmine\crafting\ShapelessRecipe as ShapelessRecipePM;
 use pocketmine\crafting\ShapelessRecipeType;
 use pocketmine\item\StringToItemParser;
@@ -15,7 +16,7 @@ class NexlyRecipes
 {
     use SingletonTrait;
 
-    /** @var \Closure[] */
+    /** @var list<\Closure(): Recipe> */
     private array $recipes = [];
 
     public function __construct()
@@ -24,7 +25,7 @@ class NexlyRecipes
     }
 
     /**
-     * @return array
+     * @return list<\Closure(): Recipe>
      */
     public function getRecipes(): array
     {
@@ -32,7 +33,7 @@ class NexlyRecipes
     }
 
     /**
-     * @param array $recipes
+     * @param list<\Closure(): Recipe> $recipes
      */
     public function setRecipes(array $recipes): void
     {
@@ -40,7 +41,7 @@ class NexlyRecipes
     }
 
     /**
-     * @param \Closure $recipe
+     * @param \Closure(): Recipe $recipe
      */
     public function addRecipe(\Closure $recipe): void
     {
@@ -50,7 +51,7 @@ class NexlyRecipes
     /**
      * Loads a recipe from an associative array.
      *
-     * @param array $data
+     * @param array<string, mixed> $data
      * @return void
      */
     public function fromArray(array $data): void
@@ -112,17 +113,13 @@ class NexlyRecipes
     /**
      * Loads recipes from a JSON array.
      *
-     * @param array $data
+     * @param list<array<string, mixed>> $data
      * @return void
      */
     public function fromJson(array $data): void
     {
         foreach ($data as $recipe) {
-            if (is_array($recipe)) {
-                $this->fromArray($recipe);
-            } else {
-                throw new \InvalidArgumentException("Invalid recipe format, expected array");
-            }
+            $this->fromArray($recipe);
         }
     }
 
@@ -141,15 +138,13 @@ class NexlyRecipes
                 continue;
             }
 
-            if (!$recipe instanceof Recipe) {
-                continue;
-            }
-
             $craftingRecipe = $recipe->build();
             if ($craftingRecipe instanceof ShapelessRecipePM) {
                 $craftingManager->registerShapelessRecipe($craftingRecipe);
-            } else {
+            } elseif ($craftingRecipe instanceof ShapedRecipePM) {
                 $craftingManager->registerShapedRecipe($craftingRecipe);
+            } else {
+                throw new \UnexpectedValueException("Unsupported crafting recipe type: " . $craftingRecipe::class);
             }
         }
     }

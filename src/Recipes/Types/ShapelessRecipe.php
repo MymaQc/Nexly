@@ -14,8 +14,8 @@ class ShapelessRecipe implements Recipe
 {
     /**
      * @param ShapelessRecipeType $type
-     * @param Item|string[] $ingredients
-     * @param Item|string[] $outputs
+     * @param list<Item|string> $ingredients
+     * @param list<Item|string> $outputs
      */
     public function __construct(
         private readonly ShapelessRecipeType $type,
@@ -33,7 +33,7 @@ class ShapelessRecipe implements Recipe
     }
 
     /**
-     * @return array
+     * @return list<Item|string>
      */
     public function getIngredients(): array
     {
@@ -41,7 +41,7 @@ class ShapelessRecipe implements Recipe
     }
 
     /**
-     * @return array
+     * @return list<Item|string>
      */
     public function getOutputs(): array
     {
@@ -56,9 +56,19 @@ class ShapelessRecipe implements Recipe
     public function build(): ShapelessRecipePM
     {
         return new ShapelessRecipePM(
-            array_map(fn ($ingredient) => new ExactRecipeIngredient(is_string($ingredient) ? StringToItemParser::getInstance()->parse($ingredient) : $ingredient), $this->ingredients),
-            array_map(fn ($output) => is_string($output) ? StringToItemParser::getInstance()->parse($output) : $output, $this->outputs),
+            array_map(fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
+            array_map(fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
             $this->type
         );
+    }
+
+    private static function resolveItem(Item|string $item): Item
+    {
+        if ($item instanceof Item) {
+            return $item;
+        }
+
+        return StringToItemParser::getInstance()->parse($item)
+            ?? throw new \InvalidArgumentException("Unknown recipe item identifier: $item");
     }
 }

@@ -12,23 +12,29 @@ use pocketmine\item\StringToItemParser;
 #[Attribute(Attribute::TARGET_CLASS)]
 class ShapedRecipe implements Recipe
 {
+    /** @var non-empty-list<string> */
+    private array $shape;
+
     /**
-     * @param MinecraftShape|string[] $shape
-     * @param Item|string[] $ingredients
-     * @param Item|string[] $outputs
+     * @param MinecraftShape|list<string> $shape
+     * @param array<string, Item|string> $ingredients
+     * @param list<Item|string> $outputs
      */
     public function __construct(
-        private MinecraftShape|array $shape,
+        MinecraftShape|array $shape,
         private readonly array       $ingredients,
         private readonly array       $outputs
     ) {
-        if ($this->shape instanceof MinecraftShape) {
-            $this->shape = $this->shape->toArray();
+        $resolvedShape = $shape instanceof MinecraftShape ? $shape->toArray() : $shape;
+        if ($resolvedShape === []) {
+            throw new \InvalidArgumentException("A shaped recipe must contain at least one row.");
         }
+
+        $this->shape = $resolvedShape;
     }
 
     /**
-     * @return array
+     * @return non-empty-list<string>
      */
     public function getShape(): array
     {
@@ -36,7 +42,7 @@ class ShapedRecipe implements Recipe
     }
 
     /**
-     * @return array
+     * @return array<string, Item|string>
      */
     public function getIngredients(): array
     {
@@ -44,7 +50,7 @@ class ShapedRecipe implements Recipe
     }
 
     /**
-     * @return string[]
+     * @return list<Item|string>
      */
     public function getOutputs(): array
     {
@@ -60,8 +66,18 @@ class ShapedRecipe implements Recipe
     {
         return new ShapedRecipePM(
             $this->shape,
-            array_map(fn ($ingredient) => new ExactRecipeIngredient(is_string($ingredient) ? StringToItemParser::getInstance()->parse($ingredient) : $ingredient), $this->ingredients),
-            array_map(fn ($output) => is_string($output) ? StringToItemParser::getInstance()->parse($output) : $output, $this->outputs),
+            array_map(fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
+            array_map(fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
         );
+    }
+
+    private static function resolveItem(Item|string $item): Item
+    {
+        if ($item instanceof Item) {
+            return $item;
+        }
+
+        return StringToItemParser::getInstance()->parse($item)
+            ?? throw new \InvalidArgumentException("Unknown recipe item identifier: $item");
     }
 }

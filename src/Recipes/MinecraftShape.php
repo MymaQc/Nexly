@@ -25,7 +25,7 @@ enum MinecraftShape: string
     case STICK = "A\nA";
 
     /**
-     * @return string[]
+     * @return non-empty-list<string>
      */
     public function toArray(): array
     {
