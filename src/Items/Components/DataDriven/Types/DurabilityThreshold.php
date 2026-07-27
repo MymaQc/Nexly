@@ -10,9 +10,12 @@ class DurabilityThreshold
 {
     public function __construct(
         private readonly int $durability,
-        private readonly ?string $sound = null,
-        private readonly ?string $particle = null,
+        private readonly ?string $soundEvent = null,
+        private readonly ?string $particleType = null,
     ) {
+        if ($durability < 0) {
+            throw new \InvalidArgumentException("Durability threshold cannot be negative.");
+        }
     }
 
     /**
@@ -28,7 +31,7 @@ class DurabilityThreshold
      */
     public function getSound(): ?string
     {
-        return $this->sound;
+        return $this->soundEvent;
     }
 
     /**
@@ -36,7 +39,7 @@ class DurabilityThreshold
      */
     public function getParticle(): ?string
     {
-        return $this->particle;
+        return $this->particleType;
     }
 
     /**
@@ -47,12 +50,12 @@ class DurabilityThreshold
         $nbt = CompoundTag::create()
             ->setTag("durability", new IntTag($this->durability));
 
-        if ($this->sound !== null) {
-            $nbt->setTag("sound", new StringTag($this->sound));
+        if ($this->soundEvent !== null) {
+            $nbt->setTag("sound_event", new StringTag($this->soundEvent));
         }
 
-        if ($this->particle !== null) {
-            $nbt->setTag("particle", new StringTag($this->particle));
+        if ($this->particleType !== null) {
+            $nbt->setTag("particle_type", new StringTag($this->particleType));
         }
 
         return $nbt;

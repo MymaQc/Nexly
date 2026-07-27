@@ -4,6 +4,7 @@ namespace Nexly\Items\Components\Legacy\Types;
 
 use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\effect\EffectInstance;
+use pocketmine\lang\Translatable;
 use pocketmine\nbt\tag\CompoundTag;
 
 class LegacyEffect
@@ -36,9 +37,11 @@ class LegacyEffect
      */
     public static function from(EffectInstance $effectInstance): self
     {
+        $name = $effectInstance->getType()->getName();
+
         return new self(
             EffectIdMap::getInstance()->toId($effectInstance->getType()),
-            $effectInstance->getType()->getName(),
+            $name instanceof Translatable ? $name->getText() : $name,
             "", // Description ID is not available in EffectInstance
             $effectInstance->getDuration(),
             $effectInstance->getAmplifier(),

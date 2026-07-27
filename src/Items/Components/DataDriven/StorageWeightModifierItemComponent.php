@@ -10,17 +10,13 @@ use pocketmine\nbt\tag\IntTag;
 class StorageWeightModifierItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param int $capacity
+     * @param int $weightInStorageItem
      */
     public function __construct(
-        private readonly int $capacity,
+        private readonly int $weightInStorageItem = 4,
     ) {
-        if ($capacity < 0) {
-            throw new \InvalidArgumentException("Capacity must be a non-negative integer.");
-        }
-
-        if ($capacity > 64) {
-            throw new \InvalidArgumentException("Capacity cannot exceed 64.");
+        if ($weightInStorageItem < 0) {
+            throw new \InvalidArgumentException("Storage weight cannot be negative.");
         }
     }
 
@@ -42,6 +38,6 @@ class StorageWeightModifierItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("weight_in_storage_item", new IntTag($this->capacity));
+            ->setTag("weight_in_storage_item", new IntTag($this->weightInStorageItem));
     }
 }

@@ -11,10 +11,13 @@ use pocketmine\nbt\tag\ListTag;
 #[Attribute(Attribute::TARGET_CLASS)]
 class DurabilitySensorItemComponent extends DataDrivenItemComponent
 {
+    /**
+     * @param list<DurabilityThreshold> $durabilityThresholds
+     */
     public function __construct(
-        private readonly array $thresholds,
+        private readonly array $durabilityThresholds,
     ) {
-        if (empty($this->thresholds)) {
+        if (empty($this->durabilityThresholds)) {
             throw new \InvalidArgumentException("Thresholds array cannot be empty.");
         }
     }
@@ -37,6 +40,6 @@ class DurabilitySensorItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("durability_thresholds", new ListTag(array_map(fn (DurabilityThreshold $threshold) => $threshold->toNBT(), $this->thresholds), NBT::TAG_Compound));
+            ->setTag("durability_thresholds", new ListTag(array_map(fn (DurabilityThreshold $threshold): CompoundTag => $threshold->toNBT(), $this->durabilityThresholds), NBT::TAG_Compound));
     }
 }

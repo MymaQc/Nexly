@@ -14,10 +14,10 @@ class RepairableItemComponent extends DataDrivenItemComponent
     public const VANILLA_COST_FORMULE = "math.min(q.remaining_durability + c.other->q.remaining_durability + math.floor(q.max_durability /20), c.other->q.max_durability)";
 
     /**
-     * @param ItemRepair[] $items
+     * @param list<ItemRepair> $repairItems
      */
     public function __construct(
-        private readonly array $items,
+        private readonly array $repairItems,
     ) {
     }
 
@@ -39,9 +39,6 @@ class RepairableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("repair_items", new ListTag(
-                array_map(fn (ItemRepair $item) => $item->toNBT(), $this->items),
-                NBT::TAG_Compound
-            ));
+            ->setTag("repair_items", new ListTag(array_map(fn (ItemRepair $item): CompoundTag => $item->toNBT(), $this->repairItems), NBT::TAG_Compound));
     }
 }

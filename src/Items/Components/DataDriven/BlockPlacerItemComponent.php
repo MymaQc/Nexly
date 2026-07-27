@@ -17,29 +17,54 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
 {
     /**
      * @param string $block
-     * @param array $useOn
-     * @param bool $canUseBlockAsIcon
+     * @param list<string> $useOn
+     * @param bool $alignedPlacement
+     * @param bool $replaceBlockItem
      */
     public function __construct(
         private readonly string $block,
         private readonly array $useOn = [],
-        private readonly bool $canUseBlockAsIcon = false,
+        private readonly bool $alignedPlacement = false,
+        private readonly bool $replaceBlockItem = false,
     ) {
+        if ($block === "") {
+            throw new \InvalidArgumentException("Placed block identifier cannot be empty.");
+        }
 
+        if (count($useOn) > 256) {
+            throw new \InvalidArgumentException("Use-on filters cannot contain more than 256 entries.");
+        }
+
+        foreach ($useOn as $filter) {
+            if ($filter === "") {
+                throw new \InvalidArgumentException("Use-on filters must contain non-empty block identifiers.");
+            }
+        }
     }
 
     /**
      * Create a BlockPlacerItemComponent from a Block instance.
      *
      * @param Block $block
+     * @param bool $alignedPlacement
+     * @param bool $replaceBlockItem
      * @param Block ...$useOn
-     * @return $this
+     * @return self
      */
-    public static function from(Block $block, Block ...$useOn): self
-    {
+    public static function from(
+        Block $block,
+        bool $alignedPlacement = false,
+        bool $replaceBlockItem = false,
+        Block ...$useOn
+    ): self {
         return new self(
             GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
-            array_map(fn (Block $b) => GlobalBlockStateHandlers::getSerializer()->serialize($b->getStateId())->getName(), $useOn)
+            array_values(array_map(
+                fn (Block $b): string => GlobalBlockStateHandlers::getSerializer()->serialize($b->getStateId())->getName(),
+                $useOn
+            )),
+            $alignedPlacement,
+            $replaceBlockItem
         );
     }
 
@@ -62,7 +87,8 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
     {
         return CompoundTag::create()
             ->setTag("block", new StringTag($this->block))
-            ->setTag("canUseBlockAsIcon", new ByteTag($this->canUseBlockAsIcon))
-            ->setTag("use_on", new ListTag($this->useOn, NBT::TAG_String));
+            ->setTag("aligned_placement", new ByteTag($this->alignedPlacement ? 1 : 0))
+            ->setTag("replace_block_item", new ByteTag($this->replaceBlockItem ? 1 : 0))
+            ->setTag("use_on", new ListTag(array_map(fn (string $block): StringTag => new StringTag($block), $this->useOn), NBT::TAG_String));
     }
 }

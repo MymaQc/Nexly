@@ -10,23 +10,23 @@ use pocketmine\nbt\tag\IntTag;
 class DurabilityItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
-        private readonly int $durability,
-        private readonly int $min = 0,
-        private readonly int $max = 0,
+        private readonly int $maxDurability,
+        private readonly int $damageChanceMin = 100,
+        private readonly int $damageChanceMax = 100,
     ) {
-        if ($durability < 1) {
-            throw new \InvalidArgumentException("Durability must be at least 1");
+        if ($maxDurability < 0) {
+            throw new \InvalidArgumentException("Maximum durability cannot be negative.");
         }
 
-        if ($min < 0 || $max < 0) {
+        if ($damageChanceMin < 0 || $damageChanceMax < 0) {
             throw new \InvalidArgumentException("Min and Max damage chance must be at least 0");
         }
 
-        if ($min > $max) {
+        if ($damageChanceMin > $damageChanceMax) {
             throw new \InvalidArgumentException("Min damage chance cannot be greater than Max damage chance");
         }
 
-        if ($max > 100) {
+        if ($damageChanceMax > 100) {
             throw new \InvalidArgumentException("Max damage chance cannot be greater than 100");
         }
     }
@@ -49,12 +49,10 @@ class DurabilityItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("max_durability", new IntTag($this->durability))
-            ->setTag(
-                "damage_chance",
-                CompoundTag::create()
-                ->setTag("min", new IntTag($this->min))
-                ->setTag("max", new IntTag($this->max))
+            ->setTag("max_durability", new IntTag($this->maxDurability))
+            ->setTag("damage_chance", CompoundTag::create()
+                ->setTag("min", new IntTag($this->damageChanceMin))
+                ->setTag("max", new IntTag($this->damageChanceMax))
             );
     }
 }

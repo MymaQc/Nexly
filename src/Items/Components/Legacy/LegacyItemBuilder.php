@@ -111,7 +111,7 @@ class LegacyItemBuilder extends ItemBuilder
         if ($item instanceof ConsumableItem) {
             if ($item instanceof FoodSource) {
                 $this->addComponent(new FoodComponent(
-                    $item->getFoodRestore(),
+                    (int) round($item->getFoodRestore()),
                     $item->getSaturationRestore(),
                     !$item->requiresHunger(),
                     cooldownType: $item->getCooldownTag() ?? $this->getStringId(),
@@ -119,7 +119,7 @@ class LegacyItemBuilder extends ItemBuilder
                 ));
             } else {
                 $this->addComponent(new FoodComponent(
-                    0.0,
+                    0,
                     0.0,
                     true,
                     cooldownType: $item->getCooldownTag() ?? $this->getStringId(),

@@ -16,7 +16,6 @@ use Nexly\Items\Components\DataDriven\Property\PropertyItemComponent;
 use Nexly\Items\Components\DataDriven\Property\ShouldDespawnProperty;
 use Nexly\Items\Components\DataDriven\Property\StackedByDataProperty;
 use Nexly\Items\Components\DataDriven\Property\UseAnimationProperty;
-use Nexly\Items\Components\DataDriven\Property\UseDurationProperty;
 use Nexly\Items\Components\DataDriven\Types\IgnoreBlockVisual;
 use Nexly\Items\Components\DataDriven\Types\ItemEnchantSlot;
 use Nexly\Items\Components\DataDriven\Types\ItemRepair;
@@ -30,9 +29,7 @@ use pocketmine\item\Bucket;
 use pocketmine\item\Durable;
 use pocketmine\item\Dye;
 use pocketmine\item\Food;
-use pocketmine\item\ProjectileItem;
 use pocketmine\item\Record;
-use pocketmine\item\SpawnEgg;
 use pocketmine\item\Sword;
 use pocketmine\item\TieredTool;
 use pocketmine\item\Tool;
@@ -50,7 +47,7 @@ class DataDrivenItemBuilder extends ItemBuilder
     /** @var DataDrivenItemComponent[] */
     private array $components = [];
 
-    public static function create(): DataDrivenItemBuilder
+    public static function create(): self
     {
         return new self();
     }
@@ -208,10 +205,6 @@ class DataDrivenItemBuilder extends ItemBuilder
             $this->addProperty(BlockProperty::from($block));
         }
 
-        if ($item instanceof Food) {
-            $this->addProperty(new UseDurationProperty(20));
-        }
-
         $this->addProperty(UseAnimationProperty::fromItem($item));
         $this->addProperty(EnchantableSlotProperty::fromItem($item));
         $this->addProperty(EnchantableValueProperty::fromItem($item));
@@ -239,25 +232,24 @@ class DataDrivenItemBuilder extends ItemBuilder
 
             $items = [];
             if ($item instanceof Armor) {
-                $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, match (true) {
-                    $item->getMaterial() === VanillaArmorMaterials::LEATHER() => VanillaItems::LEATHER(),
-                    $item->getMaterial() === VanillaArmorMaterials::IRON() => VanillaItems::IRON_INGOT(),
-                    $item->getMaterial() === VanillaArmorMaterials::GOLD() => VanillaItems::GOLD_INGOT(),
-                    $item->getMaterial() === VanillaArmorMaterials::DIAMOND() => VanillaItems::DIAMOND(),
-                    $item->getMaterial() === VanillaArmorMaterials::NETHERITE() => VanillaItems::NETHERITE_INGOT(),
-                    $item->getMaterial() === VanillaArmorMaterials::TURTLE() => VanillaItems::SCUTE(),
+                $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, match ($item->getMaterial()) {
+                    VanillaArmorMaterials::LEATHER() => VanillaItems::LEATHER(),
+                    VanillaArmorMaterials::IRON() => VanillaItems::IRON_INGOT(),
+                    VanillaArmorMaterials::GOLD() => VanillaItems::GOLD_INGOT(),
+                    VanillaArmorMaterials::DIAMOND() => VanillaItems::DIAMOND(),
+                    VanillaArmorMaterials::NETHERITE() => VanillaItems::NETHERITE_INGOT(),
+                    VanillaArmorMaterials::TURTLE() => VanillaItems::SCUTE(),
                     default => VanillaItems::AIR(),
                 });
             } elseif ($item instanceof TieredTool) {
-                $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, ...match (true) {
-                    $item->getTier() === ToolTier::WOOD => [VanillaBlocks::OAK_WOOD()->asItem(), VanillaBlocks::OAK_LOG()->asItem(), VanillaBlocks::BIRCH_LOG()->asItem(), VanillaBlocks::SPRUCE_LOG()->asItem(), VanillaBlocks::JUNGLE_LOG()->asItem(), VanillaBlocks::ACACIA_LOG()->asItem(), VanillaBlocks::DARK_OAK_LOG()->asItem()],
-                    $item->getTier() === ToolTier::STONE => [VanillaBlocks::COBBLESTONE()->asItem(), VanillaBlocks::STONE()->asItem()],
-                    $item->getTier() === ToolTier::COPPER => [VanillaItems::COPPER_INGOT()],
-                    $item->getTier() === ToolTier::IRON => [VanillaItems::IRON_INGOT()],
-                    $item->getTier() === ToolTier::GOLD => [VanillaItems::GOLD_INGOT()],
-                    $item->getTier() === ToolTier::DIAMOND => [VanillaItems::DIAMOND()],
-                    $item->getTier() === ToolTier::NETHERITE => [VanillaItems::NETHERITE_INGOT()],
-                    default => [VanillaItems::AIR()],
+                $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, ...match ($item->getTier()) {
+                    ToolTier::WOOD => [VanillaBlocks::OAK_WOOD()->asItem(), VanillaBlocks::OAK_LOG()->asItem(), VanillaBlocks::BIRCH_LOG()->asItem(), VanillaBlocks::SPRUCE_LOG()->asItem(), VanillaBlocks::JUNGLE_LOG()->asItem(), VanillaBlocks::ACACIA_LOG()->asItem(), VanillaBlocks::DARK_OAK_LOG()->asItem()],
+                    ToolTier::STONE => [VanillaBlocks::COBBLESTONE()->asItem(), VanillaBlocks::STONE()->asItem()],
+                    ToolTier::COPPER => [VanillaItems::COPPER_INGOT()],
+                    ToolTier::IRON => [VanillaItems::IRON_INGOT()],
+                    ToolTier::GOLD => [VanillaItems::GOLD_INGOT()],
+                    ToolTier::DIAMOND => [VanillaItems::DIAMOND()],
+                    ToolTier::NETHERITE => [VanillaItems::NETHERITE_INGOT()],
                 });
             }
 
@@ -266,12 +258,11 @@ class DataDrivenItemBuilder extends ItemBuilder
 
         if ($item instanceof Armor) {
             $this->addComponent(new WearableItemComponent(ItemSlot::fromArmorTypeInfo($item->getArmorSlot()), $item->getDefensePoints()));
-            $this->addComponent(ArmorItemComponent::from($item));
         }
 
         $block = $item->getBlock();
         if (!($block instanceof Air)) {
-            $this->addComponent(BlockPlacerItemComponent::from($block));
+            $this->addComponent(BlockPlacerItemComponent::from($block, replaceBlockItem: true));
         }
 
         $cooldown = $item->getCooldownTicks();
@@ -280,24 +271,16 @@ class DataDrivenItemBuilder extends ItemBuilder
         }
 
         if ($item instanceof Dye) {
-            $this->addComponent(new DyeableItemComponent(sprintf("%02X%02X%02X%02X", ($color = $item->getColor())->r, $color->g, $color->b, $color->a)));
-        }
-
-        if ($item instanceof SpawnEgg) {
-            $this->addComponent(new EntityPlacerItemComponent());
+            $color = $item->getColor()->getRgbValue();
+            $this->addComponent(new DyeableItemComponent(sprintf("#%02X%02X%02X", $color->getR(), $color->getG(), $color->getB())));
         }
 
         if ($item instanceof Food) {
-            $this->addComponent(new FoodItemComponent(
-                $item->getFoodRestore(),
-                $item->getSaturationRestore(),
-                !$item->requiresHunger()
-            ));
-        }
+            $nutrition = $item->getFoodRestore();
+            $saturationModifier = $nutrition > 0 ? $item->getSaturationRestore() / ($nutrition * 2) : 0.0;
 
-        if ($item instanceof ProjectileItem) {
-            $this->addComponent(new ProjectileItemComponent());
-            $this->addComponent(new ThrowableItemComponent());
+            $this->addComponent(new FoodItemComponent($nutrition, $saturationModifier, !$item->requiresHunger()));
+            $this->addComponent(new UseModifiersItemComponent(1.6, 0.35));
         }
 
         if ($item instanceof Record) {

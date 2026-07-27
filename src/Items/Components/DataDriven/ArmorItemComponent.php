@@ -5,7 +5,6 @@ namespace Nexly\Items\Components\DataDriven;
 use Attribute;
 use Nexly\Items\Components\DataDriven\Types\OreTextureType;
 use pocketmine\item\Armor;
-use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -26,11 +25,11 @@ class ArmorItemComponent extends DataDrivenItemComponent
      * @param Armor $item
      * @return self
      */
-    public static function from(Item $item): self
+    public static function from(Armor $item): self
     {
         return new self(
             OreTextureType::fromItem($item),
-            $item instanceof Armor ? $item->getDefensePoints() : null
+            $item->getDefensePoints()
         );
     }
 

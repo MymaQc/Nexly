@@ -5,6 +5,7 @@ namespace Nexly\Items\Components\DataDriven\Property;
 use Attribute;
 use pocketmine\nbt\tag\ByteTag;
 
+/** @deprecated Use GlintProperty. */
 #[Attribute(Attribute::TARGET_CLASS)]
 class FoilProperty extends PropertyItemComponent
 {
@@ -28,6 +29,6 @@ class FoilProperty extends PropertyItemComponent
      */
     public function toNBT(): ByteTag
     {
-        return new ByteTag($this->value);
+        return new ByteTag($this->value ? 1 : 0);
     }
 }

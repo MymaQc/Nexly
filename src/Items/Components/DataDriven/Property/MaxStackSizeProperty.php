@@ -20,7 +20,7 @@ class MaxStackSizeProperty extends PropertyItemComponent
      */
     public static function getName(): string
     {
-        return PropertyComponentIds::MAX_STACk_SIZE->getValue();
+        return PropertyComponentIds::MAX_STACK_SIZE->getValue();
     }
 
     /**

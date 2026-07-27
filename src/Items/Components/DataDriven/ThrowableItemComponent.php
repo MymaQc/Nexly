@@ -19,13 +19,25 @@ class ThrowableItemComponent extends DataDrivenItemComponent
      * @param bool $scalePowerByDrawDuration
      */
     public function __construct(
-        private readonly bool  $doSwingAnimation = true,
+        private readonly bool  $doSwingAnimation = false,
         private readonly float $launchPowerScale = 1.0,
         private readonly float $maxDrawDuration = 0.0,
         private readonly float $maxLaunchPower = 1.0,
         private readonly float $minDrawDuration = 0.0,
         private readonly bool  $scalePowerByDrawDuration = false
     ) {
+        if (
+            $launchPowerScale < 0.0
+            || $maxDrawDuration < 0.0
+            || $maxLaunchPower < 0.0
+            || $minDrawDuration < 0.0
+        ) {
+            throw new \InvalidArgumentException("Throwable power and duration values cannot be negative.");
+        }
+
+        if ($minDrawDuration > $maxDrawDuration) {
+            throw new \InvalidArgumentException("Minimum draw duration cannot exceed maximum draw duration.");
+        }
     }
 
     /**
@@ -46,11 +58,11 @@ class ThrowableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("do_swing_animation", new ByteTag($this->doSwingAnimation))
+            ->setTag("do_swing_animation", new ByteTag($this->doSwingAnimation ? 1 : 0))
             ->setTag("launch_power_scale", new FloatTag($this->launchPowerScale))
             ->setTag("max_draw_duration", new FloatTag($this->maxDrawDuration))
             ->setTag("max_launch_power", new FloatTag($this->maxLaunchPower))
             ->setTag("min_draw_duration", new FloatTag($this->minDrawDuration))
-            ->setTag("scale_power_by_draw_duration", new ByteTag($this->scalePowerByDrawDuration));
+            ->setTag("scale_power_by_draw_duration", new ByteTag($this->scalePowerByDrawDuration ? 1 : 0));
     }
 }

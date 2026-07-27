@@ -16,38 +16,48 @@ use pocketmine\network\mcpe\convert\TypeConverter;
 class StorageItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param int $capacity
-     * @param bool $allowNested
-     * @param array $allowedItems
-     * @param array $bannedItems
+     * @param int $maxSlots
+     * @param bool $allowNestedStorageItems
+     * @param list<string> $allowedItems
+     * @param list<string> $bannedItems
      */
     public function __construct(
-        private readonly int $capacity,
-        private readonly bool $allowNested = true,
+        private readonly int $maxSlots = 64,
+        private readonly bool $allowNestedStorageItems = true,
         private readonly array $allowedItems = [],
         private readonly array $bannedItems = [],
     ) {
-        if ($this->capacity < 0) {
-            throw new \InvalidArgumentException("Capacity must be a non-negative integer.");
+        if ($this->maxSlots < 0) {
+            throw new \InvalidArgumentException("Maximum slots cannot be negative.");
         }
 
-        if ($this->capacity > 64) {
-            throw new \InvalidArgumentException("Capacity must not exceed 64.");
+        if ($this->maxSlots > 64) {
+            throw new \InvalidArgumentException("Maximum slots must not exceed 64.");
+        }
+
+        if ($this->allowedItems !== [] && $this->bannedItems !== []) {
+            throw new \InvalidArgumentException("Allowed and banned item filters cannot be used together.");
+        }
+
+        foreach ([...$allowedItems, ...$bannedItems] as $item) {
+            if ($item === "") {
+                throw new \InvalidArgumentException("Storage item filters must contain non-empty item identifiers.");
+            }
         }
     }
 
     /**
      * Create a StorageItemComponent.
      *
-     * @param int $capacity
-     * @param bool $allowNested
-     * @param Item[] $allowedItems
-     * @param Item[] $bannedItems
+     * @param int $maxSlots
+     * @param bool $allowNestedStorageItems
+     * @param list<Item> $allowedItems
+     * @param list<Item> $bannedItems
      * @return self
      */
     public static function from(
-        int $capacity,
-        bool $allowNested = true,
+        int $maxSlots,
+        bool $allowNestedStorageItems = true,
         array $allowedItems = [],
         array $bannedItems = []
     ): self {
@@ -58,8 +68,8 @@ class StorageItemComponent extends DataDrivenItemComponent
         };
 
         return new self(
-            $capacity,
-            $allowNested,
+            $maxSlots,
+            $allowNestedStorageItems,
             array_map($processItem, $allowedItems),
             array_map($processItem, $bannedItems)
         );
@@ -83,9 +93,9 @@ class StorageItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("max_slots", new IntTag($this->capacity))
-            ->setTag("allow_nested_storage_items", new ByteTag($this->allowNested))
-            ->setTag("allowed_items", new ListTag(array_map(fn (string $item) => new StringTag($item), $this->allowedItems), NBT::TAG_String))
-            ->setTag("banned_items", new ListTag(array_map(fn (string $item) => new StringTag($item), $this->bannedItems), NBT::TAG_String));
+            ->setTag("max_slots", new IntTag($this->maxSlots))
+            ->setTag("allow_nested_storage_items", new ByteTag($this->allowNestedStorageItems ? 1 : 0))
+            ->setTag("allowed_items", new ListTag(array_map(fn (string $item): StringTag => new StringTag($item), $this->allowedItems), NBT::TAG_String))
+            ->setTag("banned_items", new ListTag(array_map(fn (string $item): StringTag => new StringTag($item), $this->bannedItems), NBT::TAG_String));
     }
 }

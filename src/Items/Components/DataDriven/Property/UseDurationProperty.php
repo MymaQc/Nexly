@@ -5,6 +5,10 @@ namespace Nexly\Items\Components\DataDriven\Property;
 use Attribute;
 use pocketmine\nbt\tag\IntTag;
 
+/**
+ * @deprecated Use UseModifiersItemComponent. The minecraft:use_duration
+ *             component is no longer supported by current Bedrock versions.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class UseDurationProperty extends PropertyItemComponent
 {

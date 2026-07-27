@@ -14,17 +14,20 @@ use pocketmine\nbt\tag\ListTag;
 class ShooterItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param array $ammunitions
+     * @param list<ItemAmmunition> $ammunition
      * @param bool $chargeOnDraw
      * @param float $maxDrawDuration
      * @param bool $scalePowerByDrawDuration
      */
     public function __construct(
-        private readonly array $ammunitions = [],
+        private readonly array $ammunition = [],
         private readonly bool  $chargeOnDraw = false,
         private readonly float $maxDrawDuration = 0.0,
-        private readonly bool  $scalePowerByDrawDuration = true
+        private readonly bool  $scalePowerByDrawDuration = false
     ) {
+        if ($maxDrawDuration < 0.0) {
+            throw new \InvalidArgumentException("Maximum draw duration cannot be negative.");
+        }
     }
 
     /**
@@ -45,9 +48,9 @@ class ShooterItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("charge_on_draw", new ByteTag($this->chargeOnDraw))
+            ->setTag("charge_on_draw", new ByteTag($this->chargeOnDraw ? 1 : 0))
             ->setTag("max_draw_duration", new FloatTag($this->maxDrawDuration))
-            ->setTag("scale_power_by_draw_duration", new ByteTag($this->scalePowerByDrawDuration))
-            ->setTag("ammunition", new ListTag(array_map(fn (ItemAmmunition $ammunition) => $ammunition->toNBT(), $this->ammunitions), NBT::TAG_Compound));
+            ->setTag("scale_power_by_draw_duration", new ByteTag($this->scalePowerByDrawDuration ? 1 : 0))
+            ->setTag("ammunition", new ListTag(array_map(fn (ItemAmmunition $ammunition): CompoundTag => $ammunition->toNBT(), $this->ammunition), NBT::TAG_Compound));
     }
 }

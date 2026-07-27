@@ -29,6 +29,6 @@ class InteractButtonProperty extends PropertyItemComponent
      */
     public function toNBT(): StringTag|ByteTag
     {
-        return is_string($this->value) ? new StringTag($this->value) : new ByteTag($this->value);
+        return is_string($this->value) ? new StringTag($this->value) : new ByteTag($this->value ? 1 : 0);
     }
 }

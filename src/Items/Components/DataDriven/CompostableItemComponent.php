@@ -4,14 +4,17 @@ namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\IntTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class CompostableItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
-        private readonly float $chance,
+        private readonly int $compostingChance,
     ) {
+        if ($compostingChance < 1 || $compostingChance > 100) {
+            throw new \InvalidArgumentException("Composting chance must be between 1 and 100.");
+        }
     }
 
     /**
@@ -32,6 +35,6 @@ class CompostableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("composting_chance", new FloatTag($this->chance));
+            ->setTag("composting_chance", new IntTag($this->compostingChance));
     }
 }

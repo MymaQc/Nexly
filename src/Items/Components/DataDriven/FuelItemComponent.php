@@ -10,7 +10,7 @@ use pocketmine\nbt\tag\FloatTag;
 class FuelItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param bool $value
+     * @param float $duration
      */
     public function __construct(
         private readonly float $duration

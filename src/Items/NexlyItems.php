@@ -20,7 +20,7 @@ class NexlyItems
      * @param CreativeInfo|null $creativeInfo
      * @return void
      */
-    public static function register(string $stringId, Item $item, CreativeInfo $creativeInfo = null): void
+    public static function register(string $stringId, Item $item, ?CreativeInfo $creativeInfo = null): void
     {
         $version = ItemVersion::fromItem($item);
         if ($version->equals(ItemVersion::LEGACY)) {
@@ -39,7 +39,7 @@ class NexlyItems
      * @param bool $autoload
      * @return void
      */
-    public static function registerLegacy(string $stringId, Item $item, CreativeInfo $creativeInfo = null, bool $autoload = true): void
+    public static function registerLegacy(string $stringId, Item $item, ?CreativeInfo $creativeInfo = null, bool $autoload = true): void
     {
         $version = ItemVersion::fromItem($item);
         if ($version !== ItemVersion::LEGACY) {
@@ -79,7 +79,7 @@ class NexlyItems
      * @param bool $initComponents
      * @return void
      */
-    public static function registerDataDriven(string $stringId, Item $item, CreativeInfo $creativeInfo = null, bool $initProperties = true, bool $initComponents = true): void
+    public static function registerDataDriven(string $stringId, Item $item, ?CreativeInfo $creativeInfo = null, bool $initProperties = true, bool $initComponents = true): void
     {
         $version = ItemVersion::fromItem($item);
         if ($version !== ItemVersion::DATA_DRIVEN) {

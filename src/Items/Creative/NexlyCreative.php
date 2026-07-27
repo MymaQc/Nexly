@@ -41,6 +41,7 @@ use pocketmine\inventory\ArmorInventory;
 use pocketmine\inventory\CreativeCategory;
 use pocketmine\inventory\CreativeGroup as CreativeGroupPM;
 use pocketmine\inventory\CreativeInventory;
+use pocketmine\inventory\CreativeInventoryEntry;
 use pocketmine\item\Armor;
 use pocketmine\item\Arrow;
 use pocketmine\item\Axe;
@@ -55,16 +56,20 @@ use pocketmine\item\ItemBlock;
 use pocketmine\item\Pickaxe;
 use pocketmine\item\Record;
 use pocketmine\item\Shovel;
+use pocketmine\item\SpawnEgg;
 use pocketmine\item\SplashPotion;
 use pocketmine\item\Sword;
+use pocketmine\lang\Translatable;
 
 class NexlyCreative
 {
-    /** @var CreativeGroupPM[] */
+    /** @var array<string, CreativeGroupPM> */
     private static array $groups = [];
-    /** @var CreativeCategory[]  */
+
+    /** @var array<string, CreativeCategory> */
     private static array $groupToCategory = [];
-    /** @var CreativeGroup|\StringBackedEnum[]  */
+
+    /** @var array<string, CreativeInventoryEntry|CreativeGroupPM> */
     private static array $categoryToGroups = [];
 
     /**
@@ -88,9 +93,12 @@ class NexlyCreative
                 continue;
             }
 
-            self::$groups[$group->getName()?->getText() ?? $group->getName()] = $group;
+            $name = $group->getName();
+            $groupName = $name instanceof Translatable ? $name->getText() : $name;
+
+            self::$groups[$groupName] = $group;
             self::$categoryToGroups[$category->name] = $entry;
-            self::$groupToCategory[$group->getName()?->getText()] = $category;
+            self::$groupToCategory[$groupName] = $category;
         }
     }
 
@@ -102,22 +110,23 @@ class NexlyCreative
      * @param CreativeGroup|BackedEnum|null $group
      * @return void
      */
-    public static function add(Item $item, CreativeCategory $category = null, CreativeGroup|BackedEnum $group = null): void
+    public static function add(Item $item, ?CreativeCategory $category = null, CreativeGroup|BackedEnum|null $group = null): void
     {
         self::loadGroups(); // Ensure groups are loaded
 
+        $groupValue = $group === null ? null : self::getGroupValue($group);
         if ($category === null && $group !== null) {
-            $category = self::$groupToCategory[$group->getValue()];
+            $category = self::$groupToCategory[$groupValue] ?? null;
         }
         if ($category === null) {
             $category = $item instanceof ItemBlock ? CreativeCategory::CONSTRUCTION : CreativeCategory::ITEMS;
         }
 
         $pm = null;
-        if ($group !== null) {
-            $pm = self::$groups[$group->value] ??= new CreativeGroupPM($group->value, $item);
+        if ($groupValue !== null) {
+            $pm = self::$groups[$groupValue] ??= new CreativeGroupPM($groupValue, $item);
             self::$categoryToGroups[$category->name] = $pm;
-            self::$groupToCategory[$group->value] = $category;
+            self::$groupToCategory[$groupValue] = $category;
         }
 
         CreativeInventory::getInstance()->add($item, $category, $pm);
@@ -179,7 +188,7 @@ class NexlyCreative
             $block instanceof Button => new CreativeInfo(null, CreativeGroup::GROUP_BUTTONS),
             $block instanceof Door => new CreativeInfo(null, CreativeGroup::GROUP_DOOR),
             $block instanceof Trapdoor => new CreativeInfo(null, CreativeGroup::GROUP_TRAPDOOR),
-            $block instanceof WallSign => new CreativeInfo(null, CreativeGroup::GROUP_HANDGING_SIGN),
+            $block instanceof WallSign => new CreativeInfo(null, CreativeGroup::GROUP_SIGN),
             $block instanceof BaseSign => new CreativeInfo(null, CreativeGroup::GROUP_SIGN),
             $block instanceof Chest => new CreativeInfo(null, CreativeGroup::GROUP_CHEST),
             $block instanceof Anvil => new CreativeInfo(null, CreativeGroup::GROUP_ANVIL),
@@ -202,5 +211,14 @@ class NexlyCreative
             $block instanceof NetherWartPlant => new CreativeInfo(CreativeCategory::NATURE, null),
             default => new CreativeInfo(CreativeCategory::CONSTRUCTION),
         };
+    }
+
+    private static function getGroupValue(BackedEnum $group): string
+    {
+        if (!is_string($group->value)) {
+            throw new \InvalidArgumentException("Creative group enum values must be strings.");
+        }
+
+        return $group->value;
     }
 }

@@ -29,6 +29,6 @@ class OnUseProperty extends PropertyItemComponent
      */
     public function toNBT(): ByteTag
     {
-        return new ByteTag($this->value);
+        return new ByteTag($this->value ? 1 : 0);
     }
 }

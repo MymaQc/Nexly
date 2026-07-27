@@ -30,13 +30,6 @@ class IconProperty extends PropertyItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("texture", new StringTag($this->icon))
-            ->setTag(
-                "textures",
-                CompoundTag::create()
-                ->setTag("default", new StringTag($this->icon))
-                ->setTag("dyed", new StringTag($this->icon . ".dyed"))
-                ->setTag("icon_trim", new StringTag($this->icon . ".trim"))
-            );
+            ->setTag("textures", CompoundTag::create()->setTag("default", new StringTag($this->icon)));
     }
 }

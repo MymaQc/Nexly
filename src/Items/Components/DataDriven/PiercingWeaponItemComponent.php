@@ -3,22 +3,25 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use Nexly\Items\Components\DataDriven\Types\FloatRange;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\FloatTag;
 
 /**
  * @see https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_piercing_weapon?view=minecraft-bedrock-stable
  * @since 1.21.120
- * @internal
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 class PiercingWeaponItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
-        private readonly float $hitboxMargin = 0,
-        private readonly int   $min = 0,
-        private readonly int   $max = 3,
+        private readonly float $hitboxMargin = 0.0,
+        private readonly FloatRange $reach = new FloatRange(0.0, 3.0),
+        private readonly ?FloatRange $creativeReach = null,
     ) {
+        if ($hitboxMargin < 0.0) {
+            throw new \InvalidArgumentException("Hitbox margin cannot be negative.");
+        }
     }
 
     /**
@@ -38,13 +41,14 @@ class PiercingWeaponItemComponent extends DataDrivenItemComponent
      */
     public function toNBT(): CompoundTag
     {
-        return CompoundTag::create()
-            ->setTag("hitbox_margin", new IntTag($this->hitboxMargin))
-            ->setTag(
-                "reach",
-                CompoundTag::create()
-                ->setTag("min", new IntTag($this->min))
-                ->setTag("max", new IntTag($this->max))
-            );
+        $nbt = CompoundTag::create()
+            ->setTag("hitbox_margin", new FloatTag($this->hitboxMargin))
+            ->setTag("reach", $this->reach->toNBT());
+
+        if ($this->creativeReach !== null) {
+            $nbt->setTag("creative_reach", $this->creativeReach->toNBT());
+        }
+
+        return $nbt;
     }
 }

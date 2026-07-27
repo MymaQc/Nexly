@@ -37,9 +37,9 @@ class FoodComponent extends LegacyItemComponent
      * @param int $cooldownTick
      * @param string $usingConvertsTo
      * @param LegacyItemUseActionType $useActionType
-     * @param float[] $onUseRange
-     * @param LegacyEffect[] $effects
-     * @param int[] $removeEffects
+     * @param list<float> $onUseRange
+     * @param list<LegacyEffect> $effects
+     * @param list<int> $removeEffects
      */
     public function __construct(
         private readonly int                     $nutrition,
@@ -63,7 +63,7 @@ class FoodComponent extends LegacyItemComponent
     public function setUsingConvertsTo(Item $item): void
     {
         [$rId] = ($converter = TypeConverter::getInstance())->getItemTranslator()->toNetworkId($item);
-        if ($rId == null) {
+        if ($rId === null) {
             throw new \InvalidArgumentException("Item does not have a valid network ID");
         }
 
@@ -77,16 +77,21 @@ class FoodComponent extends LegacyItemComponent
      */
     public function toNBT(): CompoundTag
     {
+        $cooldownType = is_string($this->cooldownType) ? $this->cooldownType : $this->cooldownType->value;
+        if (!is_string($cooldownType)) {
+            throw new \InvalidArgumentException("The cooldown type enum must be backed by a string.");
+        }
+
         return CompoundTag::create()
             ->setTag("nutrition", new IntTag($this->nutrition))
             ->setTag("saturation_modifier", new FloatTag($this->saturationModifier))
-            ->setTag("can_always_eat", new ByteTag($this->canAlwaysEat))
-            ->setTag("cooldown_type", new StringTag(is_string($this->cooldownType) ? $this->cooldownType : $this->cooldownType->value))
+            ->setTag("can_always_eat", new ByteTag($this->canAlwaysEat ? 1 : 0))
+            ->setTag("cooldown_type", new StringTag($cooldownType))
             ->setTag("cooldown_time", new IntTag($this->cooldownTick))
             ->setTag("using_converts_to", CompoundTag::create()->setTag("name", new StringTag($this->usingConvertsTo)))
             ->setTag("on_use_action", new IntTag($this->useActionType->getValue()))
-            ->setTag("on_use_range", new ListTag(array_map(fn (float $value) => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
-            ->setTag("effects", new ListTag(array_map(fn (LegacyEffect $effect) => $effect->toNBT(), $this->effects), NBT::TAG_Compound))
-            ->setTag("remove_effects", new ListTag(array_map(fn (int $value) => new IntTag($value), $this->removeEffects), NBT::TAG_Int));
+            ->setTag("on_use_range", new ListTag(array_map(fn (float $value): FloatTag => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
+            ->setTag("effects", new ListTag(array_map(fn (LegacyEffect $effect): CompoundTag => $effect->toNBT(), $this->effects), NBT::TAG_Compound))
+            ->setTag("remove_effects", new ListTag(array_map(fn (int $value): IntTag => new IntTag($value), $this->removeEffects), NBT::TAG_Int));
     }
 }

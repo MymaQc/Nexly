@@ -9,12 +9,27 @@ use pocketmine\nbt\tag\StringTag;
 #[Attribute(Attribute::TARGET_CLASS)]
 class DyeableItemComponent extends DataDrivenItemComponent
 {
+    private readonly string $defaultColor;
+
+    /**
+     * @param string|array{int, int, int} $defaultColor
+     */
     public function __construct(
-        private readonly string $color = "#ffffff",
+        string|array $defaultColor = "#FFFFFF",
     ) {
-        if (!preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
-            throw new \InvalidArgumentException("Invalid color format. Use hex format like #RRGGBB or #RGB.");
+        if (is_array($defaultColor)) {
+            if (array_filter($defaultColor, fn (int $channel): bool => $channel < 0 || $channel > 255) !== []) {
+                throw new \InvalidArgumentException("RGB color must contain three integer channels between 0 and 255.");
+            }
+
+            $defaultColor = sprintf("#%02X%02X%02X", ...$defaultColor);
         }
+
+        if (!preg_match('/^#[A-Fa-f0-9]{6}$/', $defaultColor)) {
+            throw new \InvalidArgumentException("Invalid color format. Use #RRGGBB.");
+        }
+
+        $this->defaultColor = $defaultColor;
     }
 
     /**
@@ -35,6 +50,6 @@ class DyeableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("default_color", new StringTag($this->color));
+            ->setTag("default_color", new StringTag($this->defaultColor));
     }
 }

@@ -4,6 +4,7 @@ namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
 use pocketmine\block\Block;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -14,9 +15,12 @@ use pocketmine\world\format\io\GlobalBlockStateHandlers;
 #[Attribute(Attribute::TARGET_CLASS)]
 class DiggerItemComponent extends DataDrivenItemComponent
 {
+    /**
+     * @param list<CompoundTag> $destroySpeeds
+     */
     public function __construct(
-        private readonly bool $efficiency,
-        private array $diggers
+        private readonly bool $useEfficiency = false,
+        private array $destroySpeeds = []
     ) {
     }
 
@@ -39,13 +43,14 @@ class DiggerItemComponent extends DataDrivenItemComponent
      */
     public function addBlock(Block $block, int $speed): self
     {
+        if ($speed < 0) {
+            throw new \InvalidArgumentException("Destroy speed cannot be negative.");
+        }
+
         $blockName = GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName();
-        $this->diggers[] = CompoundTag::create()->setTag(
-            "block",
-            CompoundTag::create()
-            ->setTag("name", new StringTag($blockName))
-            ->setTag("speed", new IntTag($speed))
-        );
+        $this->destroySpeeds[] = CompoundTag::create()
+            ->setTag("block", CompoundTag::create()->setTag("name", new StringTag($blockName)))
+            ->setTag("speed", new IntTag($speed));
         return $this;
     }
 
@@ -67,15 +72,24 @@ class DiggerItemComponent extends DataDrivenItemComponent
     /**
      * Add a tag with its corresponding speed to the digger component.
      *
-     * @param array|string $tags
+     * @param list<string>|string $tags
      * @param int $speed
      * @return $this
      */
     public function addTag(array|string $tags, int $speed): self
     {
-        $this->diggers[] = CompoundTag::create()->setTag("block", CompoundTag::create()
-            ->setString("tags", "query.any_tag(" . (is_string($tags) ? "'$tags'" : implode(", ", array_map(fn (string $tag) => "'$tag'", $tags))) . ")"))
-            ->setInt("speed", $speed);
+        $tags = is_string($tags) ? [$tags] : $tags;
+        if ($tags === [] || in_array("", $tags, true)) {
+            throw new \InvalidArgumentException("Tags must contain at least one non-empty string.");
+        }
+
+        if ($speed < 0) {
+            throw new \InvalidArgumentException("Destroy speed cannot be negative.");
+        }
+
+        $this->destroySpeeds[] = CompoundTag::create()
+            ->setTag("block", CompoundTag::create()->setString("tags", "q.any_tag(" . implode(", ", array_map(fn (string $tag): string => "'$tag'", $tags)) . ")"))
+            ->setTag("speed", new IntTag($speed));
         return $this;
     }
 
@@ -87,8 +101,7 @@ class DiggerItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("on_dig", CompoundTag::create())
-            ->setTag("use_efficiency", new ByteTag($this->efficiency))
-            ->setTag("destroy_speeds", new ListTag($this->diggers, CompoundTag::class));
+            ->setTag("use_efficiency", new ByteTag($this->useEfficiency ? 1 : 0))
+            ->setTag("destroy_speeds", new ListTag($this->destroySpeeds, NBT::TAG_Compound));
     }
 }

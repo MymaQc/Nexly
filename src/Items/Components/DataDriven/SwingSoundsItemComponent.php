@@ -9,7 +9,6 @@ use pocketmine\nbt\tag\StringTag;
 /**
  * @see https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_sounds?view=minecraft-bedrock-stable
  * @since 1.21.120
- * @internal
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 class SwingSoundsItemComponent extends DataDrivenItemComponent

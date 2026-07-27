@@ -10,10 +10,10 @@ use pocketmine\nbt\tag\IntTag;
 class BundleInteractionItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
-        private readonly int $capacity,
+        private readonly int $numViewableSlots = 12,
     ) {
-        if ($this->capacity < 1 || $this->capacity > 64) {
-            throw new \InvalidArgumentException("Capacity must be between 1 and 64");
+        if ($this->numViewableSlots < 1 || $this->numViewableSlots > 64) {
+            throw new \InvalidArgumentException("Viewable slots must be between 1 and 64.");
         }
     }
 
@@ -35,6 +35,6 @@ class BundleInteractionItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("num_viewable_slots", new IntTag($this->capacity));
+            ->setTag("num_viewable_slots", new IntTag($this->numViewableSlots));
     }
 }

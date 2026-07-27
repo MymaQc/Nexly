@@ -26,8 +26,8 @@ class UseAnimationProperty extends PropertyItemComponent
     public static function fromItem(Item $item): UseAnimationProperty
     {
         return new self(match (true) {
-            $item instanceof Consumable => ItemAnimation::EAT,
             $item instanceof Potion => ItemAnimation::DRINK,
+            $item instanceof Consumable => ItemAnimation::EAT,
             default => ItemAnimation::NONE,
         });
     }

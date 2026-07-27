@@ -12,10 +12,13 @@ class ItemAmmunition
 {
     public function __construct(
         private readonly string $item,
-        private readonly bool $searchInventory = true,
-        private readonly bool $useInCreative = true,
-        private readonly bool $useOffHand = true
+        private readonly bool $searchInventory = false,
+        private readonly bool $useInCreative = false,
+        private readonly bool $useOffHand = false
     ) {
+        if ($item === "") {
+            throw new \InvalidArgumentException("Ammunition item identifier cannot be empty.");
+        }
     }
 
     /**
@@ -27,27 +30,17 @@ class ItemAmmunition
      * @param bool $useOffHand
      * @return self
      */
-    public static function from(
-        Item $item,
-        bool $searchInventory = true,
-        bool $useInCreative = true,
-        bool $useOffHand = true
-    ): self {
+    public static function from(Item $item, bool $searchInventory = false, bool $useInCreative = false, bool $useOffHand = false): self {
         [$rid] = ($converter = TypeConverter::getInstance())->getItemTranslator()->toNetworkId($item);
-        return new self(
-            $converter->getItemTypeDictionary()->fromIntId($rid),
-            $searchInventory,
-            $useInCreative,
-            $useOffHand
-        );
+        return new self($converter->getItemTypeDictionary()->fromIntId($rid), $searchInventory, $useInCreative, $useOffHand);
     }
 
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
             ->setTag("item", new StringTag($this->item))
-            ->setTag("search_inventory", new ByteTag($this->searchInventory))
-            ->setTag("use_in_creative", new ByteTag($this->useInCreative))
-            ->setTag("use_offhand", new ByteTag($this->useOffHand));
+            ->setTag("search_inventory", new ByteTag($this->searchInventory ? 1 : 0))
+            ->setTag("use_in_creative", new ByteTag($this->useInCreative ? 1 : 0))
+            ->setTag("use_offhand", new ByteTag($this->useOffHand ? 1 : 0));
     }
 }

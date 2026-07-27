@@ -7,16 +7,21 @@ use Nexly\Items\Components\DataDriven\Types\DamageCause;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class DamageAbsorptionItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param DamageCause[] $causes
+     * @param DamageCause[] $absorbableCauses
      */
     public function __construct(
-        private readonly array $causes,
+        private readonly array $absorbableCauses,
     ) {
+        if ($absorbableCauses === []) {
+            throw new \InvalidArgumentException("At least one absorbable damage cause is required.");
+        }
+
     }
 
     /**
@@ -37,6 +42,6 @@ class DamageAbsorptionItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("absorbable_causes", new ListTag(array_map(fn (DamageCause $cause) => $cause->getValue(), $this->causes), NBT::TAG_String));
+            ->setTag("absorbable_causes", new ListTag(array_map(fn (DamageCause $cause): StringTag => new StringTag($cause->getValue()), $this->absorbableCauses), NBT::TAG_String));
     }
 }

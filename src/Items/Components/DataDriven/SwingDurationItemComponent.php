@@ -9,7 +9,6 @@ use pocketmine\nbt\tag\FloatTag;
 /**
  * @see https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_duration?view=minecraft-bedrock-stable
  * @since 1.21.120
- * @internal
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 class SwingDurationItemComponent extends DataDrivenItemComponent
@@ -18,8 +17,11 @@ class SwingDurationItemComponent extends DataDrivenItemComponent
      * @param float $duration The duration of the swing sound in seconds.
      */
     public function __construct(
-        private readonly float $duration,
+        private readonly float $duration = 0.3,
     ) {
+        if ($duration < 0.0) {
+            throw new \InvalidArgumentException("Swing duration cannot be negative.");
+        }
     }
 
     /**

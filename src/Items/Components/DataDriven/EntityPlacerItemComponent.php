@@ -15,30 +15,49 @@ class EntityPlacerItemComponent extends DataDrivenItemComponent
 {
     /**
      * @param string $entity
-     * @param string[] $dispenseOn
-     * @param string[] $useOn
+     * @param list<string> $dispenseOn
+     * @param list<string> $useOn
      */
     public function __construct(
-        private readonly string $entity = "none",
+        private readonly string $entity,
         private readonly array $dispenseOn = [],
         private readonly array $useOn = [],
     ) {
+        if ($entity === "") {
+            throw new \InvalidArgumentException("Entity identifier cannot be empty.");
+        }
+
+        if (count($dispenseOn) > 256 || count($useOn) > 256) {
+            throw new \InvalidArgumentException("Entity placer filters cannot contain more than 256 entries.");
+        }
+
+        foreach ([...$dispenseOn, ...$useOn] as $filter) {
+            if ($filter === "") {
+                throw new \InvalidArgumentException("Entity placer filters must contain non-empty block identifiers.");
+            }
+        }
     }
 
     /**
      * Create an EntityPlacerItemComponent from the given parameters.
      *
      * @param string $entity
-     * @param Block[] $dispenseOn
-     * @param Block[] $useOn
+     * @param list<Block> $dispenseOn
+     * @param list<Block> $useOn
      * @return self
      */
     public static function from(string $entity, array $dispenseOn = [], array $useOn = []): self
     {
         return new self(
             $entity,
-            array_map(fn (Block $block) => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(), $dispenseOn),
-            array_map(fn (Block $block) => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(), $useOn)
+            array_map(
+                fn (Block $block): string => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
+                $dispenseOn
+            ),
+            array_map(
+                fn (Block $block): string => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
+                $useOn
+            )
         );
     }
 
@@ -61,7 +80,7 @@ class EntityPlacerItemComponent extends DataDrivenItemComponent
     {
         return CompoundTag::create()
             ->setTag("entity", new StringTag($this->entity))
-            ->setTag("dispense_on", new ListTag(array_map(fn (string $name) => new StringTag($name), $this->dispenseOn), NBT::TAG_String))
-            ->setTag("use_on", new ListTag(array_map(fn (string $name) => new StringTag($name), $this->useOn), NBT::TAG_String));
+            ->setTag("dispense_on", new ListTag(array_map(fn (string $name): StringTag => new StringTag($name), $this->dispenseOn), NBT::TAG_String))
+            ->setTag("use_on", new ListTag(array_map(fn (string $name): StringTag => new StringTag($name), $this->useOn), NBT::TAG_String));
     }
 }

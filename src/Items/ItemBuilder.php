@@ -8,6 +8,7 @@ use Nexly\Items\Creative\NexlyCreative;
 use Nexly\Mappings\ItemMappings;
 use Nexly\Recipes\NexlyRecipes;
 use Nexly\Recipes\Types\Recipe;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\item\Item;
@@ -45,7 +46,7 @@ abstract class ItemBuilder
      */
     public function setStringId(string $stringId): self
     {
-        if (str_contains("minecraft:", $stringId)) {
+        if (str_contains($stringId, "minecraft:")) {
             throw new \InvalidArgumentException("Custom item string ID cannot contain the 'minecraft:' namespace.");
         }
 
@@ -186,13 +187,19 @@ abstract class ItemBuilder
         }
 
         $item = $this->getItem();
-        ItemDataHandlers::getDeserializer()->map($this->getStringId(), $this->getDeserializer() ?? fn () => clone $item);
-        ItemDataHandlers::getSerializer()->map($item, $this->getSerializer() ?? fn () => new SavedItemData($this->getStringId()));
+        ItemDataHandlers::getDeserializer()->map(
+            $this->getStringId(),
+            $this->getDeserializer() ?? static fn (SavedItemData $data): Item => clone $item
+        );
+        ItemDataHandlers::getSerializer()->map(
+            $item,
+            $this->getSerializer() ?? fn (Item $item): SavedItemData => new SavedItemData($this->getStringId())
+        );
         ItemMappings::getInstance()->registerMapping($this, new ItemTypeEntry(
             $this->getStringId(),
             $this->getNumericId(),
-            $this->getVersion()->equals(ItemVersion::DATA_DRIVEN),
-            $this->getVersion()->getValue(),
+            self::getVersion()->equals(ItemVersion::DATA_DRIVEN),
+            self::getVersion()->getValue(),
             new CacheableNbt($this->toNBT())
         ));
 
@@ -202,7 +209,7 @@ abstract class ItemBuilder
             $identifier = $path;
         }
 
-        StringToItemParser::getInstance()->register($identifier, fn () => clone $item);
+        StringToItemParser::getInstance()->register($identifier, fn (): Item => clone $item);
         LegacyItemIdToStringIdMap::getInstance()->add($identifier, $item->getTypeId());
 
         $creativeInfo = $this->getCreativeInfo() ?? NexlyCreative::detectCreativeInfoFrom($item);
@@ -215,7 +222,7 @@ abstract class ItemBuilder
                 if ($instance instanceof CreativeInfo) {
                     $creativeInfo = $instance;
                 } elseif ($instance instanceof Recipe) {
-                    NexlyRecipes::getInstance()->addRecipe(fn () => $attribute->newInstance());
+                    NexlyRecipes::getInstance()->addRecipe(fn (): Recipe => $instance);
                 }
             }
         }

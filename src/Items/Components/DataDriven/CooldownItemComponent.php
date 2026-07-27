@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use Nexly\Items\Components\DataDriven\Types\ItemCooldownAction;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
@@ -12,8 +13,12 @@ class CooldownItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
         private readonly float $duration,
-        private readonly string $category = ""
+        private readonly string $category = "",
+        private readonly ItemCooldownAction $type = ItemCooldownAction::USE,
     ) {
+        if ($duration < 0.0) {
+            throw new \InvalidArgumentException("Cooldown duration cannot be negative.");
+        }
     }
 
     /**
@@ -35,6 +40,7 @@ class CooldownItemComponent extends DataDrivenItemComponent
     {
         return CompoundTag::create()
             ->setTag("duration", new FloatTag($this->duration))
-            ->setTag("category", new StringTag($this->category));
+            ->setTag("category", new StringTag($this->category))
+            ->setTag("type", new StringTag($this->type->getValue()));
     }
 }

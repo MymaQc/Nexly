@@ -6,6 +6,10 @@ use Attribute;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 
+/**
+ * @deprecated Internal client metadata, not a supported behavior-pack
+ *             component in the stable Microsoft item schema.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class PublisherOnUseOnItemComponent extends DataDrivenItemComponent
 {
@@ -32,6 +36,6 @@ class PublisherOnUseOnItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("autoSucceedOnClient", new ByteTag($this->autoSucceedOnClient));
+            ->setTag("autoSucceedOnClient", new ByteTag($this->autoSucceedOnClient ? 1 : 0));
     }
 }

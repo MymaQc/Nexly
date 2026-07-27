@@ -35,6 +35,6 @@ class FireResistantItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("value", new ByteTag($this->value));
+            ->setTag("value", new ByteTag($this->value ? 1 : 0));
     }
 }

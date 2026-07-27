@@ -11,13 +11,20 @@ use pocketmine\nbt\tag\StringTag;
 class ProjectileItemComponent extends DataDrivenItemComponent
 {
     /**
+     * @param string $projectileEntity
      * @param float $minimumCriticalPower
-     * @param string $entity
      */
     public function __construct(
-        private readonly string $entity = "",
-        private readonly float $minimumCriticalPower = 1.25,
+        private readonly string $projectileEntity,
+        private readonly float $minimumCriticalPower = 0.0,
     ) {
+        if ($projectileEntity === "") {
+            throw new \InvalidArgumentException("Projectile entity identifier cannot be empty.");
+        }
+
+        if ($minimumCriticalPower < 0.0) {
+            throw new \InvalidArgumentException("Minimum critical power cannot be negative.");
+        }
     }
 
     /**
@@ -38,7 +45,7 @@ class ProjectileItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("projectile_entity", new StringTag($this->entity))
+            ->setTag("projectile_entity", new StringTag($this->projectileEntity))
             ->setTag("minimum_critical_power", new FloatTag($this->minimumCriticalPower));
     }
 }

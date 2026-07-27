@@ -14,7 +14,7 @@ enum PropertyComponentIds: string
     case HAND_EQUIPPED = "hand_equipped";
     case IS_HIDDEN_IN_COMMANDS = "is_hidden_in_commands";
     case LIQUID_CLIPPED = "liquid_clipped";
-    case MAX_STACk_SIZE = "max_stack_size";
+    case MAX_STACK_SIZE = "max_stack_size";
     case MINING_SPEED = "mining_speed";
     case SHOULD_DESPAWN = "should_despawn";
     case STACKED_BY_DATA = "stacked_by_data";

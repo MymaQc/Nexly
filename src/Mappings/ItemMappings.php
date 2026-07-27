@@ -13,12 +13,12 @@ class ItemMappings
     use SingletonTrait;
 
     /**
-     * @var array<string, array> Mapping of item string IDs to their numeric IDs.
+     * @var array<string, array{builder: ItemBuilder, entry: ItemTypeEntry}>
      */
     private array $mappings = [];
 
     /**
-     * @return array
+     * @return array<string, array{builder: ItemBuilder, entry: ItemTypeEntry}>
      */
     public function getMappings(): array
     {
@@ -26,7 +26,7 @@ class ItemMappings
     }
 
     /**
-     * @param array $mappings
+     * @param array<string, array{builder: ItemBuilder, entry: ItemTypeEntry}> $mappings
      */
     public function setMappings(array $mappings): void
     {
@@ -48,7 +48,7 @@ class ItemMappings
         $this->mappings[$entry->getStringId()] = ["builder" => $builder, "entry" => $entry];
 
         try {
-            $this->registerEntry($entry);
+            self::registerEntry($entry);
         } catch (ReflectionException $e) {
             throw new \RuntimeException("Failed to register item entry: " . $e->getMessage(), 0, $e);
         }
@@ -58,7 +58,7 @@ class ItemMappings
      * Retrieves the mapping for a given item string ID.
      *
      * @param string $stringId
-     * @return array|null
+     * @return array{builder: ItemBuilder, entry: ItemTypeEntry}|null
      */
     public function getMapping(string $stringId): ?array
     {
@@ -81,16 +81,17 @@ class ItemMappings
         $reflection = new \ReflectionClass($dictionary);
 
         $intToString = $reflection->getProperty("intToStringIdMap");
-        /** @var int[] $value */
+        /** @var array<int, string> $value */
         $value = $intToString->getValue($dictionary);
         $intToString->setValue($dictionary, $value + [$numericId => $stringId]);
 
         $stringToInt = $reflection->getProperty("stringToIntMap");
-        /** @var int[] $value */
+        /** @var array<string, int> $value */
         $value = $stringToInt->getValue($dictionary);
         $stringToInt->setValue($dictionary, $value + [$stringId => $numericId]);
 
         $itemTypes = $reflection->getProperty("itemTypes");
+        /** @var list<ItemTypeEntry> $value */
         $value = $itemTypes->getValue($dictionary);
         $value[] = $entry;
         $itemTypes->setValue($dictionary, $value);

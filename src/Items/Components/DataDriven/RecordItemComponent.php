@@ -4,6 +4,7 @@ namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
@@ -11,15 +12,22 @@ use pocketmine\nbt\tag\StringTag;
 class RecordItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param string $sound
-     * @param int $duration
-     * @param int $signal
+     * @param string $soundEvent
+     * @param float $duration
+     * @param int $comparatorSignal
      */
     public function __construct(
-        private readonly string $sound,
-        private readonly int $duration = 20,
-        private readonly int $signal = 1
+        private readonly string $soundEvent,
+        private readonly float $duration = 0.0,
+        private readonly int $comparatorSignal = 1
     ) {
+        if ($duration < 0.0) {
+            throw new \InvalidArgumentException("Record duration cannot be negative.");
+        }
+
+        if ($comparatorSignal < 1 || $comparatorSignal > 13) {
+            throw new \InvalidArgumentException("Comparator signal must be between 1 and 13.");
+        }
     }
 
     /**
@@ -40,8 +48,8 @@ class RecordItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("sound_event", new StringTag($this->sound))
-            ->setTag("duration", new IntTag($this->duration))
-            ->setTag("comparator_signal", new IntTag($this->signal));
+            ->setTag("sound_event", new StringTag($this->soundEvent))
+            ->setTag("duration", new FloatTag($this->duration))
+            ->setTag("comparator_signal", new IntTag($this->comparatorSignal));
     }
 }

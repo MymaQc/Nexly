@@ -7,6 +7,7 @@ use pocketmine\inventory\ArmorInventory;
 enum ItemSlot: string
 {
     case ARMOR = "slot.armor";
+    case ARMOR_BODY = "slot.armor.body";
     case ARMOR_CHEST = "slot.armor.chest";
     case ARMOR_FEET = "slot.armor.feet";
     case ARMOR_HEAD = "slot.armor.head";
@@ -54,7 +55,7 @@ enum ItemSlot: string
             ArmorInventory::SLOT_HEAD => self::ARMOR_HEAD,
             ArmorInventory::SLOT_LEGS => self::ARMOR_LEGS,
             ArmorInventory::SLOT_FEET => self::ARMOR_FEET,
-            default => self::ARMOR
+            default => self::ARMOR_BODY
         };
     }
 }

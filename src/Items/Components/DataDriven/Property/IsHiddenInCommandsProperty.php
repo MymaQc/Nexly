@@ -20,7 +20,7 @@ class IsHiddenInCommandsProperty extends PropertyItemComponent
      */
     public static function getName(): string
     {
-        return PropertyComponentIds::ALLOW_OFF_HAND->getValue();
+        return PropertyComponentIds::IS_HIDDEN_IN_COMMANDS->getValue();
     }
 
     /**
@@ -28,6 +28,6 @@ class IsHiddenInCommandsProperty extends PropertyItemComponent
      */
     public function toNBT(): ByteTag
     {
-        return new ByteTag($this->value);
+        return new ByteTag($this->value ? 1 : 0);
     }
 }

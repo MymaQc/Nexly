@@ -40,12 +40,8 @@ class RenderOffsetsItemComponent extends DataDrivenItemComponent
         $offhand_fp  = round(0.065  * 16 / $this->resolution, 8);
         $mainHand_tp = $offhand_tp = round(0.0965 * 16 / $this->resolution, 8);
 
-        $scale = function (float $s): ListTag {
-            return new ListTag([
-                new FloatTag($s),
-                new FloatTag($s),
-                new FloatTag($s),
-            ]);
+        $scale = static function (float $s): ListTag {
+            return new ListTag([new FloatTag($s), new FloatTag($s), new FloatTag($s)]);
         };
 
         return CompoundTag::create()

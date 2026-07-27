@@ -38,7 +38,7 @@ class EnchantableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("slot", new StringTag($this->slot->getName()))
+            ->setTag("slot", new StringTag($this->slot->getValue()))
             ->setTag("value", new IntTag($this->value));
     }
 }
