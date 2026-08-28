@@ -23,11 +23,6 @@ use WeakMap;
 
 use function in_array;
 
-/**
- * TODO: PMMP Implement this ?
- *
- * @deprecated
- */
 final class BlockBreakingListener implements Listener
 {
     private const MAX_BLOCK_ACTIONS = 100;
@@ -65,10 +60,16 @@ final class BlockBreakingListener implements Listener
      *
      * @param DataPacketReceiveEvent $ev
      * @return void
+     * @noinspection PhpConditionAlreadyCheckedInspection
      */
     public function onInbound(DataPacketReceiveEvent $ev): void
     {
-        $origin  = $ev->getOrigin();
+        $pk = $ev->getPacket();
+        if (!$pk instanceof PlayerAuthInputPacket && !$pk instanceof PlayerActionPacket) {
+            return;
+        }
+
+        $origin = $ev->getOrigin();
         $handler = $origin->getHandler();
         if (!$handler instanceof InGamePacketHandler) {
             return;
@@ -79,9 +80,10 @@ final class BlockBreakingListener implements Listener
             return;
         }
 
-        $pk = $ev->getPacket();
-
         if ($pk instanceof PlayerAuthInputPacket) {
+            if ($pk->getBlockActions() === null && !$this->breakHandlers->offsetExists($player)) {
+                return;
+            }
             $this->handleAuthInput($player, $handler, $pk);
             return;
         }
@@ -120,6 +122,8 @@ final class BlockBreakingListener implements Listener
                     $this->handleAction($player, $handler, $action->getActionType(), $action->getBlockPosition(), $action->getFace());
                 }
             }
+
+            $this->clearAuthInputBlockActions($pk);
         }
 
         if ($this->breakHandlers->offsetExists($player)) {
@@ -134,7 +138,6 @@ final class BlockBreakingListener implements Listener
             }
         }
 
-        $this->clearAuthInputBlockActions($pk);
     }
 
     /**
