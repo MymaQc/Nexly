@@ -88,15 +88,13 @@ final class BlockBreakingListener implements Listener
             return;
         }
 
-        if ($pk instanceof PlayerActionPacket) {
-            $this->handleAction(
-                $player,
-                $handler,
-                $pk->action,
-                $pk->blockPosition ?? new BlockPosition(0, 0, 0),
-                $pk->face ?? Facing::DOWN
-            );
-        }
+        $this->handleAction(
+            $player,
+            $handler,
+            $pk->action,
+            $pk->blockPosition ?? new BlockPosition(0, 0, 0),
+            $pk->face ?? Facing::DOWN
+        );
     }
 
     /**

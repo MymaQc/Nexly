@@ -52,12 +52,9 @@ class FoodItemComponent extends DataDrivenItemComponent
      */
     public function setUsingConvertsTo(Item $item): void
     {
-        [$rId] = ($converter = TypeConverter::getInstance())->getItemTranslator()->toNetworkId($item);
-        if ($rId === null) {
-            throw new \InvalidArgumentException("Item does not have a valid network ID");
-        }
-
-        $this->usingConvertsTo = $converter->getItemTypeDictionary()->fromIntId($rId);
+        $converter = TypeConverter::getInstance();
+        [$runtimeId] = $converter->getItemTranslator()->toNetworkId($item);
+        $this->usingConvertsTo = $converter->getItemTypeDictionary()->fromIntId($runtimeId);
     }
 
     /**

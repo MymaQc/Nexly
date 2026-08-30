@@ -11,7 +11,6 @@ use pocketmine\item\ProjectileItem;
 use pocketmine\item\Record;
 use pocketmine\item\SpawnEgg;
 use ReflectionClass;
-use ReflectionException;
 
 enum ItemVersion: int
 {
@@ -48,12 +47,7 @@ enum ItemVersion: int
      */
     public static function fromItem(Item $item): self
     {
-        try {
-            $reflection = new ReflectionClass($item::class);
-        } catch (ReflectionException $e) {
-            return self::NONE; // In case of reflection failure, return NONE
-        }
-
+        $reflection = new ReflectionClass($item);
         $attributes = $reflection->getAttributes(DataDriven::class);
         if (
             count($attributes) > 0 ||

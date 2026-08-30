@@ -61,7 +61,7 @@ abstract class ItemBuilder
      */
     public function getNumericId(): int
     {
-        return $this->numericId ??= ItemTypeIds::newId();
+        return $this->numericId ??= ItemTypeIds::newId() + 1000;
     }
 
     /**
@@ -195,11 +195,12 @@ abstract class ItemBuilder
             $item,
             $this->getSerializer() ?? fn (Item $item): SavedItemData => new SavedItemData($this->getStringId())
         );
+        $version = static::getVersion();
         ItemMappings::getInstance()->registerMapping($this, new ItemTypeEntry(
             $this->getStringId(),
             $this->getNumericId(),
-            self::getVersion()->equals(ItemVersion::DATA_DRIVEN),
-            self::getVersion()->getValue(),
+            $version->equals(ItemVersion::DATA_DRIVEN),
+            $version->getValue(),
             new CacheableNbt($this->toNBT())
         ));
 
