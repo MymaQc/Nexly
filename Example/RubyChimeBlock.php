@@ -6,6 +6,7 @@ use Nexly\Blocks\Components\BlockEntityBlockComponent;
 use Nexly\Blocks\Components\ChestObstructionBlockComponent;
 use Nexly\Blocks\Components\InstrumentSoundBlockComponent;
 use Nexly\Blocks\Components\SoundBlockComponent;
+use Nexly\Blocks\Components\Types\BlockSoundType;
 use Nexly\Blocks\Components\Types\ChestObstructionRule;
 use Nexly\Blocks\Components\Types\NoteInstrument;
 use pocketmine\block\Block;
@@ -14,7 +15,7 @@ use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\item\ToolTier;
 
-#[SoundBlockComponent("glass")]
+#[SoundBlockComponent(BlockSoundType::GLASS)]
 #[BlockEntityBlockComponent(dynamicProperties: true, containerSlotCount: 27)]
 #[InstrumentSoundBlockComponent(up: NoteInstrument::BASS_ATTACK, down: NoteInstrument::BIT)]
 #[ChestObstructionBlockComponent(ChestObstructionRule::ALWAYS)]
