@@ -58,12 +58,14 @@ class Nexly extends PluginBase
         $ev->trigger();
         $this->getLogger()->notice("Registered " . $ev->getCount() . " items.");
 
-        $this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $ev): void {
+        $blockPalette = null;
+        $this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $ev) use (&$blockPalette): void {
             $packets = $ev->getPackets();
             foreach ($packets as $packet) {
                 if ($packet instanceof StartGamePacket) {
                     $packet->blockNetworkIdsAreHashes = true; // Always true for Nexly
-                    $packet->blockPalette = BlockMappings::getInstance()->getEntries();
+                    $blockPalette ??= array_merge($packet->blockPalette, BlockMappings::getInstance()->getEntries());
+                    $packet->blockPalette = $blockPalette;
                 }
             }
         }, EventPriority::NORMAL, $this);
