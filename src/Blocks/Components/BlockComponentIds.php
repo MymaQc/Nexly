@@ -34,6 +34,10 @@ enum BlockComponentIds: string
     case RANDOM_OFFSET = "minecraft:random_offset";
     case SUPPORT = "minecraft:support";
     case PRECIPITATION_INTERACTIONS = "minecraft:precipitation_interactions";
+    case CHEST_OBSTRUCTION = "minecraft:chest_obstruction";
+    case SOUND = "minecraft:sound";
+    case BLOCK_ENTITY = "minecraft:block_entity";
+    case INSTRUMENT_SOUND = "minecraft:instrument_sound";
 
     /**
      * Returns the name of the component.
