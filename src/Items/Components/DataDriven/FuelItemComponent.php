@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 
@@ -16,11 +17,11 @@ class FuelItemComponent extends DataDrivenItemComponent
         private readonly float $duration
     ) {
         if ($this->duration < 0.05) {
-            throw new \InvalidArgumentException("Duration must be at least 0.05");
+            throw new InvalidArgumentException("Duration must be at least 0.05");
         }
 
         if ($this->duration > 107374180) {
-            throw new \InvalidArgumentException("Duration must be at most 107374180");
+            throw new InvalidArgumentException("Duration must be at most 107374180");
         }
     }
 

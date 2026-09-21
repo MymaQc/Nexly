@@ -21,7 +21,7 @@ class EnchantableSlotProperty extends PropertyItemComponent
      * @param Item $item
      * @return EnchantableSlotProperty
      */
-    public static function fromItem(Item $item): EnchantableSlotProperty
+    public static function fromItem(Item $item): self
     {
         return new self(ItemEnchantSlot::fromItem($item));
     }

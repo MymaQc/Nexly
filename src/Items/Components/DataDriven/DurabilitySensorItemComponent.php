@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\DurabilityThreshold;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -18,7 +19,7 @@ class DurabilitySensorItemComponent extends DataDrivenItemComponent
         private readonly array $durabilityThresholds,
     ) {
         if (empty($this->durabilityThresholds)) {
-            throw new \InvalidArgumentException("Thresholds array cannot be empty.");
+            throw new InvalidArgumentException("Thresholds array cannot be empty.");
         }
     }
 
@@ -40,6 +41,6 @@ class DurabilitySensorItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("durability_thresholds", new ListTag(array_map(fn (DurabilityThreshold $threshold): CompoundTag => $threshold->toNBT(), $this->durabilityThresholds), NBT::TAG_Compound));
+            ->setTag("durability_thresholds", new ListTag(array_map(static fn (DurabilityThreshold $threshold): CompoundTag => $threshold->toNBT(), $this->durabilityThresholds), NBT::TAG_Compound));
     }
 }

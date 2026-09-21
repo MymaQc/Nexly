@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\block\Block;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -44,7 +45,7 @@ class DiggerItemComponent extends DataDrivenItemComponent
     public function addBlock(Block $block, int $speed): self
     {
         if ($speed < 0) {
-            throw new \InvalidArgumentException("Destroy speed cannot be negative.");
+            throw new InvalidArgumentException("Destroy speed cannot be negative.");
         }
 
         $blockName = GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName();
@@ -80,15 +81,15 @@ class DiggerItemComponent extends DataDrivenItemComponent
     {
         $tags = is_string($tags) ? [$tags] : $tags;
         if ($tags === [] || in_array("", $tags, true)) {
-            throw new \InvalidArgumentException("Tags must contain at least one non-empty string.");
+            throw new InvalidArgumentException("Tags must contain at least one non-empty string.");
         }
 
         if ($speed < 0) {
-            throw new \InvalidArgumentException("Destroy speed cannot be negative.");
+            throw new InvalidArgumentException("Destroy speed cannot be negative.");
         }
 
         $this->destroySpeeds[] = CompoundTag::create()
-            ->setTag("block", CompoundTag::create()->setString("tags", "q.any_tag(" . implode(", ", array_map(fn (string $tag): string => "'$tag'", $tags)) . ")"))
+            ->setTag("block", CompoundTag::create()->setString("tags", "q.any_tag(" . implode(", ", array_map(static fn (string $tag): string => "'$tag'", $tags)) . ")"))
             ->setTag("speed", new IntTag($speed));
         return $this;
     }

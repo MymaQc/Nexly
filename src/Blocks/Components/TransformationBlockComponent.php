@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -22,7 +23,7 @@ class TransformationBlockComponent extends BlockComponent
     ) {
         foreach ([$rotation->getX(), $rotation->getY(), $rotation->getZ()] as $angle) {
             if (abs(fmod((float) $angle, 90.0)) > PHP_FLOAT_EPSILON) {
-                throw new \InvalidArgumentException("Block rotation values must be multiples of 90 degrees.");
+                throw new InvalidArgumentException("Block rotation values must be multiples of 90 degrees.");
             }
         }
     }

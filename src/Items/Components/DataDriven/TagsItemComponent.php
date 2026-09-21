@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
@@ -19,7 +20,7 @@ class TagsItemComponent extends DataDrivenItemComponent
     ) {
         foreach ($tags as $tag) {
             if ($tag === "") {
-                throw new \InvalidArgumentException("Item tags must contain only non-empty strings.");
+                throw new InvalidArgumentException("Item tags must contain only non-empty strings.");
             }
         }
     }
@@ -42,6 +43,6 @@ class TagsItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("tags", new ListTag(array_map(fn (string $tag): StringTag => new StringTag($tag), $this->tags), NBT::TAG_String));
+            ->setTag("tags", new ListTag(array_map(static fn (string $tag): StringTag => new StringTag($tag), $this->tags), NBT::TAG_String));
     }
 }

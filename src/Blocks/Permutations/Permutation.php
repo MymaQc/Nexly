@@ -19,7 +19,7 @@ final class Permutation
      * @param string $condition
      * @return self
      */
-    public static function create(string $condition = ""): Permutation
+    public static function create(string $condition = ""): self
     {
         return new self($condition);
     }

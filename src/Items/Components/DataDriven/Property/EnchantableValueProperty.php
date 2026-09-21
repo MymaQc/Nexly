@@ -20,7 +20,7 @@ class EnchantableValueProperty extends PropertyItemComponent
      * @param Item $item
      * @return EnchantableValueProperty
      */
-    public static function fromItem(Item $item): EnchantableValueProperty
+    public static function fromItem(Item $item): self
     {
         return new self($item->getEnchantability());
     }

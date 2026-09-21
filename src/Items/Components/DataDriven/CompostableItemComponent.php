@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 
@@ -13,7 +14,7 @@ class CompostableItemComponent extends DataDrivenItemComponent
         private readonly int $compostingChance,
     ) {
         if ($compostingChance < 1 || $compostingChance > 100) {
-            throw new \InvalidArgumentException("Composting chance must be between 1 and 100.");
+            throw new InvalidArgumentException("Composting chance must be between 1 and 100.");
         }
     }
 

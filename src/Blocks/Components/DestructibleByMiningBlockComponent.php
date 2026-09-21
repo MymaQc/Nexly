@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\ItemSpecificSpeed;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -20,7 +21,7 @@ class DestructibleByMiningBlockComponent extends BlockComponent
         private readonly array $itemSpecificSpeeds = [],
     ) {
         if ($secondsToDestroy < 0.0) {
-            throw new \InvalidArgumentException("Seconds to destroy cannot be negative.");
+            throw new InvalidArgumentException("Seconds to destroy cannot be negative.");
         }
     }
 
@@ -44,6 +45,6 @@ class DestructibleByMiningBlockComponent extends BlockComponent
         return CompoundTag::create()
             ->setTag("value", new FloatTag($this->secondsToDestroy))
             ->setTag("seconds_to_destroy", new FloatTag($this->secondsToDestroy))
-            ->setTag("item_specific_speeds", new ListTag(array_map(fn (ItemSpecificSpeed $speed): CompoundTag => $speed->toNBT(), $this->itemSpecificSpeeds), NBT::TAG_Compound));
+            ->setTag("item_specific_speeds", new ListTag(array_map(static fn (ItemSpecificSpeed $speed): CompoundTag => $speed->toNBT(), $this->itemSpecificSpeeds), NBT::TAG_Compound));
     }
 }

@@ -2,27 +2,28 @@
 
 namespace Nexly\Blocks\Permutations;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 
-class BlockProperty
+readonly class BlockProperty
 {
     /** @var non-empty-list<string|int|bool> */
-    private readonly array $values;
+    private array $values;
 
     /**
      * @param string $name
      * @param list<string|int|bool> $values
      */
     public function __construct(
-        private readonly string $name,
-        array $values
+        private string $name,
+        array          $values
     ) {
         if ($values === []) {
-            throw new \InvalidArgumentException("A block property must define at least one possible value.");
+            throw new InvalidArgumentException("A block property must define at least one possible value.");
         }
 
         $this->values = $values;

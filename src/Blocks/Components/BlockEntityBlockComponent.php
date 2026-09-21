@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -19,7 +20,7 @@ class BlockEntityBlockComponent extends BlockComponent
         private readonly ?int $containerSlotCount = null,
     ) {
         if ($containerSlotCount !== null && ($containerSlotCount < 1 || $containerSlotCount > 54)) {
-            throw new \InvalidArgumentException("Container slot count must be between 1 and 54.");
+            throw new InvalidArgumentException("Container slot count must be between 1 and 54.");
         }
     }
 

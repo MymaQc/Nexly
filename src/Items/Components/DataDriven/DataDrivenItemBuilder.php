@@ -2,6 +2,7 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use BackedEnum;
 use Nexly\Items\Components\DataDriven\Property\BlockProperty;
 use Nexly\Items\Components\DataDriven\Property\CanDestroyInCreative;
 use Nexly\Items\Components\DataDriven\Property\DamageProperty;
@@ -39,6 +40,7 @@ use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
+use ReflectionClass;
 
 class DataDrivenItemBuilder extends ItemBuilder
 {
@@ -96,10 +98,10 @@ class DataDrivenItemBuilder extends ItemBuilder
     /**
      * Remove a property by its name.
      *
-     * @param \BackedEnum|string $name
+     * @param BackedEnum|string $name
      * @return $this
      */
-    public function removeProperty(\BackedEnum|string $name): self
+    public function removeProperty(BackedEnum|string $name): self
     {
         $key = is_string($name) ? $name : $name->value;
         unset($this->properties[$key]);
@@ -185,7 +187,7 @@ class DataDrivenItemBuilder extends ItemBuilder
             $icon = explode(":", $icon, 2)[1];
         }
 
-        $reflection = new \ReflectionClass($item);
+        $reflection = new ReflectionClass($item);
 
         $this->addProperty(new IconProperty($icon));
         $this->addProperty(new StackedByDataProperty(false));

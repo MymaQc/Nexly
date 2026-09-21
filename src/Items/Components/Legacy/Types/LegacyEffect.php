@@ -7,7 +7,7 @@ use pocketmine\entity\effect\EffectInstance;
 use pocketmine\lang\Translatable;
 use pocketmine\nbt\tag\CompoundTag;
 
-class LegacyEffect
+readonly class LegacyEffect
 {
     /**
      * LegacyEffect constructor.
@@ -20,12 +20,12 @@ class LegacyEffect
      * @param float $chance
      */
     public function __construct(
-        private readonly int    $id,
-        private readonly string $name,
-        private readonly string $descriptionId,
-        private readonly int    $duration = -1,
-        private readonly int    $amplifier = 0,
-        private readonly float $chance = 100.0
+        private int    $id,
+        private string $name,
+        private string $descriptionId,
+        private int    $duration = -1,
+        private int    $amplifier = 0,
+        private float  $chance = 100.0
     ) {
     }
 

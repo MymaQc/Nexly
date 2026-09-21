@@ -3,6 +3,7 @@
 namespace Nexly\Recipes\Types;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Recipes\MinecraftShape;
 use pocketmine\crafting\ExactRecipeIngredient;
 use pocketmine\crafting\ShapedRecipe as ShapedRecipePM;
@@ -27,7 +28,7 @@ class ShapedRecipe implements Recipe
     ) {
         $resolvedShape = $shape instanceof MinecraftShape ? $shape->toArray() : $shape;
         if ($resolvedShape === []) {
-            throw new \InvalidArgumentException("A shaped recipe must contain at least one row.");
+            throw new InvalidArgumentException("A shaped recipe must contain at least one row.");
         }
 
         $this->shape = $resolvedShape;
@@ -66,8 +67,8 @@ class ShapedRecipe implements Recipe
     {
         return new ShapedRecipePM(
             $this->shape,
-            array_map(fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
-            array_map(fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
+            array_map(static fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
+            array_map(static fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
         );
     }
 
@@ -78,6 +79,6 @@ class ShapedRecipe implements Recipe
         }
 
         return StringToItemParser::getInstance()->parse($item)
-            ?? throw new \InvalidArgumentException("Unknown recipe item identifier: $item");
+            ?? throw new InvalidArgumentException("Unknown recipe item identifier: $item");
     }
 }

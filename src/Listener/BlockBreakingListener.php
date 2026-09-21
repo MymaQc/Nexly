@@ -19,8 +19,11 @@ use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 use pocketmine\network\PacketHandlingException;
 use pocketmine\player\Player;
 use pocketmine\player\SurvivalBlockBreakHandler;
+use ReflectionClass;
+use ReflectionProperty;
 use WeakMap;
 
+use function count;
 use function in_array;
 
 final class BlockBreakingListener implements Listener
@@ -32,9 +35,9 @@ final class BlockBreakingListener implements Listener
     private WeakMap $breakHandlers;
 
     /** Réflexion mise en cache */
-    private static ?\ReflectionProperty $rpPlayerBlockBreakHandler = null;
-    private static ?\ReflectionProperty $rpHandlerLastBlockAttacked = null;
-    private static ?\ReflectionProperty $rpAuthInputBlockActions   = null;
+    private static ?ReflectionProperty $rpPlayerBlockBreakHandler = null;
+    private static ?ReflectionProperty $rpHandlerLastBlockAttacked = null;
+    private static ?ReflectionProperty $rpAuthInputBlockActions   = null;
 
     public function __construct()
     {
@@ -60,7 +63,6 @@ final class BlockBreakingListener implements Listener
      *
      * @param DataPacketReceiveEvent $ev
      * @return void
-     * @noinspection PhpConditionAlreadyCheckedInspection
      */
     public function onInbound(DataPacketReceiveEvent $ev): void
     {
@@ -109,7 +111,7 @@ final class BlockBreakingListener implements Listener
     {
         $actions = $pk->getBlockActions();
         if ($actions !== null) {
-            if (\count($actions) > self::MAX_BLOCK_ACTIONS) {
+            if (count($actions) > self::MAX_BLOCK_ACTIONS) {
                 throw new PacketHandlingException("Too many block actions in PlayerAuthInputPacket");
             }
 
@@ -287,7 +289,7 @@ final class BlockBreakingListener implements Listener
     private function clearAuthInputBlockActions(PlayerAuthInputPacket $pk): void
     {
         if (self::$rpAuthInputBlockActions === null) {
-            $rc = new \ReflectionClass($pk);
+            $rc = new ReflectionClass($pk);
             if (!$rc->hasProperty('blockActions')) {
                 return;
             }
@@ -306,7 +308,7 @@ final class BlockBreakingListener implements Listener
     private function getPlayerBlockBreakHandler(Player $player): ?SurvivalBlockBreakHandler
     {
         if (self::$rpPlayerBlockBreakHandler === null) {
-            $rc = new \ReflectionClass($player);
+            $rc = new ReflectionClass($player);
             if (!$rc->hasProperty('blockBreakHandler')) {
                 return null;
             }
@@ -326,7 +328,7 @@ final class BlockBreakingListener implements Listener
     private function getLastBlockAttacked(InGamePacketHandler $handler): ?BlockPosition
     {
         if (self::$rpHandlerLastBlockAttacked === null) {
-            $rc = new \ReflectionClass($handler);
+            $rc = new ReflectionClass($handler);
             if (!$rc->hasProperty('lastBlockAttacked')) {
                 return null;
             }
@@ -347,7 +349,7 @@ final class BlockBreakingListener implements Listener
     private function setLastBlockAttacked(InGamePacketHandler $handler, ?BlockPosition $bp): void
     {
         if (self::$rpHandlerLastBlockAttacked === null) {
-            $rc = new \ReflectionClass($handler);
+            $rc = new ReflectionClass($handler);
             if (!$rc->hasProperty('lastBlockAttacked')) {
                 return;
             }

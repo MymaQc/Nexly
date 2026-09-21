@@ -2,6 +2,7 @@
 
 namespace Nexly\Items;
 
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\DataDrivenItemBuilder;
 use Nexly\Items\Components\DataDriven\DataDrivenItemComponent;
 use Nexly\Items\Components\DataDriven\Property\PropertyItemComponent;
@@ -9,6 +10,7 @@ use Nexly\Items\Components\Legacy\LegacyItemBuilder;
 use Nexly\Items\Components\Legacy\LegacyItemComponent;
 use Nexly\Items\Creative\CreativeInfo;
 use pocketmine\item\Item;
+use ReflectionClass;
 
 class NexlyItems
 {
@@ -43,7 +45,7 @@ class NexlyItems
     {
         $version = ItemVersion::fromItem($item);
         if ($version !== ItemVersion::LEGACY) {
-            throw new \InvalidArgumentException("Item must be a legacy item.");
+            throw new InvalidArgumentException("Item must be a legacy item.");
         }
 
         $builder = LegacyItemBuilder::create();
@@ -56,7 +58,7 @@ class NexlyItems
             $builder->loadFromItems();
         }
 
-        $reflection = new \ReflectionClass($item);
+        $reflection = new ReflectionClass($item);
         $attributes = $reflection->getAttributes();
 
         foreach ($attributes as $attribute) {
@@ -83,7 +85,7 @@ class NexlyItems
     {
         $version = ItemVersion::fromItem($item);
         if ($version !== ItemVersion::DATA_DRIVEN) {
-            throw new \InvalidArgumentException("Item must be a data driven item.");
+            throw new InvalidArgumentException("Item must be a data driven item.");
         }
 
         $builder = DataDrivenItemBuilder::create();
@@ -99,7 +101,7 @@ class NexlyItems
             $builder->loadComponents();
         }
 
-        $reflection = new \ReflectionClass($item);
+        $reflection = new ReflectionClass($item);
         $attributes = $reflection->getAttributes();
 
         foreach ($attributes as $attribute) {

@@ -41,6 +41,6 @@ class ConnectionRuleComponent extends BlockComponent
     {
         return CompoundTag::create()
             ->setTag("accepts_connections_from", new StringTag($this->from->getValue()))
-            ->setTag("enabled_directions", new ListTag(array_map(fn (HorizontalFace $direction): StringTag => new StringTag($direction->getValue()), $this->enabledDirections), NBT::TAG_String));
+            ->setTag("enabled_directions", new ListTag(array_map(static fn (HorizontalFace $direction): StringTag => new StringTag($direction->getValue()), $this->enabledDirections), NBT::TAG_String));
     }
 }

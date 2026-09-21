@@ -13,7 +13,7 @@ use pocketmine\math\Vector3;
 class WallPermutation
 {
     private function __construct(
-        private Builder $builder
+        private readonly Builder $builder
     ) {
     }
 

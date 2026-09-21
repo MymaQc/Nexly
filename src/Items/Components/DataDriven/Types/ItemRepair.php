@@ -2,6 +2,7 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -11,27 +12,27 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\TypeConverter;
 
-class ItemRepair
+readonly class ItemRepair
 {
     /**
      * @param float|string $repairAmount
      * @param list<string> $items
      */
     public function __construct(
-        private readonly float|string $repairAmount,
-        private readonly array $items,
+        private float|string $repairAmount,
+        private array        $items,
     ) {
         if ($repairAmount === "") {
-            throw new \InvalidArgumentException("Repair amount expression cannot be empty.");
+            throw new InvalidArgumentException("Repair amount expression cannot be empty.");
         }
 
         if ($items === []) {
-            throw new \InvalidArgumentException("At least one repair item is required.");
+            throw new InvalidArgumentException("At least one repair item is required.");
         }
 
         foreach ($items as $item) {
             if ($item === "") {
-                throw new \InvalidArgumentException("Repair items must be non-empty item identifiers.");
+                throw new InvalidArgumentException("Repair items must be non-empty item identifiers.");
             }
         }
     }
@@ -47,7 +48,7 @@ class ItemRepair
     {
         return new self(
             $repairAmount,
-            array_values(array_map(function (Item $item): string {
+            array_values(array_map(static function (Item $item): string {
                 [$rid] = ($converter = TypeConverter::getInstance())->getItemTranslator()->toNetworkId($item);
                 return $converter->getItemTypeDictionary()->fromIntId($rid);
             }, $items))
@@ -72,6 +73,6 @@ class ItemRepair
 
         return CompoundTag::create()
             ->setTag("repair_amount", $repairAmount)
-            ->setTag("items", new ListTag(array_map(fn (string $stringId): StringTag => new StringTag($stringId), $this->items), NBT::TAG_String));
+            ->setTag("items", new ListTag(array_map(static fn (string $stringId): StringTag => new StringTag($stringId), $this->items), NBT::TAG_String));
     }
 }

@@ -76,9 +76,9 @@ final class NexlyPermutations
         $builder->addProperty(new BlockProperty(StateNames::GROWTH, $ages = range(0, $block::MAX_AGE)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::CROP->toString()));
         foreach ($ages as $age) {
-            $builder->addPermutation(Permutation::create("q.block_state('" . StateNames::GROWTH . "') == {$age}")
+            $builder->addPermutation(Permutation::create("q.block_state('" . StateNames::GROWTH . "') == $age")
                 ->addComponent(SelectionBoxBlockComponent::fromCrops($block, $age))
-                ->addComponent(new MaterialInstancesBlockComponent([new Material($builder->getName() . "_{$age}", renderMethod: MaterialRenderMethod::ALPHA_TEST)])));
+                ->addComponent(new MaterialInstancesBlockComponent([new Material($builder->getName() . "_$age", renderMethod: MaterialRenderMethod::ALPHA_TEST)])));
         }
     }
 
@@ -97,9 +97,9 @@ final class NexlyPermutations
         $builder->addProperty(new BlockProperty(StateNames::AGE, $ages = range(0, $block::MAX_AGE)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::NETHER_WART->toString()));
         foreach ($ages as $age) {
-            $builder->addPermutation(Permutation::create("q.block_state('" . StateNames::AGE . "') == {$age}")
+            $builder->addPermutation(Permutation::create("q.block_state('" . StateNames::AGE . "') == $age")
                 ->addComponent(SelectionBoxBlockComponent::fromCrops($block, $age))
-                ->addComponent(new MaterialInstancesBlockComponent([new Material($builder->getName() . "_{$age}", renderMethod: MaterialRenderMethod::ALPHA_TEST)])));
+                ->addComponent(new MaterialInstancesBlockComponent([new Material($builder->getName() . "_$age", renderMethod: MaterialRenderMethod::ALPHA_TEST)])));
         }
     }
 
@@ -137,7 +137,7 @@ final class NexlyPermutations
             foreach ($facings as $direction) {
                 $expr =
                     "q.block_state('" . StateNames::UPSIDE_DOWN_BIT . "') == " . ($upsideDown ? "1" : "0") . " && " .
-                    "q.block_state('" . StateNames::DIRECTION . "') == {$direction}";
+                    "q.block_state('" . StateNames::DIRECTION . "') == $direction";
 
                 $permutation = Permutation::create($expr);
                 $permutation->addComponent(new TransformationBlockComponent(

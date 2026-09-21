@@ -2,6 +2,7 @@
 
 namespace Nexly;
 
+use Exception;
 use Nexly\Blocks\AsyncInitialization;
 use Nexly\Blocks\BlockPalette;
 use Nexly\Events\Impl\BlockRegistryEvent;
@@ -32,7 +33,7 @@ class Nexly extends PluginBase
         if ($config->get("enable-block-breaking", true)) {
             try {
                 $this->getServer()->getPluginManager()->registerEvents(new BlockBreakingListener(), $this);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->getLogger()->error("Failed to register BlockBreakingListener: " . $e->getMessage());
             }
         } else {
@@ -45,7 +46,7 @@ class Nexly extends PluginBase
         if ($config->get("enable-ladder-climbing", true)) {
             try {
                 $this->getServer()->getPluginManager()->registerEvents(new LadderClimbingListener(), $this);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->getLogger()->error("Failed to register LadderClimbingListener: " . $e->getMessage());
             }
         }

@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks\Components\Types;
 
+use InvalidArgumentException;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -92,7 +93,7 @@ class BoxCollision
             || $origin->getY() < 0 || $origin->getY() > 24
             || $origin->getZ() < -8 || $origin->getZ() > 8
         ) {
-            throw new \InvalidArgumentException("Collision-box origin is outside the supported Bedrock range.");
+            throw new InvalidArgumentException("Collision-box origin is outside the supported Bedrock range.");
         }
 
         if (
@@ -101,7 +102,7 @@ class BoxCollision
             || $origin->getY() + $size->getY() > 24
             || $origin->getZ() + $size->getZ() > 8
         ) {
-            throw new \InvalidArgumentException("Collision-box size exceeds the supported Bedrock bounds.");
+            throw new InvalidArgumentException("Collision-box size exceeds the supported Bedrock bounds.");
         }
     }
 

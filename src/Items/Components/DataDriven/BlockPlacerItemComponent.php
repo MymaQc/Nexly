@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\block\Block;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -28,16 +29,16 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
         private readonly bool $replaceBlockItem = false,
     ) {
         if ($block === "") {
-            throw new \InvalidArgumentException("Placed block identifier cannot be empty.");
+            throw new InvalidArgumentException("Placed block identifier cannot be empty.");
         }
 
         if (count($useOn) > 256) {
-            throw new \InvalidArgumentException("Use-on filters cannot contain more than 256 entries.");
+            throw new InvalidArgumentException("Use-on filters cannot contain more than 256 entries.");
         }
 
         foreach ($useOn as $filter) {
             if ($filter === "") {
-                throw new \InvalidArgumentException("Use-on filters must contain non-empty block identifiers.");
+                throw new InvalidArgumentException("Use-on filters must contain non-empty block identifiers.");
             }
         }
     }
@@ -60,7 +61,7 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
         return new self(
             GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
             array_values(array_map(
-                fn (Block $b): string => GlobalBlockStateHandlers::getSerializer()->serialize($b->getStateId())->getName(),
+                static fn (Block $b): string => GlobalBlockStateHandlers::getSerializer()->serialize($b->getStateId())->getName(),
                 $useOn
             )),
             $alignedPlacement,
@@ -89,6 +90,6 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
             ->setTag("block", new StringTag($this->block))
             ->setTag("aligned_placement", new ByteTag($this->alignedPlacement ? 1 : 0))
             ->setTag("replace_block_item", new ByteTag($this->replaceBlockItem ? 1 : 0))
-            ->setTag("use_on", new ListTag(array_map(fn (string $block): StringTag => new StringTag($block), $this->useOn), NBT::TAG_String));
+            ->setTag("use_on", new ListTag(array_map(static fn (string $block): StringTag => new StringTag($block), $this->useOn), NBT::TAG_String));
     }
 }

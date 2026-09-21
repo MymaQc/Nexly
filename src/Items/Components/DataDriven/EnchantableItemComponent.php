@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemEnchantSlot;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -16,7 +17,7 @@ class EnchantableItemComponent extends DataDrivenItemComponent
         private readonly int $value,
     ) {
         if ($value < 0) {
-            throw new \InvalidArgumentException("Value must be non-negative");
+            throw new InvalidArgumentException("Value must be non-negative");
         }
     }
 

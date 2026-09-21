@@ -39,6 +39,6 @@ class RepairableItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("repair_items", new ListTag(array_map(fn (ItemRepair $item): CompoundTag => $item->toNBT(), $this->repairItems), NBT::TAG_Compound));
+            ->setTag("repair_items", new ListTag(array_map(static fn (ItemRepair $item): CompoundTag => $item->toNBT(), $this->repairItems), NBT::TAG_Compound));
     }
 }

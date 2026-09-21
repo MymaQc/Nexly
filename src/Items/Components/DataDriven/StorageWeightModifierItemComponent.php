@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 
@@ -16,7 +17,7 @@ class StorageWeightModifierItemComponent extends DataDrivenItemComponent
         private readonly int $weightInStorageItem = 4,
     ) {
         if ($weightInStorageItem < 0) {
-            throw new \InvalidArgumentException("Storage weight cannot be negative.");
+            throw new InvalidArgumentException("Storage weight cannot be negative.");
         }
     }
 

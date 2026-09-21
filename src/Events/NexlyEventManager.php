@@ -2,6 +2,7 @@
 
 namespace Nexly\Events;
 
+use InvalidArgumentException;
 use Nexly\Events\Attribute\HandleCancelled;
 use Nexly\Events\Attribute\HandlePriority;
 use pocketmine\event\EventPriority;
@@ -9,6 +10,11 @@ use pocketmine\utils\SingletonTrait;
 use ReflectionException;
 use ReflectionFunction;
 use WeakReference;
+use function class_exists;
+use function is_callable;
+use function is_string;
+use function is_subclass_of;
+use function method_exists;
 
 class NexlyEventManager
 {
@@ -36,30 +42,30 @@ class NexlyEventManager
      */
     public function listen(string $event, callable $callback, ?object $instance = null): void
     {
-        if (!\class_exists($event) || !\is_subclass_of($event, Event::class)) {
-            throw new \InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: {$event})");
+        if (!class_exists($event) || !is_subclass_of($event, Event::class)) {
+            throw new InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: $event)");
         }
 
         $callable = $callback;
-        if ($instance !== null && \is_string($callback)) {
-            if (!\method_exists($instance, $callback)) {
-                throw new \InvalidArgumentException("Method {$callback} does not exist on " . $instance::class);
+        if ($instance !== null && is_string($callback)) {
+            if (!method_exists($instance, $callback)) {
+                throw new InvalidArgumentException("Method $callback does not exist on " . $instance::class);
             }
             $callable = [$instance, $callback];
         }
 
-        if (!\is_callable($callable)) {
-            throw new \InvalidArgumentException("Callback is not callable");
+        if (!is_callable($callable)) {
+            throw new InvalidArgumentException("Callback is not callable");
         }
 
         $closure = $callable(...);
         $rf = new ReflectionFunction($closure);
 
-        if ($rf->isStatic() && $instance !== null) {
-            throw new \InvalidArgumentException("Cannot bind instance to static method");
+        if ($instance !== null && $rf->isStatic()) {
+            throw new InvalidArgumentException("Cannot bind instance to static method");
         }
-        if (!$rf->isStatic() && $instance === null) {
-            throw new \InvalidArgumentException("Cannot use non-static method without instance");
+        if ($instance === null && !$rf->isStatic()) {
+            throw new InvalidArgumentException("Cannot use non-static method without instance");
         }
 
         $handleCancelled = false;
@@ -98,8 +104,8 @@ class NexlyEventManager
      */
     public function deafen(string $event, ?callable $callback = null, ?object $instance = null): void
     {
-        if (!\class_exists($event) || !\is_subclass_of($event, Event::class)) {
-            throw new \InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: {$event})");
+        if (!class_exists($event) || !is_subclass_of($event, Event::class)) {
+            throw new InvalidArgumentException("Event class must exist and be a subclass of " . Event::class . " (got: $event)");
         }
         if (!isset($this->handlerCaches[$event])) {
             return;
@@ -125,14 +131,14 @@ class NexlyEventManager
         }
 
         $callable = $callback;
-        if ($instance !== null && \is_string($callback)) {
-            if (!\method_exists($instance, $callback)) {
-                throw new \InvalidArgumentException("Method {$callback} does not exist on " . $instance::class);
+        if ($instance !== null && is_string($callback)) {
+            if (!method_exists($instance, $callback)) {
+                throw new InvalidArgumentException("Method $callback does not exist on " . $instance::class);
             }
             $callable = [$instance, $callback];
         }
-        if (!\is_callable($callable)) {
-            throw new \InvalidArgumentException("Callback is not callable");
+        if (!is_callable($callable)) {
+            throw new InvalidArgumentException("Callback is not callable");
         }
 
         $tClosure = $callable(...);
@@ -173,11 +179,11 @@ class NexlyEventManager
     public function getHandlersFor(object $event): array
     {
         if (!$event instanceof Event) {
-            throw new \InvalidArgumentException("Event must be an instance of " . Event::class);
+            throw new InvalidArgumentException("Event must be an instance of " . Event::class);
         }
         $class = $event::class;
         if ($class === Event::class) {
-            throw new \InvalidArgumentException("Cannot get handlers for abstract " . Event::class);
+            throw new InvalidArgumentException("Cannot get handlers for abstract " . Event::class);
         }
 
         $byP = $this->handlerCaches[$class] ?? [];

@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace Nexly\Blocks\Components\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
 
-final class Material
+final readonly class Material
 {
     public function __construct(
-        private readonly string               $texture,
-        private readonly MaterialTarget       $target = MaterialTarget::ALL,
-        private readonly MaterialRenderMethod $renderMethod = MaterialRenderMethod::OPAQUE,
-        private readonly string               $tintMethod = "none",
-        private readonly float                $ambientOcclusion = 1.0,
-        private readonly bool                 $faceDimming = true,
-        private readonly bool                 $isotropic = false,
-        private readonly bool                 $packedBools = false,
+        private string               $texture,
+        private MaterialTarget       $target = MaterialTarget::ALL,
+        private MaterialRenderMethod $renderMethod = MaterialRenderMethod::OPAQUE,
+        private string               $tintMethod = "none",
+        private float                $ambientOcclusion = 1.0,
+        private bool                 $faceDimming = true,
+        private bool                 $isotropic = false,
+        private bool                 $packedBools = false,
     ) {
         if ($ambientOcclusion < 0.0) {
-            throw new \InvalidArgumentException("Ambient occlusion cannot be negative.");
+            throw new InvalidArgumentException("Ambient occlusion cannot be negative.");
         }
     }
 

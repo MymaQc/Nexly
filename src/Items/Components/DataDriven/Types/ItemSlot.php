@@ -48,7 +48,7 @@ enum ItemSlot: string
      * @param int $slotArmor
      * @return ItemSlot
      */
-    public static function fromArmorTypeInfo(int $slotArmor): ItemSlot
+    public static function fromArmorTypeInfo(int $slotArmor): self
     {
         return match ($slotArmor) {
             ArmorInventory::SLOT_CHEST => self::ARMOR_CHEST,

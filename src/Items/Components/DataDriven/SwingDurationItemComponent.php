@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 
@@ -20,7 +21,7 @@ class SwingDurationItemComponent extends DataDrivenItemComponent
         private readonly float $duration = 0.3,
     ) {
         if ($duration < 0.0) {
-            throw new \InvalidArgumentException("Swing duration cannot be negative.");
+            throw new InvalidArgumentException("Swing duration cannot be negative.");
         }
     }
 

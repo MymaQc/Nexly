@@ -6,7 +6,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
 
-class MinecraftTrait
+readonly class MinecraftTrait
 {
     /**
      * @param TraitIds $identifier
@@ -14,9 +14,9 @@ class MinecraftTrait
      * @param State $state
      */
     public function __construct(
-        private readonly TraitIds $identifier,
-        private readonly float    $rotationOffset,
-        private readonly State    $state,
+        private TraitIds $identifier,
+        private float    $rotationOffset,
+        private State    $state,
     ) {
     }
 

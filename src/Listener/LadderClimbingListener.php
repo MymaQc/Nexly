@@ -48,7 +48,7 @@ final class LadderClimbingListener implements Listener
         }
 
         $player = $origin->getPlayer();
-        if ($player == null || !$player->isConnected()) {
+        if ($player === null || !$player->isConnected()) {
             return; // Player is not connected
         }
 

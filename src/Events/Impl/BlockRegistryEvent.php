@@ -2,6 +2,7 @@
 
 namespace Nexly\Events\Impl;
 
+use Closure;
 use Nexly\Blocks\BlockBuilder;
 use Nexly\Blocks\NexlyBlocks;
 use Nexly\Events\Event;
@@ -13,11 +14,11 @@ class BlockRegistryEvent extends Event
 
     /**
      * @param string $stringId
-     * @param \Closure $block
+     * @param Closure $block
      * @param CreativeInfo|null $creativeInfo
      * @return BlockBuilder
      */
-    public function register(string $stringId, \Closure $block, ?CreativeInfo $creativeInfo = null): BlockBuilder
+    public function register(string $stringId, Closure $block, ?CreativeInfo $creativeInfo = null): BlockBuilder
     {
         $this->count++;
         return NexlyBlocks::register($stringId, $block, $creativeInfo);
@@ -25,11 +26,11 @@ class BlockRegistryEvent extends Event
 
     /**
      * @param string $stringId
-     * @param \Closure $block
+     * @param Closure $block
      * @param CreativeInfo|null $creativeInfo
      * @return BlockBuilder
      */
-    public function build(string $stringId, \Closure $block, ?CreativeInfo $creativeInfo = null): BlockBuilder
+    public function build(string $stringId, Closure $block, ?CreativeInfo $creativeInfo = null): BlockBuilder
     {
         $this->count++;
         return NexlyBlocks::buildComplex($stringId, $block, $creativeInfo);

@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemStartUsing;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -27,11 +28,11 @@ class UseModifiersItemComponent extends DataDrivenItemComponent
         private readonly ItemStartUsing $startUsing = ItemStartUsing::ALWAYS,
     ) {
         if ($useDuration < 0.0) {
-            throw new \InvalidArgumentException("Use duration cannot be negative.");
+            throw new InvalidArgumentException("Use duration cannot be negative.");
         }
 
         if ($movementModifier !== null && ($movementModifier < 0.0 || $movementModifier > 1.0)) {
-            throw new \InvalidArgumentException("Movement modifier must be between 0 and 1.");
+            throw new InvalidArgumentException("Movement modifier must be between 0 and 1.");
         }
     }
 

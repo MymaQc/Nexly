@@ -11,8 +11,8 @@ class BlockLoaderEvent extends Event
     private bool $affected = false;
 
     public function __construct(
-        private BlockBuilder $builder,
-        private Block $block
+        private readonly BlockBuilder $builder,
+        private readonly Block        $block
     ) {
     }
 

@@ -3,6 +3,7 @@
 namespace Nexly\Items;
 
 use Closure;
+use InvalidArgumentException;
 use Nexly\Items\Creative\CreativeInfo;
 use Nexly\Items\Creative\NexlyCreative;
 use Nexly\Mappings\ItemMappings;
@@ -18,6 +19,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\world\format\io\GlobalItemDataHandlers as ItemDataHandlers;
+use ReflectionClass;
 
 abstract class ItemBuilder
 {
@@ -47,7 +49,7 @@ abstract class ItemBuilder
     public function setStringId(string $stringId): self
     {
         if (str_contains($stringId, "minecraft:")) {
-            throw new \InvalidArgumentException("Custom item string ID cannot contain the 'minecraft:' namespace.");
+            throw new InvalidArgumentException("Custom item string ID cannot contain the 'minecraft:' namespace.");
         }
 
         $this->stringId = $stringId;
@@ -183,7 +185,7 @@ abstract class ItemBuilder
     public function register(): void
     {
         if (!isset($this->item)) {
-            throw new \InvalidArgumentException("Item closure must be set before registering");
+            throw new InvalidArgumentException("Item closure must be set before registering");
         }
 
         $item = $this->getItem();
@@ -214,7 +216,7 @@ abstract class ItemBuilder
         LegacyItemIdToStringIdMap::getInstance()->add($identifier, $item->getTypeId());
 
         $creativeInfo = $this->getCreativeInfo() ?? NexlyCreative::detectCreativeInfoFrom($item);
-        $reflection = new \ReflectionClass($item);
+        $reflection = new ReflectionClass($item);
 
         $attributes = $reflection->getAttributes();
         if (count($attributes) > 0) {

@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -29,7 +30,7 @@ class GeometryBlockComponent extends BlockComponent
     ) {
         $this->boneVisibility ??= CompoundTag::create();
         if (is_array($uvLock) && count($uvLock) > 64) {
-            throw new \InvalidArgumentException("UV lock cannot contain more than 64 bone names.");
+            throw new InvalidArgumentException("UV lock cannot contain more than 64 bone names.");
         }
     }
 
@@ -84,7 +85,7 @@ class GeometryBlockComponent extends BlockComponent
 
         $nbt->setTag("uv_lock", is_bool($this->uvLock)
             ? new ByteTag($this->uvLock ? 1 : 0)
-            : new ListTag(array_map(fn (string $bone): StringTag => new StringTag($bone), $this->uvLock), NBT::TAG_String)
+            : new ListTag(array_map(static fn (string $bone): StringTag => new StringTag($bone), $this->uvLock), NBT::TAG_String)
         );
 
         return $nbt;

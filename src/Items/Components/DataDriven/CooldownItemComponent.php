@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemCooldownAction;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -17,7 +18,7 @@ class CooldownItemComponent extends DataDrivenItemComponent
         private readonly ItemCooldownAction $type = ItemCooldownAction::USE,
     ) {
         if ($duration < 0.0) {
-            throw new \InvalidArgumentException("Cooldown duration cannot be negative.");
+            throw new InvalidArgumentException("Cooldown duration cannot be negative.");
         }
     }
 

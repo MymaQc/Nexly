@@ -2,11 +2,14 @@
 
 namespace Nexly\Mappings;
 
+use InvalidArgumentException;
 use Nexly\Items\ItemBuilder;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
+use ReflectionClass;
 use ReflectionException;
+use RuntimeException;
 
 class ItemMappings
 {
@@ -42,7 +45,7 @@ class ItemMappings
     public function registerMapping(ItemBuilder $builder, ItemTypeEntry $entry): void
     {
         if (isset($this->mappings[$entry->getStringId()])) {
-            throw new \InvalidArgumentException("Item mapping for " . $entry->getStringId() . " is already registered");
+            throw new InvalidArgumentException("Item mapping for " . $entry->getStringId() . " is already registered");
         }
 
         $this->mappings[$entry->getStringId()] = ["builder" => $builder, "entry" => $entry];
@@ -50,7 +53,7 @@ class ItemMappings
         try {
             self::registerEntry($entry);
         } catch (ReflectionException $e) {
-            throw new \RuntimeException("Failed to register item entry: " . $e->getMessage(), 0, $e);
+            throw new RuntimeException("Failed to register item entry: " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -78,7 +81,7 @@ class ItemMappings
         $numericId = $entry->getNumericId();
 
         $dictionary = TypeConverter::getInstance()->getItemTypeDictionary();
-        $reflection = new \ReflectionClass($dictionary);
+        $reflection = new ReflectionClass($dictionary);
 
         $intToString = $reflection->getProperty("intToStringIdMap");
         /** @var array<int, string> $value */

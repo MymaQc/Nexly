@@ -2,19 +2,20 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
-class DurabilityThreshold
+readonly class DurabilityThreshold
 {
     public function __construct(
-        private readonly int $durability,
-        private readonly ?string $soundEvent = null,
-        private readonly ?string $particleType = null,
+        private int     $durability,
+        private ?string $soundEvent = null,
+        private ?string $particleType = null,
     ) {
         if ($durability < 0) {
-            throw new \InvalidArgumentException("Durability threshold cannot be negative.");
+            throw new InvalidArgumentException("Durability threshold cannot be negative.");
         }
     }
 

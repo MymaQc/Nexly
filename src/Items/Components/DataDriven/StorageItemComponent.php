@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -28,20 +29,20 @@ class StorageItemComponent extends DataDrivenItemComponent
         private readonly array $bannedItems = [],
     ) {
         if ($this->maxSlots < 0) {
-            throw new \InvalidArgumentException("Maximum slots cannot be negative.");
+            throw new InvalidArgumentException("Maximum slots cannot be negative.");
         }
 
         if ($this->maxSlots > 64) {
-            throw new \InvalidArgumentException("Maximum slots must not exceed 64.");
+            throw new InvalidArgumentException("Maximum slots must not exceed 64.");
         }
 
         if ($this->allowedItems !== [] && $this->bannedItems !== []) {
-            throw new \InvalidArgumentException("Allowed and banned item filters cannot be used together.");
+            throw new InvalidArgumentException("Allowed and banned item filters cannot be used together.");
         }
 
         foreach ([...$allowedItems, ...$bannedItems] as $item) {
             if ($item === "") {
-                throw new \InvalidArgumentException("Storage item filters must contain non-empty item identifiers.");
+                throw new InvalidArgumentException("Storage item filters must contain non-empty item identifiers.");
             }
         }
     }
@@ -62,7 +63,7 @@ class StorageItemComponent extends DataDrivenItemComponent
         array $bannedItems = []
     ): self {
 
-        $processItem = function (Item $item): string {
+        $processItem = static function (Item $item): string {
             [$rid] = ($converter = TypeConverter::getInstance())->getItemTranslator()->toNetworkId($item);
             return $converter->getItemTypeDictionary()->fromIntId($rid);
         };
@@ -95,7 +96,7 @@ class StorageItemComponent extends DataDrivenItemComponent
         return CompoundTag::create()
             ->setTag("max_slots", new IntTag($this->maxSlots))
             ->setTag("allow_nested_storage_items", new ByteTag($this->allowNestedStorageItems ? 1 : 0))
-            ->setTag("allowed_items", new ListTag(array_map(fn (string $item): StringTag => new StringTag($item), $this->allowedItems), NBT::TAG_String))
-            ->setTag("banned_items", new ListTag(array_map(fn (string $item): StringTag => new StringTag($item), $this->bannedItems), NBT::TAG_String));
+            ->setTag("allowed_items", new ListTag(array_map(static fn (string $item): StringTag => new StringTag($item), $this->allowedItems), NBT::TAG_String))
+            ->setTag("banned_items", new ListTag(array_map(static fn (string $item): StringTag => new StringTag($item), $this->bannedItems), NBT::TAG_String));
     }
 }

@@ -3,6 +3,7 @@
 namespace Nexly\Tasks;
 
 use Closure;
+use InvalidArgumentException;
 use Nexly\Blocks\BlockPalette;
 use Nexly\Blocks\Components\AsyncBlockComponent;
 use Nexly\Blocks\NexlyBlocks;
@@ -76,11 +77,11 @@ final class AsyncRegisterBlocksTask extends AsyncTask
                 ->setSerializer($this->serializer[$stringId])
                 ->setDeserializer($this->deserializer[$stringId]);
 
-            foreach (json_decode($this->properties[$stringId], true) as $property) {
+            foreach (json_decode($this->properties[$stringId], true, 512, JSON_THROW_ON_ERROR) as $property) {
                 $builder->addProperty(new BlockProperty($property["name"], $property["values"]));
             }
 
-            foreach (json_decode($this->permutations[$stringId], true) as $permutation) {
+            foreach (json_decode($this->permutations[$stringId], true, 512, JSON_THROW_ON_ERROR) as $permutation) {
                 $p = Permutation::create($permutation["condition"]);
 
                 foreach ($permutation["components"] as $component) {
@@ -90,34 +91,34 @@ final class AsyncRegisterBlocksTask extends AsyncTask
                 $builder->addPermutation($p);
             }
 
-            foreach (json_decode($this->components[$stringId], true) as $component) {
+            foreach (json_decode($this->components[$stringId], true, 512, JSON_THROW_ON_ERROR) as $component) {
                 $builder->addComponent(new AsyncBlockComponent($component["name"], $component["nbt"]));
             }
 
-            foreach (json_decode($this->traits[$stringId], true) as $trait) {
+            foreach (json_decode($this->traits[$stringId], true, 512, JSON_THROW_ON_ERROR) as $trait) {
                 $identifier = $trait["identifier"] ?? null;
                 if (!is_string($identifier)) {
-                    throw new \InvalidArgumentException("Invalid identifier for trait " . $identifier);
+                    throw new InvalidArgumentException("Invalid identifier for trait " . $identifier);
                 }
 
                 $rotationOffset = $trait["rotationOffset"] ?? null;
                 if (!is_int($rotationOffset) && !is_float($rotationOffset)) {
-                    throw new \InvalidArgumentException("Invalid rotationOffset for trait " . $rotationOffset);
+                    throw new InvalidArgumentException("Invalid rotationOffset for trait " . $rotationOffset);
                 }
 
                 $state = $trait["state"] ?? null;
                 if (!is_array($state)) {
-                    throw new \InvalidArgumentException("Invalid state for trait " . $state);
+                    throw new InvalidArgumentException("Invalid state for trait " . $state);
                 }
 
                 $cardinal = $state["cardinal"] ?? null;
                 if (!is_bool($cardinal)) {
-                    throw new \InvalidArgumentException("Invalid cardinal for trait " . $cardinal);
+                    throw new InvalidArgumentException("Invalid cardinal for trait " . $cardinal);
                 }
 
                 $facing = $state["facing"] ?? null;
                 if (!is_bool($facing)) {
-                    throw new \InvalidArgumentException("Invalid facing for trait " . $facing);
+                    throw new InvalidArgumentException("Invalid facing for trait " . $facing);
                 }
 
                 $builder->addTrait(new MinecraftTrait(TraitIds::fromString($identifier), $rotationOffset, new State($cardinal, $facing)));

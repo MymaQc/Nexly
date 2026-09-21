@@ -19,7 +19,7 @@ class LegacyItemBuilder extends ItemBuilder
     /** @var LegacyItemComponent[] */
     private array $components = [];
 
-    public static function create(): LegacyItemBuilder
+    public static function create(): self
     {
         return new self();
     }

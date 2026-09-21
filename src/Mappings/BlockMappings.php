@@ -2,6 +2,7 @@
 
 namespace Nexly\Mappings;
 
+use InvalidArgumentException;
 use Nexly\Blocks\BlockMapping;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\utils\SingletonTrait;
@@ -66,7 +67,7 @@ class BlockMappings
     public function registerMapping(BlockMapping $mapping): void
     {
         if (isset($this->mappings[$mapping->getStringId()])) {
-            throw new \InvalidArgumentException("Item mapping for " . $mapping->getStringId() . " is already registered");
+            throw new InvalidArgumentException("Item mapping for " . $mapping->getStringId() . " is already registered");
         }
 
         $this->mappings[$mapping->getStringId()] = $mapping;

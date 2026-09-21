@@ -13,8 +13,8 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 class RandomOffsetBlockComponent extends BlockComponent
 {
     public function __construct(
-        private BlockPosition $steps,
-        private RangeOffset   $offset,
+        private readonly BlockPosition $steps,
+        private readonly RangeOffset   $offset,
     ) {
     }
 

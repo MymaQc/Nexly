@@ -45,6 +45,6 @@ class CollisionBoxBlockComponent extends BlockComponent
     {
         return CompoundTag::create()
             ->setTag("enabled", new ByteTag($this->enabled ? 1 : 0))
-            ->setTag("boxes", new ListTag(array_map(fn (BoxCollision $collision): CompoundTag => $collision->toNBT(true), $this->collisions), NBT::TAG_Compound));
+            ->setTag("boxes", new ListTag(array_map(static fn (BoxCollision $collision): CompoundTag => $collision->toNBT(true), $this->collisions), NBT::TAG_Compound));
     }
 }

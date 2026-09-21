@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -16,7 +17,7 @@ class FlammableBlockComponent extends BlockComponent
         private readonly bool $lavaFlammable = false,
     ) {
         if ($catchChanceModifier < 0 || $destroyChanceModifier < 0) {
-            throw new \InvalidArgumentException("Flammability modifiers cannot be negative.");
+            throw new InvalidArgumentException("Flammability modifiers cannot be negative.");
         }
     }
 

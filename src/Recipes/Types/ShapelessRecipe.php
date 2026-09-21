@@ -3,6 +3,7 @@
 namespace Nexly\Recipes\Types;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\crafting\ExactRecipeIngredient;
 use pocketmine\crafting\ShapelessRecipe as ShapelessRecipePM;
 use pocketmine\crafting\ShapelessRecipeType;
@@ -10,7 +11,7 @@ use pocketmine\item\Item;
 use pocketmine\item\StringToItemParser;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class ShapelessRecipe implements Recipe
+readonly class ShapelessRecipe implements Recipe
 {
     /**
      * @param ShapelessRecipeType $type
@@ -18,9 +19,9 @@ class ShapelessRecipe implements Recipe
      * @param list<Item|string> $outputs
      */
     public function __construct(
-        private readonly ShapelessRecipeType $type,
-        private readonly array               $ingredients,
-        private readonly array               $outputs
+        private ShapelessRecipeType $type,
+        private array               $ingredients,
+        private array               $outputs
     ) {
     }
 
@@ -56,8 +57,8 @@ class ShapelessRecipe implements Recipe
     public function build(): ShapelessRecipePM
     {
         return new ShapelessRecipePM(
-            array_map(fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
-            array_map(fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
+            array_map(static fn (Item|string $ingredient): ExactRecipeIngredient => new ExactRecipeIngredient(self::resolveItem($ingredient)), $this->ingredients),
+            array_map(static fn (Item|string $output): Item => self::resolveItem($output), $this->outputs),
             $this->type
         );
     }
@@ -69,6 +70,6 @@ class ShapelessRecipe implements Recipe
         }
 
         return StringToItemParser::getInstance()->parse($item)
-            ?? throw new \InvalidArgumentException("Unknown recipe item identifier: $item");
+            ?? throw new InvalidArgumentException("Unknown recipe item identifier: $item");
     }
 }

@@ -4,6 +4,7 @@ namespace Nexly\Blocks;
 
 use Closure;
 use Generator;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\BlockComponent;
 use Nexly\Blocks\Components\BlockComponentIds;
 use Nexly\Blocks\Components\BreathabilityBlockComponent;
@@ -16,6 +17,7 @@ use Nexly\Blocks\Components\DisplayNameBlockComponent;
 use Nexly\Blocks\Components\FrictionBlockComponent;
 use Nexly\Blocks\Components\LightEmissionBlockComponent;
 use Nexly\Blocks\Components\MaterialInstancesBlockComponent;
+use Nexly\Blocks\Components\OnInteractBlockComponent;
 use Nexly\Blocks\Components\OnPlayerPlacingBlockComponent;
 use Nexly\Blocks\Components\SelectionBoxBlockComponent;
 use Nexly\Blocks\Components\Types\BreathabilityType;
@@ -88,6 +90,8 @@ use pocketmine\utils\AssumptionFailedError;
 use pocketmine\world\format\io\GlobalBlockStateHandlers as BlockStateHandlers;
 use pocketmine\world\format\io\GlobalItemDataHandlers as ItemDataHandlers;
 use ReflectionClass;
+use RuntimeException;
+use Throwable;
 
 class BlockBuilder
 {
@@ -114,7 +118,7 @@ class BlockBuilder
     /**
      * @return BlockBuilder
      */
-    public static function create(): BlockBuilder
+    public static function create(): self
     {
         return new self();
     }
@@ -138,7 +142,7 @@ class BlockBuilder
     public function setStringId(string $stringId): self
     {
         if (str_contains($stringId, "minecraft:")) {
-            throw new \InvalidArgumentException("Custom block string ID cannot contain the 'minecraft:' namespace.");
+            throw new InvalidArgumentException("Custom block string ID cannot contain the 'minecraft:' namespace.");
         }
 
         $this->stringId = $stringId;
@@ -434,7 +438,7 @@ class BlockBuilder
     {
         $item = $block->asItem();
         if ($item->isNull()) {
-            throw new \RuntimeException("The block must have a valid item form to be registered.");
+            throw new RuntimeException("The block must have a valid item form to be registered.");
         }
 
         $itemVersion = ItemVersion::fromItem($item);
@@ -454,7 +458,7 @@ class BlockBuilder
             $builder->loadComponents();
         }
 
-        $reflection = new \ReflectionClass($item);
+        $reflection = new ReflectionClass($item);
         $attributes = $reflection->getAttributes();
 
         foreach ($attributes as $attribute) {
@@ -468,10 +472,8 @@ class BlockBuilder
                 }
             }
 
-            if ($builder instanceof LegacyItemBuilder) {
-                if ($instance instanceof LegacyItemComponent) {
-                    $builder->addComponent($instance);
-                }
+            if ($builder instanceof LegacyItemBuilder && $instance instanceof LegacyItemComponent) {
+                $builder->addComponent($instance);
             }
         }
 
@@ -494,11 +496,11 @@ class BlockBuilder
         $properties = [];
         foreach ($this->properties as $property) {
             foreach ($this->traits as $trait) {
-                if ($trait->getState()->isCardinal() && $property->getName() === BlockStateNames::MC_CARDINAL_DIRECTION) {
+                if ($property->getName() === BlockStateNames::MC_CARDINAL_DIRECTION && $trait->getState()->isCardinal()) {
                     continue 2;
                 }
 
-                if ($trait->getState()->isFacing() && $property->getName() === BlockStateNames::FACING_DIRECTION) {
+                if ($property->getName() === BlockStateNames::FACING_DIRECTION && $trait->getState()->isFacing()) {
                     continue 2;
                 }
             }
@@ -511,7 +513,7 @@ class BlockBuilder
 
         return CompoundTag::create()
             ->setTag("components", $components)
-            ->setTag("permutations", new ListTag(array_map(fn (Permutation $permutation): CompoundTag => $permutation->toNBT(), $this->permutations), NBT::TAG_Compound))
+            ->setTag("permutations", new ListTag(array_map(static fn (Permutation $permutation): CompoundTag => $permutation->toNBT(), $this->permutations), NBT::TAG_Compound))
             ->setTag("properties", new ListTag($properties, NBT::TAG_Compound))
             ->setTag(
                 "menu_category",
@@ -520,8 +522,8 @@ class BlockBuilder
                 ->setTag("group", new StringTag($creativeGroup))
                 ->setTag("is_hidden_in_commands", new ByteTag(($this->getCreativeInfo()?->isHidden() ?? false) ? 1 : 0))
             )
-            ->setTag("blockTags", new ListTag(array_map(fn (string $tag): StringTag => new StringTag($tag), $this->tags), NBT::TAG_String))
-            ->setTag("traits", new ListTag(array_map(fn (MinecraftTrait $trait): CompoundTag => $trait->toNBT(), $this->traits), NBT::TAG_Compound))
+            ->setTag("blockTags", new ListTag(array_map(static fn (string $tag): StringTag => new StringTag($tag), $this->tags), NBT::TAG_String))
+            ->setTag("traits", new ListTag(array_map(static fn (MinecraftTrait $trait): CompoundTag => $trait->toNBT(), $this->traits), NBT::TAG_Compound))
             ->setTag(
                 "vanilla_block_data",
                 CompoundTag::create()
@@ -538,10 +540,10 @@ class BlockBuilder
      * @param bool $autoload
      * @return $this
      */
-    public function register(bool $creative = true, bool $autoload = true, ?Closure $init = null): self
+    public function register(bool $creative = true, bool $autoload = true): self
     {
         if (!isset($this->block)) {
-            throw new \RuntimeException("Block instance is not set. Use setBlock() to set it before registering.");
+            throw new RuntimeException("Block instance is not set. Use setBlock() to set it before registering.");
         }
 
         $stringId = $this->getStringId();
@@ -549,7 +551,7 @@ class BlockBuilder
 
         $block = ($this->getBlock())($numericId);
         if (!$block instanceof Block) {
-            throw new \RuntimeException("The block closure must return an instance of " . Block::class);
+            throw new RuntimeException("The block closure must return an instance of " . Block::class);
         }
 
         $this->loadComponents($block, $autoload);
@@ -572,22 +574,22 @@ class BlockBuilder
         AsyncInitialization::addAsyncBlock($stringId, [
             $numericId,
             $this->block,
-            json_encode(array_map(fn (BlockProperty $property): array => [
+            json_encode(array_map(static fn (BlockProperty $property): array => [
                 "name" => $property->getName(),
                 "values" => $property->getValues()
             ], $this->properties), JSON_THROW_ON_ERROR),
-            json_encode(array_map(fn (Permutation $permutation): array => [
+            json_encode(array_map(static fn (Permutation $permutation): array => [
                 "condition" => $permutation->getCondition(),
-                "components" => array_map(fn (BlockComponent $component): array => [
+                "components" => array_map(static fn (BlockComponent $component): array => [
                     "name" => $component->getName(),
                     "nbt" => base64_encode((new CacheableNbt($component->toNBT()))->getEncodedNbt())
                 ], $permutation->getComponents())
             ], $this->permutations), JSON_THROW_ON_ERROR),
-            json_encode(array_map(fn (BlockComponent $component): array => [
+            json_encode(array_map(static fn (BlockComponent $component): array => [
                 "name" => $component->getName(),
                 "nbt" => base64_encode((new CacheableNbt($component->toNBT()))->getEncodedNbt())
             ], $this->getComponents()), JSON_THROW_ON_ERROR),
-            json_encode(array_map(fn (MinecraftTrait $trait): array => [
+            json_encode(array_map(static fn (MinecraftTrait $trait): array => [
                 "identifier" => $trait->getIdentifier()->value,
                 "rotationOffset" => $trait->getRotationOffset(),
                 "state" => [
@@ -614,7 +616,7 @@ class BlockBuilder
         $this->registerBlockItem($block);
 
         $creativeInfo = $this->getCreativeInfo() ?? NexlyCreative::detectCreativeInfoFrom($block->asItem());
-        $reflection = new \ReflectionClass($block->asItem());
+        $reflection = new ReflectionClass($block->asItem());
 
         $attributes = $reflection->getAttributes();
         if (count($attributes) > 0) {
@@ -661,7 +663,7 @@ class BlockBuilder
 
             $tile = $block->getIdInfo()->getTileClass();
             if ($tile !== null && is_a($tile, Container::class, true)) {
-                $this->addComponent(new CustomComponentsBlockComponent());
+                $this->addComponent(new OnInteractBlockComponent());
             }
 
             $this->addComponent(new SelectionBoxBlockComponent(true));
@@ -669,7 +671,7 @@ class BlockBuilder
 
         $ev = new BlockLoaderEvent($this, $block);
         $ev->trigger();
-        if (!$ev->isAffected() && $autoload) {
+        if ($autoload && !$ev->isAffected()) {
             $this->detectDefaultComponent($block); // Detect known block types and apply default components
         }
 
@@ -699,15 +701,17 @@ class BlockBuilder
         try {
             ItemDataHandlers::getDeserializer()->map($stringId, fn (SavedItemData $data): Item => clone $builder->getItem());
             ItemDataHandlers::getSerializer()->map($builder->getItem(), fn (Item $item): SavedItemData => new SavedItemData($stringId));
-        } catch (\Throwable) {
-            Server::getInstance()->getLogger()->warning("Nexly BlockBuilder: Failed to register item serializer/deserializer for block item '{$stringId}'");
+        } catch (Throwable) {
+            Server::getInstance()->getLogger()->warning("Nexly BlockBuilder: Failed to register item serializer/deserializer for block item '$stringId'");
         }
+
+        $version = $builder::getVersion();
 
         ItemMappings::getInstance()->registerMapping($builder, new ItemTypeEntry(
             $stringId,
             255 - $builder->getNumericId(),
-            $builder->getVersion()->equals(ItemVersion::DATA_DRIVEN),
-            $builder->getVersion()->getValue(),
+            $version->equals(ItemVersion::DATA_DRIVEN),
+            $version->getValue(),
             new CacheableNbt($builder->toNBT())
         ));
     }
@@ -745,8 +749,8 @@ class BlockBuilder
             return;
         }
 
-        $listBlockPropertyName = array_map(fn (BlockProperty $property): string => $property->getName(), $this->properties);
-        $data_ = array_map(fn (BlockProperty $property): array => $property->getValues(), $this->properties);
+        $listBlockPropertyName = array_map(static fn (BlockProperty $property): string => $property->getName(), $this->properties);
+        $data_ = array_map(static fn (BlockProperty $property): array => $property->getValues(), $this->properties);
         foreach (CartesianProduct::get($data_) as $meta => $property) {
             $states = [];
             foreach ($property as $i => $data) {

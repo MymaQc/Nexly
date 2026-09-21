@@ -3,6 +3,8 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use BackedEnum;
+use InvalidArgumentException;
 use Nexly\Items\Components\Legacy\Types\LegacyEffect;
 use Nexly\Items\Components\Legacy\Types\LegacyItemCooldownType;
 use Nexly\Items\Components\Legacy\Types\LegacyItemUseActionType;
@@ -33,7 +35,7 @@ class FoodComponent extends LegacyItemComponent
      * @param int $nutrition
      * @param float $saturationModifier
      * @param bool $canAlwaysEat
-     * @param LegacyItemCooldownType|\BackedEnum|string $cooldownType
+     * @param LegacyItemCooldownType|BackedEnum|string $cooldownType
      * @param int $cooldownTick
      * @param string $usingConvertsTo
      * @param LegacyItemUseActionType $useActionType
@@ -42,16 +44,16 @@ class FoodComponent extends LegacyItemComponent
      * @param list<int> $removeEffects
      */
     public function __construct(
-        private readonly int                     $nutrition,
-        private readonly float                   $saturationModifier,
-        private readonly bool                    $canAlwaysEat = false,
-        private readonly LegacyItemCooldownType|\BackedEnum|string  $cooldownType = LegacyItemCooldownType::NONE,
-        private readonly int                     $cooldownTick = 0,
-        private string                           $usingConvertsTo = "air",
-        private readonly LegacyItemUseActionType $useActionType = LegacyItemUseActionType::NONE,
-        private readonly array                   $onUseRange = [],
-        private readonly array                   $effects = [],
-        private readonly array                   $removeEffects = [],
+        private readonly int                                      $nutrition,
+        private readonly float                                    $saturationModifier,
+        private readonly bool                                     $canAlwaysEat = false,
+        private readonly LegacyItemCooldownType|BackedEnum|string $cooldownType = LegacyItemCooldownType::NONE,
+        private readonly int                                      $cooldownTick = 0,
+        private string                                            $usingConvertsTo = "air",
+        private readonly LegacyItemUseActionType                  $useActionType = LegacyItemUseActionType::NONE,
+        private readonly array                                    $onUseRange = [],
+        private readonly array                                    $effects = [],
+        private readonly array                                    $removeEffects = [],
     ) {
     }
 
@@ -76,7 +78,7 @@ class FoodComponent extends LegacyItemComponent
     {
         $cooldownType = is_string($this->cooldownType) ? $this->cooldownType : $this->cooldownType->value;
         if (!is_string($cooldownType)) {
-            throw new \InvalidArgumentException("The cooldown type enum must be backed by a string.");
+            throw new InvalidArgumentException("The cooldown type enum must be backed by a string.");
         }
 
         return CompoundTag::create()
@@ -87,8 +89,8 @@ class FoodComponent extends LegacyItemComponent
             ->setTag("cooldown_time", new IntTag($this->cooldownTick))
             ->setTag("using_converts_to", CompoundTag::create()->setTag("name", new StringTag($this->usingConvertsTo)))
             ->setTag("on_use_action", new IntTag($this->useActionType->getValue()))
-            ->setTag("on_use_range", new ListTag(array_map(fn (float $value): FloatTag => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
-            ->setTag("effects", new ListTag(array_map(fn (LegacyEffect $effect): CompoundTag => $effect->toNBT(), $this->effects), NBT::TAG_Compound))
-            ->setTag("remove_effects", new ListTag(array_map(fn (int $value): IntTag => new IntTag($value), $this->removeEffects), NBT::TAG_Int));
+            ->setTag("on_use_range", new ListTag(array_map(static fn (float $value): FloatTag => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
+            ->setTag("effects", new ListTag(array_map(static fn (LegacyEffect $effect): CompoundTag => $effect->toNBT(), $this->effects), NBT::TAG_Compound))
+            ->setTag("remove_effects", new ListTag(array_map(static fn (int $value): IntTag => new IntTag($value), $this->removeEffects), NBT::TAG_Int));
     }
 }

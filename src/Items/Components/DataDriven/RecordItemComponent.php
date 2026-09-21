@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
@@ -22,11 +23,11 @@ class RecordItemComponent extends DataDrivenItemComponent
         private readonly int $comparatorSignal = 1
     ) {
         if ($duration < 0.0) {
-            throw new \InvalidArgumentException("Record duration cannot be negative.");
+            throw new InvalidArgumentException("Record duration cannot be negative.");
         }
 
         if ($comparatorSignal < 1 || $comparatorSignal > 13) {
-            throw new \InvalidArgumentException("Comparator signal must be between 1 and 13.");
+            throw new InvalidArgumentException("Comparator signal must be between 1 and 13.");
         }
     }
 

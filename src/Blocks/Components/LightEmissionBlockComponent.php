@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -13,7 +14,7 @@ class LightEmissionBlockComponent extends BlockComponent
         private readonly int $value,
     ) {
         if ($value < 0 || $value > 15) {
-            throw new \InvalidArgumentException("Light emission value must be between 0 and 15");
+            throw new InvalidArgumentException("Light emission value must be between 0 and 15");
         }
     }
 

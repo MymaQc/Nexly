@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -32,11 +33,11 @@ class ThrowableItemComponent extends DataDrivenItemComponent
             || $maxLaunchPower < 0.0
             || $minDrawDuration < 0.0
         ) {
-            throw new \InvalidArgumentException("Throwable power and duration values cannot be negative.");
+            throw new InvalidArgumentException("Throwable power and duration values cannot be negative.");
         }
 
         if ($minDrawDuration > $maxDrawDuration) {
-            throw new \InvalidArgumentException("Minimum draw duration cannot exceed maximum draw duration.");
+            throw new InvalidArgumentException("Minimum draw duration cannot exceed maximum draw duration.");
         }
     }
 

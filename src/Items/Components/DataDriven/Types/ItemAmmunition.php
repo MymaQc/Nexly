@@ -2,22 +2,23 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\TypeConverter;
 
-class ItemAmmunition
+readonly class ItemAmmunition
 {
     public function __construct(
-        private readonly string $item,
-        private readonly bool $searchInventory = false,
-        private readonly bool $useInCreative = false,
-        private readonly bool $useOffHand = false
+        private string $item,
+        private bool   $searchInventory = false,
+        private bool   $useInCreative = false,
+        private bool   $useOffHand = false
     ) {
         if ($item === "") {
-            throw new \InvalidArgumentException("Ammunition item identifier cannot be empty.");
+            throw new InvalidArgumentException("Ammunition item identifier cannot be empty.");
         }
     }
 

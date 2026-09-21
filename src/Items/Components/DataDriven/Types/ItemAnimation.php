@@ -41,7 +41,7 @@ enum ItemAnimation: int
      * @param int $value
      * @return ItemAnimation
      */
-    public static function fromInt(int $value): ItemAnimation
+    public static function fromInt(int $value): self
     {
         return match ($value) {
             1 => self::EAT,

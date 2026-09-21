@@ -35,7 +35,7 @@ enum OreTextureType: string
      * @param Item $item
      * @return OreTextureType
      */
-    public static function fromItem(Item $item): OreTextureType
+    public static function fromItem(Item $item): self
     {
         if ($item instanceof Armor) {
             return match (true) {

@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemAmmunition;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -26,7 +27,7 @@ class ShooterItemComponent extends DataDrivenItemComponent
         private readonly bool  $scalePowerByDrawDuration = false
     ) {
         if ($maxDrawDuration < 0.0) {
-            throw new \InvalidArgumentException("Maximum draw duration cannot be negative.");
+            throw new InvalidArgumentException("Maximum draw duration cannot be negative.");
         }
     }
 
@@ -51,6 +52,6 @@ class ShooterItemComponent extends DataDrivenItemComponent
             ->setTag("charge_on_draw", new ByteTag($this->chargeOnDraw ? 1 : 0))
             ->setTag("max_draw_duration", new FloatTag($this->maxDrawDuration))
             ->setTag("scale_power_by_draw_duration", new ByteTag($this->scalePowerByDrawDuration ? 1 : 0))
-            ->setTag("ammunition", new ListTag(array_map(fn (ItemAmmunition $ammunition): CompoundTag => $ammunition->toNBT(), $this->ammunition), NBT::TAG_Compound));
+            ->setTag("ammunition", new ListTag(array_map(static fn (ItemAmmunition $ammunition): CompoundTag => $ammunition->toNBT(), $this->ammunition), NBT::TAG_Compound));
     }
 }

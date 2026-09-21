@@ -7,8 +7,8 @@ use pocketmine\math\Vector3;
 class RangeOffset
 {
     public function __construct(
-        private Vector3 $min,
-        private Vector3 $max,
+        private readonly Vector3 $min,
+        private readonly Vector3 $max,
     ) {
     }
 

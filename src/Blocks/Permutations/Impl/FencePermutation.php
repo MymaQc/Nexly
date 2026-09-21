@@ -12,7 +12,7 @@ use pocketmine\math\Vector3;
 class FencePermutation
 {
     private function __construct(
-        private Builder $builder
+        private readonly Builder $builder
     ) {
     }
 

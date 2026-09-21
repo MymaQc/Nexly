@@ -62,7 +62,7 @@ enum ItemEnchantSlot: string
      * @param int $slotArmor
      * @return ItemEnchantSlot
      */
-    public static function fromArmorTypeInfo(int $slotArmor): ItemEnchantSlot
+    public static function fromArmorTypeInfo(int $slotArmor): self
     {
         return match ($slotArmor) {
             ArmorInventory::SLOT_HEAD => self::ARMOR_HEAD,
@@ -79,22 +79,22 @@ enum ItemEnchantSlot: string
      * @param Item $item
      * @return ItemEnchantSlot
      */
-    public static function fromItem(Item $item): ItemEnchantSlot
+    public static function fromItem(Item $item): self
     {
         return match (true) {
-            $item instanceof Sword => ItemEnchantSlot::SWORD,
-            $item instanceof Pickaxe => ItemEnchantSlot::PICKAXE,
-            $item instanceof Axe => ItemEnchantSlot::AXE,
-            $item instanceof Hoe => ItemEnchantSlot::HOE,
-            $item instanceof Shovel => ItemEnchantSlot::SHOVEL,
-            $item instanceof Bow => ItemEnchantSlot::BOW,
-            //$item instanceof Crossbow => ItemEnchantSlot::CROSSBOW, TODO: Add CrossBow class
-            //$item instanceof Elytra => ItemEnchantSlot::ELYTRA, TODO: Add Elytra class
-            $item instanceof FishingRod => ItemEnchantSlot::FISHING_ROD,
-            $item instanceof Shears => ItemEnchantSlot::SHEARS,
-            //$item instanceof Shield => ItemEnchantSlot::SHIELD, TODO: Add Shield class
+            $item instanceof Sword => self::SWORD,
+            $item instanceof Pickaxe => self::PICKAXE,
+            $item instanceof Axe => self::AXE,
+            $item instanceof Hoe => self::HOE,
+            $item instanceof Shovel => self::SHOVEL,
+            $item instanceof Bow => self::BOW,
+            //$item instanceof Crossbow => self::CROSSBOW, TODO: Add CrossBow class
+            //$item instanceof Elytra => self::ELYTRA, TODO: Add Elytra class
+            $item instanceof FishingRod => self::FISHING_ROD,
+            $item instanceof Shears => self::SHEARS,
+            //$item instanceof Shield => self::SHIELD, TODO: Add Shield class
             $item instanceof Armor => self::fromArmorTypeInfo($item->getArmorSlot()),
-            default => ItemEnchantSlot::ALL
+            default => self::ALL
         };
     }
 }

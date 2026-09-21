@@ -3,7 +3,6 @@
 namespace Nexly\Items;
 
 use Nexly\Items\Components\DataDriven\DataDriven;
-use Nexly\Items\Components\DataDriven\ItemDataDriven;
 use pocketmine\item\Armor;
 use pocketmine\item\Dye;
 use pocketmine\item\Item;
@@ -44,6 +43,7 @@ enum ItemVersion: int
      *
      * @param Item $item
      * @return self
+     * @noinspection NotOptimalIfConditionsInspection
      */
     public static function fromItem(Item $item): self
     {

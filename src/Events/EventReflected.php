@@ -2,29 +2,30 @@
 
 namespace Nexly\Events;
 
+use Closure;
 use ReflectionFunction;
 use WeakReference;
 
-class EventReflected
+readonly class EventReflected
 {
     /**
      * @param WeakReference<object>|null $instanceRef
      */
     public function __construct(
-        private readonly \Closure           $closure,
-        private readonly ReflectionFunction $ref,
-        private readonly bool               $isStatic,
-        private readonly ?WeakReference     $instanceRef,
-        private readonly ?int               $instanceId,
-        private readonly int                $priority,
-        private readonly bool               $handleCancelled,
+        private Closure           $closure,
+        private ReflectionFunction $ref,
+        private bool               $isStatic,
+        private ?WeakReference     $instanceRef,
+        private ?int               $instanceId,
+        private int                $priority,
+        private bool               $handleCancelled,
     ) {
     }
 
     /**
-     * @return \Closure
+     * @return Closure
      */
-    public function getClosure(): \Closure
+    public function getClosure(): Closure
     {
         return $this->closure;
     }

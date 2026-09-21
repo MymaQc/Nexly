@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 
@@ -13,7 +14,7 @@ class BundleInteractionItemComponent extends DataDrivenItemComponent
         private readonly int $numViewableSlots = 12,
     ) {
         if ($this->numViewableSlots < 1 || $this->numViewableSlots > 64) {
-            throw new \InvalidArgumentException("Viewable slots must be between 1 and 64.");
+            throw new InvalidArgumentException("Viewable slots must be between 1 and 64.");
         }
     }
 

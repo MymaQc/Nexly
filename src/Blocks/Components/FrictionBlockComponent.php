@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 
@@ -13,7 +14,7 @@ class FrictionBlockComponent extends BlockComponent
         private readonly float $value = 0.0,
     ) {
         if ($this->value < 0.0 || $this->value > 0.9) {
-            throw new \InvalidArgumentException("Friction value must be between 0.0 and 0.9");
+            throw new InvalidArgumentException("Friction value must be between 0.0 and 0.9");
         }
     }
 

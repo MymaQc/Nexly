@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\FloatRange;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -20,7 +21,7 @@ class PiercingWeaponItemComponent extends DataDrivenItemComponent
         private readonly ?FloatRange $creativeReach = null,
     ) {
         if ($hitboxMargin < 0.0) {
-            throw new \InvalidArgumentException("Hitbox margin cannot be negative.");
+            throw new InvalidArgumentException("Hitbox margin cannot be negative.");
         }
     }
 

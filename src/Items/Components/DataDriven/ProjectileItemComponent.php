@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
@@ -19,11 +20,11 @@ class ProjectileItemComponent extends DataDrivenItemComponent
         private readonly float $minimumCriticalPower = 0.0,
     ) {
         if ($projectileEntity === "") {
-            throw new \InvalidArgumentException("Projectile entity identifier cannot be empty.");
+            throw new InvalidArgumentException("Projectile entity identifier cannot be empty.");
         }
 
         if ($minimumCriticalPower < 0.0) {
-            throw new \InvalidArgumentException("Minimum critical power cannot be negative.");
+            throw new InvalidArgumentException("Minimum critical power cannot be negative.");
         }
     }
 

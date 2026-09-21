@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks;
 
+use LogicException;
 use pocketmine\data\bedrock\block\BlockTypeNames;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
@@ -12,6 +13,7 @@ use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use ReflectionProperty;
+use RuntimeException;
 
 final class BlockPalette
 {
@@ -37,8 +39,8 @@ final class BlockPalette
      */
     public function insertState(BlockStateDictionaryEntry $entry): void
     {
-        if (($name = $entry->getStateName()) === "") {
-            throw new \RuntimeException("Block state must contain a StringTag called 'name'");
+        if ($entry->getStateName() === "") {
+            throw new RuntimeException("Block state must contain a StringTag called 'name'");
         }
         $this->states[] = $entry;
     }
@@ -52,7 +54,7 @@ final class BlockPalette
     {
         foreach ($entries as $entry) {
             if (($entry->getStateName()) === "") {
-                throw new \RuntimeException("Block state must contain a StringTag called 'name'");
+                throw new RuntimeException("Block state must contain a StringTag called 'name'");
             }
         }
 
@@ -93,7 +95,7 @@ final class BlockPalette
                 } else {
                     $lookup = $stateDataToStateIdLookup[$name] ?? [];
                     if (!is_array($lookup)) {
-                        throw new \LogicException("Multiple states cannot share a scalar state lookup.");
+                        throw new LogicException("Multiple states cannot share a scalar state lookup.");
                     }
                     $lookup[$blockState->getRawStateProperties()] = $stateId;
                     $stateDataToStateIdLookup[$name] = $lookup;

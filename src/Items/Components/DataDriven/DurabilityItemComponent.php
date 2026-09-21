@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 
@@ -15,19 +16,19 @@ class DurabilityItemComponent extends DataDrivenItemComponent
         private readonly int $damageChanceMax = 100,
     ) {
         if ($maxDurability < 0) {
-            throw new \InvalidArgumentException("Maximum durability cannot be negative.");
+            throw new InvalidArgumentException("Maximum durability cannot be negative.");
         }
 
         if ($damageChanceMin < 0 || $damageChanceMax < 0) {
-            throw new \InvalidArgumentException("Min and Max damage chance must be at least 0");
+            throw new InvalidArgumentException("Min and Max damage chance must be at least 0");
         }
 
         if ($damageChanceMin > $damageChanceMax) {
-            throw new \InvalidArgumentException("Min damage chance cannot be greater than Max damage chance");
+            throw new InvalidArgumentException("Min damage chance cannot be greater than Max damage chance");
         }
 
         if ($damageChanceMax > 100) {
-            throw new \InvalidArgumentException("Max damage chance cannot be greater than 100");
+            throw new InvalidArgumentException("Max damage chance cannot be greater than 100");
         }
     }
 

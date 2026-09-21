@@ -3,6 +3,7 @@
 namespace Nexly\Items\Creative;
 
 use BackedEnum;
+use InvalidArgumentException;
 use pocketmine\block\Air;
 use pocketmine\block\Anvil;
 use pocketmine\block\BaseSign;
@@ -188,8 +189,7 @@ class NexlyCreative
             $block instanceof Button => new CreativeInfo(null, CreativeGroup::GROUP_BUTTONS),
             $block instanceof Door => new CreativeInfo(null, CreativeGroup::GROUP_DOOR),
             $block instanceof Trapdoor => new CreativeInfo(null, CreativeGroup::GROUP_TRAPDOOR),
-            $block instanceof WallSign => new CreativeInfo(null, CreativeGroup::GROUP_SIGN),
-            $block instanceof BaseSign => new CreativeInfo(null, CreativeGroup::GROUP_SIGN),
+            $block instanceof WallSign, $block instanceof BaseSign => new CreativeInfo(null, CreativeGroup::GROUP_SIGN),
             $block instanceof Chest => new CreativeInfo(null, CreativeGroup::GROUP_CHEST),
             $block instanceof Anvil => new CreativeInfo(null, CreativeGroup::GROUP_ANVIL),
             $block instanceof ShulkerBox => new CreativeInfo(null, CreativeGroup::GROUP_SHULKER_BOX),
@@ -216,7 +216,7 @@ class NexlyCreative
     private static function getGroupValue(BackedEnum $group): string
     {
         if (!is_string($group->value)) {
-            throw new \InvalidArgumentException("Creative group enum values must be strings.");
+            throw new InvalidArgumentException("Creative group enum values must be strings.");
         }
 
         return $group->value;

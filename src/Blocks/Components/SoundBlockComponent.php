@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\BlockSoundType;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
@@ -19,8 +20,8 @@ class SoundBlockComponent extends BlockComponent
     public function __construct(
         private readonly BlockSoundType|string $sound,
     ) {
-        if (is_string($this->sound) && $this->sound === "") {
-            throw new \InvalidArgumentException("Block sound type cannot be empty.");
+        if ($this->sound === "") {
+            throw new InvalidArgumentException("Block sound type cannot be empty.");
         }
     }
 

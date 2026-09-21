@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -27,11 +28,11 @@ class FoodItemComponent extends DataDrivenItemComponent
         private ?string $usingConvertsTo = null,
     ) {
         if ($nutrition < 0) {
-            throw new \InvalidArgumentException("Nutrition cannot be negative.");
+            throw new InvalidArgumentException("Nutrition cannot be negative.");
         }
 
         if ($saturationModifier < 0.0) {
-            throw new \InvalidArgumentException("Saturation modifier cannot be negative.");
+            throw new InvalidArgumentException("Saturation modifier cannot be negative.");
         }
     }
 

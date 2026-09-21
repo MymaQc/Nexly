@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\NoteInstrument;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
@@ -19,7 +20,7 @@ class InstrumentSoundBlockComponent extends BlockComponent
         private readonly ?NoteInstrument $down = null,
     ) {
         if ($up === null && $down === null) {
-            throw new \InvalidArgumentException("At least one instrument sound face ('up' or 'down') must be defined.");
+            throw new InvalidArgumentException("At least one instrument sound face ('up' or 'down') must be defined.");
         }
     }
 

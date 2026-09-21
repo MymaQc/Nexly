@@ -37,7 +37,7 @@ class SeedComponent extends LegacyItemComponent
         return new self(
             GlobalBlockStateHandlers::getSerializer()->serialize($result->getStateId())->getName(),
             array_values(array_map(
-                fn (Block $block): string => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
+                static fn (Block $block): string => GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName(),
                 $blocks
             )),
         );
@@ -52,7 +52,7 @@ class SeedComponent extends LegacyItemComponent
         private readonly LegacyFace $plantFace = LegacyFace::UP,
     ) {
         $this->result = str_replace(["minecraft:", "grass_block", "air"], ["", "grass", "light_block"], strtolower($this->result));
-        $this->plantAt = array_map(fn (string $block): string => str_replace(["minecraft:", "grass_block"], ["", "grass"], strtolower($block)), $this->plantAt);
+        $this->plantAt = array_map(static fn (string $block): string => str_replace(["minecraft:", "grass_block"], ["", "grass"], strtolower($block)), $this->plantAt);
     }
 
     /**
@@ -66,6 +66,6 @@ class SeedComponent extends LegacyItemComponent
             ->setTag("crop_result", new StringTag($this->result))
             ->setTag("plant_at_face", new StringTag($this->plantFace->getValue()))
             ->setTag("plant_at_any_solid_surface", new ByteTag(empty($this->plantAt) ? 1 : 0))
-            ->setTag("plant_at", new ListTag(array_map(fn (string $block): StringTag => new StringTag($block), $this->plantAt), NBT::TAG_String));
+            ->setTag("plant_at", new ListTag(array_map(static fn (string $block): StringTag => new StringTag($block), $this->plantAt), NBT::TAG_String));
     }
 }

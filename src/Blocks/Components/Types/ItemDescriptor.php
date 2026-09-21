@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks\Components\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 
@@ -11,7 +12,7 @@ readonly class ItemDescriptor
         private string $tags,
     ) {
         if ($tags === "") {
-            throw new \InvalidArgumentException("Item descriptor tags cannot be empty.");
+            throw new InvalidArgumentException("Item descriptor tags cannot be empty.");
         }
     }
 

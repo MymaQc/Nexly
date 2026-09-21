@@ -2,6 +2,9 @@
 
 namespace Nexly\Recipes;
 
+use Closure;
+use Exception;
+use InvalidArgumentException;
 use Nexly\Recipes\Types\Recipe;
 use Nexly\Recipes\Types\ShapedRecipe;
 use Nexly\Recipes\Types\ShapelessRecipe;
@@ -11,12 +14,13 @@ use pocketmine\crafting\ShapelessRecipeType;
 use pocketmine\item\StringToItemParser;
 use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
+use UnexpectedValueException;
 
 class NexlyRecipes
 {
     use SingletonTrait;
 
-    /** @var list<\Closure(): Recipe> */
+    /** @var list<Closure(): Recipe> */
     private array $recipes = [];
 
     public function __construct()
@@ -25,7 +29,7 @@ class NexlyRecipes
     }
 
     /**
-     * @return list<\Closure(): Recipe>
+     * @return list<Closure(): Recipe>
      */
     public function getRecipes(): array
     {
@@ -33,7 +37,7 @@ class NexlyRecipes
     }
 
     /**
-     * @param list<\Closure(): Recipe> $recipes
+     * @param list<Closure(): Recipe> $recipes
      */
     public function setRecipes(array $recipes): void
     {
@@ -41,9 +45,9 @@ class NexlyRecipes
     }
 
     /**
-     * @param \Closure(): Recipe $recipe
+     * @param Closure(): Recipe $recipe
      */
-    public function addRecipe(\Closure $recipe): void
+    public function addRecipe(Closure $recipe): void
     {
         $this->recipes[] = $recipe;
     }
@@ -57,10 +61,10 @@ class NexlyRecipes
     public function fromArray(array $data): void
     {
         if (!isset($data["output"])) {
-            throw new \InvalidArgumentException("Missing 'output' key");
+            throw new InvalidArgumentException("Missing 'output' key");
         }
         if (!isset($data["ingredients"])) {
-            throw new \InvalidArgumentException("Missing 'ingredients' key");
+            throw new InvalidArgumentException("Missing 'ingredients' key");
         }
 
         $this->addRecipe(function () use ($data): Recipe {
@@ -69,13 +73,13 @@ class NexlyRecipes
                 $output = StringToItemParser::getInstance()->parse($output);
             } elseif (is_array($output)) {
                 if (!isset($output["item"])) {
-                    throw new \InvalidArgumentException("Invalid 'output' format, missing 'item' key");
+                    throw new InvalidArgumentException("Invalid 'output' format, missing 'item' key");
                 }
 
                 if (isset($output["count"])) {
                     $count = (int)$output["count"];
                     if ($count < 1 || $count > 64) {
-                        throw new \InvalidArgumentException("Invalid 'output' count, must be between 1 and 64");
+                        throw new InvalidArgumentException("Invalid 'output' count, must be between 1 and 64");
                     }
                     $item = StringToItemParser::getInstance()->parse($output["item"]);
                     $item->setCount($count);
@@ -84,11 +88,11 @@ class NexlyRecipes
                     $output = StringToItemParser::getInstance()->parse($output["item"]);
                 }
             } else {
-                throw new \InvalidArgumentException("Invalid 'output' format");
+                throw new InvalidArgumentException("Invalid 'output' format");
             }
 
             if (count($data["ingredients"]) > 9) {
-                throw new \InvalidArgumentException("Too many 'ingredients', maximum is 9");
+                throw new InvalidArgumentException("Too many 'ingredients', maximum is 9");
             }
             if (!isset($data["shape"])) {
                 if (!isset($data["type"])) {
@@ -99,7 +103,7 @@ class NexlyRecipes
                         "cartography" => ShapelessRecipeType::CARTOGRAPHY(),
                         "smithing" => ShapelessRecipeType::SMITHING(),
                         "stonecutter" => ShapelessRecipeType::STONECUTTER(),
-                        default => throw new \InvalidArgumentException("Invalid 'type' value"),
+                        default => throw new InvalidArgumentException("Invalid 'type' value"),
                     };
                 }
 
@@ -133,7 +137,7 @@ class NexlyRecipes
         foreach ($this->recipes as $closure) {
             try {
                 $recipe = ($closure)();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Server::getInstance()->getLogger()->error("Error while building a recipe: " . $e->getMessage());
                 continue;
             }
@@ -144,7 +148,7 @@ class NexlyRecipes
             } elseif ($craftingRecipe instanceof ShapedRecipePM) {
                 $craftingManager->registerShapedRecipe($craftingRecipe);
             } else {
-                throw new \UnexpectedValueException("Unsupported crafting recipe type: " . $craftingRecipe::class);
+                throw new UnexpectedValueException("Unsupported crafting recipe type: " . $craftingRecipe::class);
             }
         }
     }

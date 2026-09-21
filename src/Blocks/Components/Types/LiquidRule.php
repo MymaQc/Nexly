@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks\Components\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -23,7 +24,7 @@ readonly class LiquidRule
         $validDirections = ["down", "up", "north", "south", "east", "west"];
         foreach ($stopsLiquidFlowingFromDirection as $direction) {
             if (!in_array($direction, $validDirections, true)) {
-                throw new \InvalidArgumentException("Invalid stopped liquid-flow direction: $direction");
+                throw new InvalidArgumentException("Invalid stopped liquid-flow direction: $direction");
             }
         }
     }
@@ -69,7 +70,7 @@ readonly class LiquidRule
             ->setTag("canContainLiquid", new ByteTag($this->canContainLiquid ? 1 : 0))
             ->setTag("liquidType", new StringTag($this->liquidType->getValue()))
             ->setTag("onLiquidTouches", new StringTag($this->onLiquidTouches->getValue()))
-            ->setTag("stopsLiquidFromDirection", new ListTag(array_map(fn (string $direction): StringTag => new StringTag($direction), $this->stopsLiquidFlowingFromDirection), NBT::TAG_String))
+            ->setTag("stopsLiquidFromDirection", new ListTag(array_map(static fn (string $direction): StringTag => new StringTag($direction), $this->stopsLiquidFlowingFromDirection), NBT::TAG_String))
             ->setTag("useLiquidClipping", new ByteTag($this->useLiquidClipping ? 1 : 0));
     }
 }

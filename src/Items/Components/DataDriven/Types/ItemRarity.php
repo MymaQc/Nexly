@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use InvalidArgumentException;
+
 enum ItemRarity: string
 {
     case COMMON = "common";
@@ -42,7 +44,7 @@ enum ItemRarity: string
             'uncommon' => self::UNCOMMON,
             'rare' => self::RARE,
             'epic' => self::EPIC,
-            default => throw new \InvalidArgumentException("Invalid item rarity name: $name"),
+            default => throw new InvalidArgumentException("Invalid item rarity name: $name"),
         };
     }
 }

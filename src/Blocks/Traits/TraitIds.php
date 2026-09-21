@@ -2,6 +2,8 @@
 
 namespace Nexly\Blocks\Traits;
 
+use InvalidArgumentException;
+
 enum TraitIds: string
 {
     case PLACEMENT_DIRECTION = "minecraft:placement_direction";
@@ -32,7 +34,7 @@ enum TraitIds: string
         return match ($value) {
             "minecraft:placement_direction" => self::PLACEMENT_DIRECTION,
             "minecraft:placement_position" => self::PLACEMENT_POSITION,
-            default => throw new \InvalidArgumentException("Invalid TraitIds value: " . $value),
+            default => throw new InvalidArgumentException("Invalid TraitIds value: " . $value),
         };
     }
 }

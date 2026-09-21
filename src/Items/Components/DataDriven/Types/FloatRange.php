@@ -2,6 +2,7 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 
@@ -12,7 +13,7 @@ readonly class FloatRange
         private float $max = 0.0,
     ) {
         if ($min > $max) {
-            throw new \InvalidArgumentException("Range minimum cannot be greater than its maximum.");
+            throw new InvalidArgumentException("Range minimum cannot be greater than its maximum.");
         }
     }
 

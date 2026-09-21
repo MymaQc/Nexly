@@ -23,7 +23,7 @@ class UseAnimationProperty extends PropertyItemComponent
      * @param Item $item
      * @return UseAnimationProperty
      */
-    public static function fromItem(Item $item): UseAnimationProperty
+    public static function fromItem(Item $item): self
     {
         return new self(match (true) {
             $item instanceof Potion => ItemAnimation::DRINK,

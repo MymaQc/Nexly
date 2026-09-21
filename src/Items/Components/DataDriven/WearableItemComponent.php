@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemSlot;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -25,7 +26,7 @@ class WearableItemComponent extends DataDrivenItemComponent
         private readonly ?bool $dispensable = null,
     ) {
         if ($protection < 0) {
-            throw new \InvalidArgumentException("Wearable protection cannot be negative.");
+            throw new InvalidArgumentException("Wearable protection cannot be negative.");
         }
 
         if (!in_array($slot, [
@@ -37,7 +38,7 @@ class WearableItemComponent extends DataDrivenItemComponent
             ItemSlot::WEAPON_MAIN_HAND,
             ItemSlot::WEAPON_OFF_HAND,
         ], true)) {
-            throw new \InvalidArgumentException("Unsupported wearable equipment slot.");
+            throw new InvalidArgumentException("Unsupported wearable equipment slot.");
         }
     }
 

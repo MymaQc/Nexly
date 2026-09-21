@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks\Components\Types;
 
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
@@ -13,11 +14,11 @@ readonly class ItemSpecificSpeed
         private float $destroySpeed,
     ) {
         if ($item === "") {
-            throw new \InvalidArgumentException("Item identifier cannot be empty.");
+            throw new InvalidArgumentException("Item identifier cannot be empty.");
         }
 
         if ($destroySpeed < 0.0) {
-            throw new \InvalidArgumentException("Item-specific destroy speed cannot be negative.");
+            throw new InvalidArgumentException("Item-specific destroy speed cannot be negative.");
         }
     }
 

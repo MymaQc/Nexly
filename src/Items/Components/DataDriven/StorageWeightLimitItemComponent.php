@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 
@@ -16,7 +17,7 @@ class StorageWeightLimitItemComponent extends DataDrivenItemComponent
         private readonly int $maxWeightLimit = 64,
     ) {
         if ($maxWeightLimit < 0 || $maxWeightLimit > 64) {
-            throw new \InvalidArgumentException("Weight limit must be between 0 and 64.");
+            throw new InvalidArgumentException("Weight limit must be between 0 and 64.");
         }
     }
 

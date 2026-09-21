@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\FloatRange;
 use Nexly\Items\Components\DataDriven\Types\KineticEffectConditions;
 use pocketmine\nbt\tag\CompoundTag;
@@ -28,7 +29,7 @@ class KineticWeaponItemComponent extends DataDrivenItemComponent
         private readonly ?KineticEffectConditions $knockbackConditions = null,
     ) {
         if ($hitboxMargin < 0.0) {
-            throw new \InvalidArgumentException("Hitbox margin cannot be negative.");
+            throw new InvalidArgumentException("Hitbox margin cannot be negative.");
         }
     }
 
