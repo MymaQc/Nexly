@@ -72,8 +72,6 @@ final class AsyncRegisterBlocksTask extends AsyncTask
         foreach ($this->func as $stringId => $blockFunc) {
             /*
              * We do not care about the model or creative inventory data in other threads since it is unused outside of
-             */
-            /*
              * the main thread.
              */
             $builder = NexlyBlocks::buildComplex($stringId, $blockFunc)

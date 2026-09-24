@@ -50,7 +50,7 @@ enum ItemVersion: int
         $reflection = new ReflectionClass($item);
         $attributes = $reflection->getAttributes(DataDriven::class);
         if (
-            count($attributes) > 0 ||
+            \count($attributes) > 0 ||
             $item instanceof Armor ||
             $item instanceof SpawnEgg ||
             $item instanceof ProjectileItem ||

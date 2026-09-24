@@ -22,7 +22,7 @@ class CollisionBoxBlockComponent extends BlockComponent
         private readonly bool $enabled,
         private array $collisions = [],
     ) {
-        if (count($collisions) > 16) {
+        if (\count($collisions) > 16) {
             throw new InvalidArgumentException("A collision component supports at most 16 boxes.");
         }
         foreach ($collisions as $collision) {

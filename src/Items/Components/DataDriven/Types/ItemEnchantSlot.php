@@ -96,17 +96,11 @@ enum ItemEnchantSlot: string
             $item instanceof Hoe => self::HOE,
             $item instanceof Shovel => self::SHOVEL,
             $item instanceof Bow => self::BOW,
-            /*
-             * $item instanceof Crossbow => self::CROSSBOW, TODO: Add CrossBow class
-             */
-            /*
-             * $item instanceof Elytra => self::ELYTRA, TODO: Add Elytra class
-             */
+            // $item instanceof Crossbow => self::CROSSBOW, TODO: Add CrossBow class
+            // $item instanceof Elytra => self::ELYTRA, TODO: Add Elytra class
             $item instanceof FishingRod => self::FISHING_ROD,
             $item instanceof Shears => self::SHEARS,
-            /*
-             * $item instanceof Shield => self::SHIELD, TODO: Add Shield class
-             */
+            // $item instanceof Shield => self::SHIELD, TODO: Add Shield class
             $item instanceof Armor => self::fromArmorTypeInfo($item->getArmorSlot()),
             default => self::ALL
         };

@@ -204,7 +204,7 @@ class BlockBuilder
      */
     public function addTag(string $tag): void
     {
-        if (!in_array($tag, $this->tags, true)) {
+        if (!\in_array($tag, $this->tags, true)) {
             $this->tags[] = $tag;
         }
     }
@@ -538,7 +538,7 @@ class BlockBuilder
         $properties = [];
         foreach ($this->properties as $property) {
             foreach ($this->traits as $trait) {
-                if (in_array($property->getName(), $trait->getState()->getProvidedStateNames(), true)) {
+                if (\in_array($property->getName(), $trait->getState()->getProvidedStateNames(), true)) {
                     continue 2;
                 }
             }
@@ -547,7 +547,7 @@ class BlockBuilder
         }
 
         $creativeGroup = $this->getCreativeInfo()?->getGroup()?->value;
-        $creativeGroup = is_string($creativeGroup) ? strtolower($creativeGroup) : "none";
+        $creativeGroup = \is_string($creativeGroup) ? strtolower($creativeGroup) : "none";
 
         return CompoundTag::create()
             ->setTag("components", $components)
@@ -654,7 +654,7 @@ class BlockBuilder
         $reflection = new ReflectionClass($block->asItem());
 
         $attributes = $reflection->getAttributes();
-        if (count($attributes) > 0) {
+        if (\count($attributes) > 0) {
             foreach ($attributes as $attribute) {
                 $instance = $attribute->newInstance();
                 if ($instance instanceof CreativeInfo) {
@@ -688,9 +688,7 @@ class BlockBuilder
             if (($lightLevel = $block->getLightLevel()) > 0) {
                 $this->addComponent(new LightEmissionBlockComponent($lightLevel));
             }
-            /*
-             * $this->addComponent(new LiquidDetectionComponent(false)); // TODO: PMMP Implement Liquid Layer
-             */
+            // $this->addComponent(new LiquidDetectionComponent(false)); TODO: PMMP Implement Liquid Layer
             $this->addComponent(new MaterialInstancesBlockComponent([new Material($this->getName(), renderMethod: $block->isTransparent() ? MaterialRenderMethod::ALPHA_TEST_SINGLE_SIDED : MaterialRenderMethod::OPAQUE)]));
             $this->addComponent(new OnPlayerPlacingBlockComponent());
 
@@ -716,7 +714,7 @@ class BlockBuilder
 
         $reflection = new ReflectionClass($block);
         $attributes = $reflection->getAttributes();
-        if (count($attributes) > 0) {
+        if (\count($attributes) > 0) {
             foreach ($attributes as $attribute) {
                 $instance = $attribute->newInstance();
                 if ($instance instanceof BlockComponent) {
@@ -795,9 +793,9 @@ class BlockBuilder
         foreach (CartesianProduct::get($data_) as $meta => $property) {
             $states = [];
             foreach ($property as $i => $data) {
-                if (is_bool($data)) {
+                if (\is_bool($data)) {
                     $states[$listBlockPropertyName[$i]] = new ByteTag($data ? 1 : 0);
-                } elseif (is_string($data)) {
+                } elseif (\is_string($data)) {
                     $states[$listBlockPropertyName[$i]] = new StringTag($data);
                 } else {
                     $states[$listBlockPropertyName[$i]] = new IntTag($data);

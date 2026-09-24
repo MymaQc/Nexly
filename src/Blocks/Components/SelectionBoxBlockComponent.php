@@ -26,7 +26,7 @@ class SelectionBoxBlockComponent extends BlockComponent
         private readonly bool $enabled,
         private array $collisions = [],
     ) {
-        if (count($collisions) > 1) {
+        if (\count($collisions) > 1) {
             throw new InvalidArgumentException("Selection supports exactly one box; use collision_box for multiple boxes.");
         }
         foreach ($collisions as $collision) {

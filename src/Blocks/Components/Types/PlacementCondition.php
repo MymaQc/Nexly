@@ -23,14 +23,14 @@ final readonly class PlacementCondition
         if ($allowedFaces === [] && $blockFilter === []) {
             throw new InvalidArgumentException('A placement condition needs allowed faces or block filters.');
         }
-        if (!array_is_list($allowedFaces) || count($allowedFaces) > 6) {
+        if (!array_is_list($allowedFaces) || \count($allowedFaces) > 6) {
             throw new InvalidArgumentException('Allowed faces must be a list with at most six entries.');
         }
         $faces = [];
         foreach ($allowedFaces as $face) {
             if ($face instanceof PlacementFace) {
                 $value = $face->value;
-            } elseif (is_string($face) && PlacementFace::tryFrom($face) !== null) {
+            } elseif (\is_string($face) && PlacementFace::tryFrom($face) !== null) {
                 $value = $face;
             } else {
                 throw new InvalidArgumentException('Unknown placement face.');
@@ -40,11 +40,11 @@ final readonly class PlacementCondition
             }
             $faces[$value] = true;
         }
-        if (!array_is_list($blockFilter) || count($blockFilter) > 64) {
+        if (!array_is_list($blockFilter) || \count($blockFilter) > 64) {
             throw new InvalidArgumentException('Block filters must be a list with at most 64 descriptors.');
         }
         foreach ($blockFilter as $filter) {
-            if (!($filter instanceof BlockDescriptor) && (!is_string($filter) || $filter === '')) {
+            if (!($filter instanceof BlockDescriptor) && (!\is_string($filter) || $filter === '')) {
                 throw new InvalidArgumentException('Block filters must be non-empty identifiers or BlockDescriptor objects.');
             }
         }

@@ -76,7 +76,7 @@ final class BlockPalette
     private function sort(array $states, array &$sortedStates, array &$stateDataToStateIdLookup): void
     {
         foreach ($states as $name => $blockStates) {
-            $numberState = count($blockStates);
+            $numberState = \count($blockStates);
 
             foreach ($blockStates as $_ => $blockState) {
                 $data = BlockStateDictionaryEntry::decodeStateProperties($blockState->getRawStateProperties());
@@ -96,7 +96,7 @@ final class BlockPalette
                     $stateDataToStateIdLookup[$name] = $stateId;
                 } else {
                     $lookup = $stateDataToStateIdLookup[$name] ?? [];
-                    if (!is_array($lookup)) {
+                    if (!\is_array($lookup)) {
                         throw new LogicException("Multiple states cannot share a scalar state lookup.");
                     }
                     $lookup[$blockState->getRawStateProperties()] = $stateId;
@@ -162,8 +162,6 @@ final class BlockPalette
 
         /*
          * To sort the block palette we first have to split the palette up in to groups of states. We only want to sort
-         */
-        /*
          * using the name of the block, and keeping the order of the existing states.
          */
         foreach ($this->getStates() as $state) {
@@ -176,12 +174,8 @@ final class BlockPalette
         $dictionary = $translator->getBlockStateDictionary();
         $bedrockKnownStates->setValue($dictionary, $sortedStates);
         $stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookupValue);
-        $idMetaToStateIdLookupCache->setValue($dictionary, null); /*
-             * set this to null so pm can create a new cache
-             */
-        $networkIdCache->setValue($translator, []); /*
-             * set this to empty-array so pm can create a new cache
-             */
+        $idMetaToStateIdLookupCache->setValue($dictionary, null); // set this to null so pm can create a new cache
+        $networkIdCache->setValue($translator, []); // set this to empty-array so pm can create a new cache
         $fallbackStateId->setValue(
             $translator,
             $stateDataToStateIdLookupValue[BlockTypeNames::INFO_UPDATE] ??

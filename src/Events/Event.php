@@ -13,7 +13,7 @@ abstract class Event
         $handlers = NexlyEventManager::getInstance()->getHandlersFor($this);
 
         try {
-            foreach ($handlers as $k => $handler) {
+            foreach ($handlers as $handler) {
                 $ownerRef = $handler->getInstanceRef();
                 if ($ownerRef !== null && $ownerRef->get() === null) {
                     continue;

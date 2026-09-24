@@ -61,7 +61,7 @@ final class Permutation
      */
     public function addComponent(BlockComponent $component): self
     {
-        if (in_array($component->getName(), ["minecraft:flower_pottable", "minecraft:embedded_visual", "minecraft:redstone_consumer"], true)) {
+        if (\in_array($component->getName(), ["minecraft:flower_pottable", "minecraft:embedded_visual", "minecraft:redstone_consumer"], true)) {
             throw new InvalidArgumentException($component->getName() . " is only supported in root block components.");
         }
         if ($component instanceof GeometryBlockComponent && $component->hasNWayVisualRotation()) {

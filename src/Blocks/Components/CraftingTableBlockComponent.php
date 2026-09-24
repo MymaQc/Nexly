@@ -24,11 +24,11 @@ final class CraftingTableBlockComponent extends BlockComponent
     public function __construct(private readonly array $craftingTags, private readonly ?string $tableName = null)
     {
         ComponentValues::strings($craftingTags);
-        if (count($craftingTags) > 64) {
+        if (\count($craftingTags) > 64) {
             throw new InvalidArgumentException('At most 64 crafting tags are allowed.');
         }
         foreach ($craftingTags as $tag) {
-            if (strlen($tag) > 64) {
+            if (\strlen($tag) > 64) {
                 throw new InvalidArgumentException('Crafting tags are limited to 64 characters.');
             }
         }

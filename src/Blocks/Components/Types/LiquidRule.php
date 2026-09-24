@@ -22,7 +22,7 @@ readonly class LiquidRule
         private bool              $useLiquidClipping = false,
     ) {
         foreach ($stopsLiquidFlowingFromDirection as $direction) {
-            if (!$direction instanceof BlockFace && (!is_string($direction) || BlockFace::tryFrom($direction) === null)) {
+            if (!$direction instanceof BlockFace && (!\is_string($direction) || BlockFace::tryFrom($direction) === null)) {
                 throw new InvalidArgumentException("Invalid stopped liquid-flow direction.");
             }
         }

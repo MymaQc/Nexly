@@ -26,10 +26,10 @@ final readonly class Material
         private bool                 $alphaMaskedTint = false,
     ) {
         ComponentValues::finite($ambientOcclusion);
-        if (!is_finite($ambientOcclusion) || $ambientOcclusion < 0.0 || $ambientOcclusion > 10.0) {
+        if ($ambientOcclusion < 0.0 || $ambientOcclusion > 10.0 || !is_finite($ambientOcclusion)) {
             throw new InvalidArgumentException("Ambient occlusion must be between 0.0 and 10.0.");
         }
-        if (is_string($tintMethod) && TintMethod::tryFrom($tintMethod) === null) {
+        if (\is_string($tintMethod) && TintMethod::tryFrom($tintMethod) === null) {
             throw new InvalidArgumentException("Unknown biome tint method.");
         }
         if ($target === "") {

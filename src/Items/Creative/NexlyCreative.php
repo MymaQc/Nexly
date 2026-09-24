@@ -118,9 +118,7 @@ class NexlyCreative
      */
     public static function add(Item $item, ?CreativeCategory $category = null, CreativeGroup|BackedEnum|null $group = null): void
     {
-        self::loadGroups(); /*
-             * Ensure groups are loaded
-             */
+        self::loadGroups(); // Ensure groups are loaded
 
         $groupValue = $group === null ? null : self::getGroupValue($group);
         if ($category === null && $group !== null) {
@@ -171,9 +169,7 @@ class NexlyCreative
             $item instanceof Record => new CreativeInfo(null, CreativeGroup::GROUP_RECORD),
             $item instanceof GoatHorn => new CreativeInfo(null, CreativeGroup::GROUP_GOAT_HORN),
             $item instanceof Banner => new CreativeInfo(null, CreativeGroup::GROUP_BANNER),
-            /*
-             * $item instanceof SpawnEgg => new CreativeInfo(null, CreativeGroup::GROUP_MOB_EGGS),
-             */
+            // $item instanceof SpawnEgg => new CreativeInfo(null, CreativeGroup::GROUP_MOB_EGGS),
             !$item->getBlock() instanceof Air => self::detectCreativeInfoFromBlock($item->getBlock()),
             default => new CreativeInfo(CreativeCategory::ITEMS),
         };

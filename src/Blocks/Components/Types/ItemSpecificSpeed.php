@@ -16,7 +16,7 @@ readonly class ItemSpecificSpeed
         private float $destroySpeed,
     ) {
         ComponentValues::finite($destroySpeed);
-        if (is_string($item) && $item === "") {
+        if ($item === "") {
             throw new InvalidArgumentException("Item identifier cannot be empty.");
         }
 
@@ -28,7 +28,7 @@ readonly class ItemSpecificSpeed
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("item", is_string($this->item) ? new StringTag($this->item) : $this->item->toNBT())
+            ->setTag("item", \is_string($this->item) ? new StringTag($this->item) : $this->item->toNBT())
             ->setTag("destroy_speed", new FloatTag($this->destroySpeed));
     }
 }

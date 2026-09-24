@@ -63,9 +63,7 @@ class SeedComponent extends LegacyItemComponent
 
     private static function legacyIdentifier(string $identifier, bool $crop): string
     {
-        /*
-         * Legacy aliases apply only to whole vanilla identifiers, never to custom names.
-         */
+        // Legacy aliases apply only to whole vanilla identifiers, never to custom names.
         if (str_contains($identifier, ":") && !str_starts_with($identifier, "minecraft:")) {
             return $identifier;
         }

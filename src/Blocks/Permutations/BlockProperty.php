@@ -28,7 +28,7 @@ readonly class BlockProperty
             throw new InvalidArgumentException("A block property must define at least one possible value.");
         }
 
-        if (!array_is_list($values) || count($values) > 16) {
+        if (!array_is_list($values) || \count($values) > 16) {
             throw new InvalidArgumentException("Block states require a list of at most 16 values.");
         }
         if ($name === "") {
@@ -37,13 +37,13 @@ readonly class BlockProperty
         $type = get_debug_type($values[0]);
         $seen = [];
         foreach ($values as $value) {
-            if ((!is_string($value) && !is_int($value) && !is_bool($value)) || get_debug_type($value) !== $type) {
+            if ((!\is_string($value) && !\is_int($value) && !\is_bool($value)) || get_debug_type($value) !== $type) {
                 throw new InvalidArgumentException("Block state values must all have the same string, integer or boolean type.");
             }
-            if (is_int($value) && ($value < -2147483648 || $value > 2147483647)) {
+            if (\is_int($value) && ($value < -2147483648 || $value > 2147483647)) {
                 throw new InvalidArgumentException("Block state integers must fit an NBT IntTag.");
             }
-            if (in_array($value, $seen, true)) {
+            if (\in_array($value, $seen, true)) {
                 throw new InvalidArgumentException("Block state values must be unique.");
             }
             $seen[] = $value;
@@ -75,9 +75,9 @@ readonly class BlockProperty
          */
         $values = [];
         foreach ($this->values as $value) {
-            if (is_string($value)) {
+            if (\is_string($value)) {
                 $values[] = new StringTag($value);
-            } elseif (is_int($value)) {
+            } elseif (\is_int($value)) {
                 $values[] = new IntTag($value);
             } else {
                 $values[] = new ByteTag($value ? 1 : 0);

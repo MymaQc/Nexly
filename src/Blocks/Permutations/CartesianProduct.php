@@ -15,8 +15,8 @@ class CartesianProduct
     public static function get(array $arrays): array
     {
         $result = [];
-        $count = count($arrays) - 1;
-        $combinations = array_product(array_map(static fn (array $array): int => count($array), $arrays));
+        $count = \count($arrays) - 1;
+        $combinations = array_product(array_map(static fn (array $array): int => \count($array), $arrays));
         for ($i = 0; $i < $combinations; $i++) {
             $result[] = array_map(static fn (array $array): mixed => current($array), $arrays);
             for ($j = $count; $j >= 0; $j--) {

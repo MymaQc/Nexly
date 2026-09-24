@@ -50,7 +50,7 @@ class MaterialInstancesBlockComponent extends BlockComponent
             }
             $names[$name] = true;
         }
-        if (count($names) > 64) {
+        if (\count($names) > 64) {
             throw new InvalidArgumentException("At most 64 material instances and mappings are supported.");
         }
     }

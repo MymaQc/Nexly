@@ -10,7 +10,9 @@ use Nexly\Validation\ComponentValues;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 
-/** Enables the Bedrock onEntityFallOn script event above the documented distance. */
+/**
+ * Enables the Bedrock onEntityFallOn script event above the documented distance.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 final class EntityFallOnBlockComponent extends BlockComponent
 {

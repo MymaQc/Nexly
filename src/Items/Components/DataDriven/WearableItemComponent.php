@@ -29,7 +29,7 @@ class WearableItemComponent extends DataDrivenItemComponent
             throw new InvalidArgumentException("Wearable protection cannot be negative.");
         }
 
-        if (!in_array($slot, [
+        if (!\in_array($slot, [
             ItemSlot::ARMOR_BODY,
             ItemSlot::ARMOR_CHEST,
             ItemSlot::ARMOR_FEET,

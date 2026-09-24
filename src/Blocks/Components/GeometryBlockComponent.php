@@ -35,7 +35,7 @@ class GeometryBlockComponent extends BlockComponent
     ) {
         $this->boneVisibility ??= CompoundTag::create();
         $identifierName = $identifier instanceof MinecraftGeometry ? $identifier->value : $identifier;
-        if ($identifierName === "" || strlen($identifierName) > 256 || strlen($culling) > 256) {
+        if ($identifierName === "" || \strlen($identifierName) > 256 || \strlen($culling) > 256) {
             throw new InvalidArgumentException("Geometry identifier must contain 1..256 bytes and culling at most 256 bytes.");
         }
         self::validateCullingIdentifier($cullingLayer instanceof CullingLayer ? $cullingLayer->value : $cullingLayer, [
@@ -46,10 +46,10 @@ class GeometryBlockComponent extends BlockComponent
             CullingShape::EMPTY->value,
             CullingShape::UNIT_CUBE->value,
         ], "culling shape");
-        if (is_array($uvLock)) {
+        if (\is_array($uvLock)) {
             ComponentValues::strings($uvLock);
         }
-        if (is_array($uvLock) && count($uvLock) > 64) {
+        if (\is_array($uvLock) && \count($uvLock) > 64) {
             throw new InvalidArgumentException("UV lock cannot contain more than 64 bone names.");
         }
         $this->validateBoneVisibility();
@@ -72,15 +72,15 @@ class GeometryBlockComponent extends BlockComponent
      */
     public function add(string $boneName, bool|string $visibility): self
     {
-        if ($boneName === "" || (is_string($visibility) && $visibility === "")) {
+        if ($boneName === "" || $visibility === "") {
             throw new InvalidArgumentException("Bone names and visibility expressions must not be empty.");
         }
-        if ($this->boneVisibility->getTag($boneName) === null && count($this->boneVisibility) >= 64) {
+        if ($this->boneVisibility->getTag($boneName) === null && \count($this->boneVisibility) >= 64) {
             throw new InvalidArgumentException("Bone visibility cannot contain more than 64 bones.");
         }
         $this->boneVisibility->setTag(
             $boneName,
-            is_bool($visibility) ?
+            \is_bool($visibility) ?
             new ByteTag($visibility ? 1 : 0) : CompoundTag::create()
                 ->setString("expression", $visibility)
                 ->setShort("version", 12)
@@ -93,27 +93,27 @@ class GeometryBlockComponent extends BlockComponent
      */
     private static function validateCullingIdentifier(string $value, array $vanillaValues, string $label): void
     {
-        if (strlen($value) > 256) {
+        if (\strlen($value) > 256) {
             throw new InvalidArgumentException(ucfirst($label) . " identifier cannot exceed 256 bytes.");
         }
-        if (in_array($value, $vanillaValues, true)) {
+        if (\in_array($value, $vanillaValues, true)) {
             return;
         }
-        if (str_starts_with($value, "minecraft:") || strlen($value) < 2 || preg_match('/^[a-z0-9].*[a-z0-9]$/D', $value) !== 1) {
+        if (str_starts_with($value, "minecraft:") || \strlen($value) < 2 || preg_match('/^[a-z0-9].*[a-z0-9]$/D', $value) !== 1) {
             throw new InvalidArgumentException("Invalid $label identifier; use a supported vanilla value or a custom name beginning and ending with a lowercase letter or digit.");
         }
     }
 
     private function validateBoneVisibility(): void
     {
-        if (count($this->boneVisibility) > 64) {
+        if (\count($this->boneVisibility) > 64) {
             throw new InvalidArgumentException("Bone visibility cannot contain more than 64 bones.");
         }
         foreach ($this->boneVisibility as $name => $visibility) {
             if ($name === "" || !($visibility instanceof ByteTag || $visibility instanceof CompoundTag)) {
                 throw new InvalidArgumentException("Bone visibility requires named boolean or Molang NBT values.");
             }
-            if ($visibility instanceof ByteTag && !in_array($visibility->getValue(), [0, 1], true)) {
+            if ($visibility instanceof ByteTag && !\in_array($visibility->getValue(), [0, 1], true)) {
                 throw new InvalidArgumentException("Bone visibility booleans must be 0 or 1.");
             }
             if ($visibility instanceof CompoundTag && (!($visibility->getTag("expression") instanceof StringTag) || $visibility->getString("expression") === "")) {
@@ -145,7 +145,7 @@ class GeometryBlockComponent extends BlockComponent
             $nbt->setTag("n_way_visual_rotation", $this->nWayVisualRotation instanceof NWayVisualRotation ? $this->nWayVisualRotation->toNBT() : new StringTag($this->nWayVisualRotation));
         }
 
-        $nbt->setTag("uv_lock", is_bool($this->uvLock)
+        $nbt->setTag("uv_lock", \is_bool($this->uvLock)
             ? new ByteTag($this->uvLock ? 1 : 0)
             : new ListTag(array_map(static fn (string $bone): StringTag => new StringTag($bone), $this->uvLock), NBT::TAG_String)
         );

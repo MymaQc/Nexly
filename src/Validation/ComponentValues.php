@@ -54,7 +54,7 @@ final class ComponentValues
             throw new InvalidArgumentException("Component collections must be lists.");
         }
         foreach ($values as $value) {
-            if (!is_string($value) || $value === "") {
+            if (!\is_string($value) || $value === "") {
                 throw new InvalidArgumentException("Component entries must be non-empty strings.");
             }
         }

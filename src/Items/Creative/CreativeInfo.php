@@ -7,12 +7,12 @@ use BackedEnum;
 use pocketmine\inventory\CreativeCategory;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class CreativeInfo
+readonly class CreativeInfo
 {
     public function __construct(
-        private readonly ?CreativeCategory             $category,
-        private readonly CreativeGroup|BackedEnum|null $group = null,
-        private readonly bool                          $isHidden = false,
+        private ?CreativeCategory             $category,
+        private CreativeGroup|BackedEnum|null $group = null,
+        private bool                          $isHidden = false,
     ) {
     }
 

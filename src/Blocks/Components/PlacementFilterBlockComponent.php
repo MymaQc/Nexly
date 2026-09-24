@@ -19,7 +19,7 @@ class PlacementFilterBlockComponent extends BlockComponent
         private readonly array $conditions,
     ) {
         ComponentValues::objects($conditions, PlacementCondition::class);
-        if ($conditions === [] || count($conditions) > 64) {
+        if ($conditions === [] || \count($conditions) > 64) {
             throw new InvalidArgumentException('Placement filter requires between 1 and 64 conditions.');
         }
     }
