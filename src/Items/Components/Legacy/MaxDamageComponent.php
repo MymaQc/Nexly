@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\IntTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
@@ -21,6 +22,9 @@ class MaxDamageComponent extends LegacyItemComponent
     public function __construct(
         private readonly int $maxDamage
     ) {
+        if ($maxDamage < 0 || $maxDamage > 2147483647) {
+            throw new InvalidArgumentException("Maximum damage must be a non-negative NBT int.");
+        }
     }
 
     /**

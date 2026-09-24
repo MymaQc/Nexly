@@ -393,7 +393,7 @@ final class NexlyPermutations
                     )->addComponent(
                         new CollisionBoxBlockComponent(!$open, [BoxCollision::FENCE_GATE()])
                     )->addComponent(
-                        new SelectionBoxBlockComponent(true, [BoxCollision::FENCE_GATE()])
+                        new SelectionBoxBlockComponent(true, [new BoxCollision(new Vector3(-8, 0, -2), new Vector3(16, 16, 4))])
                     )->addComponent(new TransformationBlockComponent(match ($dir) {
                         StateValues::MC_CARDINAL_DIRECTION_NORTH => new Vector3(0, 0, 0),
                         StateValues::MC_CARDINAL_DIRECTION_SOUTH => new Vector3(0, 180, 0),
@@ -712,7 +712,7 @@ final class NexlyPermutations
 
         $builder->addComponent(new FlowerPottableBlockComponent());
         $builder->addComponent(new EmbeddedVisualBlockComponent($geometry, $material));
-        $builder->addComponent(new RandomOffsetBlockComponent(new BlockPosition(0, 0, 0), new RangeOffset(new Vector3(-4, 1, -4), new Vector3(4, 0, 4))));
+        $builder->addComponent(new RandomOffsetBlockComponent(new BlockPosition(0, 0, 0), new RangeOffset(new Vector3(-4, 0, -4), new Vector3(4, 1, 4))));
     }
 
     /**
@@ -847,7 +847,7 @@ final class NexlyPermutations
                     "q.block_state('" . StateNames::LEVER_DIRECTION . "') == '$dir' && " .
                     "q.block_state('" . StateNames::OPEN_BIT . "') == $open";
 
-                if (in_array($dir, [
+                if (\in_array($dir, [
                     StateValues::LEVER_DIRECTION_UP_NORTH_SOUTH,
                     StateValues::LEVER_DIRECTION_UP_EAST_WEST,
                     StateValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH,

@@ -24,7 +24,9 @@ use pocketmine\data\bedrock\block\convert\BlockStateWriter;
  */
 class AsyncInitialization
 {
-    /** @var array<string, AsyncBlockDefinition> */
+    /**
+     * @var array<string, AsyncBlockDefinition>
+     */
     private static array $blocks = [];
 
     /**

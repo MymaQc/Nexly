@@ -2,6 +2,9 @@
 
 namespace Nexly\Items\Components\Legacy\Types;
 
+use InvalidArgumentException;
+use Nexly\Validation\ComponentValues;
+
 use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\lang\Translatable;
@@ -27,6 +30,10 @@ readonly class LegacyEffect
         private int    $amplifier = 0,
         private float  $chance = 100.0
     ) {
+        ComponentValues::finite($chance);
+        if ($id < 0 || $id > 2147483647 || $duration < -1 || $amplifier < 0 || $chance < 0.0 || $chance > 100.0) {
+            throw new InvalidArgumentException("Legacy effect id/amplifier/duration/chance is outside its supported range.");
+        }
     }
 
     /**
@@ -42,10 +49,10 @@ readonly class LegacyEffect
         return new self(
             EffectIdMap::getInstance()->toId($effectInstance->getType()),
             $name instanceof Translatable ? $name->getText() : $name,
-            "", // Description ID is not available in EffectInstance
+            "",
             $effectInstance->getDuration(),
             $effectInstance->getAmplifier(),
-            100.0 // Default chance to 100%
+            100.0
         );
     }
 

@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\NBT;
@@ -18,6 +20,7 @@ class TagsItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly array $tags,
     ) {
+        ComponentValues::strings($tags);
         foreach ($tags as $tag) {
             if ($tag === "") {
                 throw new InvalidArgumentException("Item tags must contain only non-empty strings.");

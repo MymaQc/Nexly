@@ -70,8 +70,12 @@ final class AsyncRegisterBlocksTask extends AsyncTask
     public function onRun(): void
     {
         foreach ($this->func as $stringId => $blockFunc) {
-            // We do not care about the model or creative inventory data in other threads since it is unused outside of
-            // the main thread.
+            /*
+             * We do not care about the model or creative inventory data in other threads since it is unused outside of
+             */
+            /*
+             * the main thread.
+             */
             $builder = NexlyBlocks::buildComplex($stringId, $blockFunc)
                 ->setNumericId($this->numericIds[$stringId])
                 ->setSerializer($this->serializer[$stringId])
@@ -97,31 +101,21 @@ final class AsyncRegisterBlocksTask extends AsyncTask
 
             foreach (json_decode($this->traits[$stringId], true, 512, JSON_THROW_ON_ERROR) as $trait) {
                 $identifier = $trait["identifier"] ?? null;
-                if (!is_string($identifier)) {
+                if (!\is_string($identifier)) {
                     throw new InvalidArgumentException("Invalid identifier for trait " . $identifier);
                 }
 
                 $rotationOffset = $trait["rotationOffset"] ?? null;
-                if (!is_int($rotationOffset) && !is_float($rotationOffset)) {
+                if (!\is_int($rotationOffset) && !\is_float($rotationOffset)) {
                     throw new InvalidArgumentException("Invalid rotationOffset for trait " . $rotationOffset);
                 }
 
                 $state = $trait["state"] ?? null;
-                if (!is_array($state)) {
+                if (!\is_array($state)) {
                     throw new InvalidArgumentException("Invalid state for trait " . $state);
                 }
 
-                $cardinal = $state["cardinal"] ?? null;
-                if (!is_bool($cardinal)) {
-                    throw new InvalidArgumentException("Invalid cardinal for trait " . $cardinal);
-                }
-
-                $facing = $state["facing"] ?? null;
-                if (!is_bool($facing)) {
-                    throw new InvalidArgumentException("Invalid facing for trait " . $facing);
-                }
-
-                $builder->addTrait(new MinecraftTrait(TraitIds::fromString($identifier), $rotationOffset, new State($cardinal, $facing)));
+                $builder->addTrait(new MinecraftTrait(TraitIds::fromString($identifier), $rotationOffset, State::fromArray($state)));
             }
 
             $builder->register(false, false);

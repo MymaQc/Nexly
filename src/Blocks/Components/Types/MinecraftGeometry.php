@@ -6,6 +6,10 @@ enum MinecraftGeometry: string
 {
     case FULL_BLOCK = "minecraft:geometry.full_block";
     case FULL_BLOCK_V1 = "minecraft:geometry.full_block_v1";
+    case SHELF_MUSHROOM_LARGE = "minecraft:geometry.shelf_mushroom_large";
+    case SHELF_MUSHROOM_SMALL = "minecraft:geometry.shelf_mushroom_small";
+    case STRAW_BED_FOOT = "minecraft:geometry.straw_bed_foot";
+    case STRAW_BED_HEAD = "minecraft:geometry.straw_bed_head";
     case FULL_CUBE = "minecraft:geometry.full_cube";
     case CROSS = "minecraft:geometry.cross";
     case BEACON = "minecraft:geometry.beacon";

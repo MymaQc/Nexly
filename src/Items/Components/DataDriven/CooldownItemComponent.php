@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemCooldownAction;
@@ -17,6 +19,7 @@ class CooldownItemComponent extends DataDrivenItemComponent
         private readonly string $category = "",
         private readonly ItemCooldownAction $type = ItemCooldownAction::USE,
     ) {
+        ComponentValues::finite($duration);
         if ($duration < 0.0) {
             throw new InvalidArgumentException("Cooldown duration cannot be negative.");
         }

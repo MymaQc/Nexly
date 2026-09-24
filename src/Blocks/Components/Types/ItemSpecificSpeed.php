@@ -2,6 +2,8 @@
 
 namespace Nexly\Blocks\Components\Types;
 
+use Nexly\Validation\ComponentValues;
+
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -13,7 +15,8 @@ readonly class ItemSpecificSpeed
         private string|ItemDescriptor $item,
         private float $destroySpeed,
     ) {
-        if ($item === "") {
+        ComponentValues::finite($destroySpeed);
+        if (is_string($item) && $item === "") {
             throw new InvalidArgumentException("Item identifier cannot be empty.");
         }
 

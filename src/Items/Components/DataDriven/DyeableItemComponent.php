@@ -18,12 +18,12 @@ class DyeableItemComponent extends DataDrivenItemComponent
     public function __construct(
         string|array $defaultColor = "#FFFFFF",
     ) {
-        if (is_array($defaultColor)) {
-            if (array_filter($defaultColor, static fn (int $channel): bool => $channel < 0 || $channel > 255) !== []) {
+        if (\is_array($defaultColor)) {
+            if (!array_is_list($defaultColor) || \count($defaultColor) !== 3 || array_filter($defaultColor, static fn (mixed $channel): bool => !\is_int($channel) || $channel < 0 || $channel > 255) !== []) {
                 throw new InvalidArgumentException("RGB color must contain three integer channels between 0 and 255.");
             }
 
-            $defaultColor = sprintf("#%02X%02X%02X", ...$defaultColor);
+            $defaultColor = \sprintf("#%02X%02X%02X", ...$defaultColor);
         }
 
         if (!preg_match('/^#[A-Fa-f0-9]{6}$/', $defaultColor)) {

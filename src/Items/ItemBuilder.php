@@ -4,6 +4,7 @@ namespace Nexly\Items;
 
 use Closure;
 use InvalidArgumentException;
+use Nexly\Validation\ComponentValues;
 use Nexly\Items\Creative\CreativeInfo;
 use Nexly\Items\Creative\NexlyCreative;
 use Nexly\Mappings\ItemMappings;
@@ -48,10 +49,7 @@ abstract class ItemBuilder
      */
     public function setStringId(string $stringId): self
     {
-        if (str_contains($stringId, "minecraft:")) {
-            throw new InvalidArgumentException("Custom item string ID cannot contain the 'minecraft:' namespace.");
-        }
-
+        ComponentValues::customIdentifier($stringId);
         $this->stringId = $stringId;
         return $this;
     }
@@ -219,7 +217,7 @@ abstract class ItemBuilder
         $reflection = new ReflectionClass($item);
 
         $attributes = $reflection->getAttributes();
-        if (count($attributes) > 0) {
+        if (\count($attributes) > 0) {
             foreach ($attributes as $attribute) {
                 $instance = $attribute->newInstance();
                 if ($instance instanceof CreativeInfo) {

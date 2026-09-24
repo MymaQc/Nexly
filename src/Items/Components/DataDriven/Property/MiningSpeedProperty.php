@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven\Property;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use pocketmine\nbt\tag\FloatTag;
 
@@ -11,6 +13,7 @@ class MiningSpeedProperty extends PropertyItemComponent
     public function __construct(
         private readonly float $speed
     ) {
+        ComponentValues::finite($speed);
     }
 
     /**

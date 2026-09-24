@@ -11,11 +11,17 @@ readonly class DurabilityThreshold
 {
     public function __construct(
         private int     $durability,
-        private ?string $soundEvent = null,
-        private ?string $particleType = null,
+        private SoundEvent|string|null $soundEvent = null,
+        private ParticleType|string|null $particleType = null,
     ) {
-        if ($durability < 0) {
+        if ($durability < 0 || $durability > 2147483647) {
             throw new InvalidArgumentException("Durability threshold cannot be negative.");
+        }
+        if (\is_string($soundEvent) && SoundEvent::tryFrom($soundEvent) === null) {
+            throw new InvalidArgumentException("Unknown built-in sound event; use SoundEvent cases.");
+        }
+        if (\is_string($particleType) && ParticleType::tryFrom($particleType) === null) {
+            throw new InvalidArgumentException("Unknown built-in particle type; use ParticleType cases.");
         }
     }
 
@@ -32,7 +38,7 @@ readonly class DurabilityThreshold
      */
     public function getSound(): ?string
     {
-        return $this->soundEvent;
+        return $this->soundEvent instanceof SoundEvent ? $this->soundEvent->value : $this->soundEvent;
     }
 
     /**
@@ -40,7 +46,7 @@ readonly class DurabilityThreshold
      */
     public function getParticle(): ?string
     {
-        return $this->particleType;
+        return $this->particleType instanceof ParticleType ? $this->particleType->value : $this->particleType;
     }
 
     /**
@@ -52,11 +58,11 @@ readonly class DurabilityThreshold
             ->setTag("durability", new IntTag($this->durability));
 
         if ($this->soundEvent !== null) {
-            $nbt->setTag("sound_event", new StringTag($this->soundEvent));
+            $nbt->setTag("sound_event", new StringTag($this->getSound()));
         }
 
         if ($this->particleType !== null) {
-            $nbt->setTag("particle_type", new StringTag($this->particleType));
+            $nbt->setTag("particle_type", new StringTag($this->getParticle()));
         }
 
         return $nbt;

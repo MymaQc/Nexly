@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven\Types;
 
+use Nexly\Validation\ComponentValues;
+
 use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\NBT;
@@ -22,6 +24,10 @@ readonly class ItemRepair
         private float|string $repairAmount,
         private array        $items,
     ) {
+        ComponentValues::strings($items);
+        if (\is_float($repairAmount)) {
+            ComponentValues::finite($repairAmount);
+        }
         if ($repairAmount === "") {
             throw new InvalidArgumentException("Repair amount expression cannot be empty.");
         }
@@ -65,7 +71,7 @@ readonly class ItemRepair
 
     public function toNBT(): CompoundTag
     {
-        $repairAmount = is_float($this->repairAmount)
+        $repairAmount = \is_float($this->repairAmount)
             ? new FloatTag($this->repairAmount)
             : CompoundTag::create()
                 ->setTag("expression", new StringTag($this->repairAmount))

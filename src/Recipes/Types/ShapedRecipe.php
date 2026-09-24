@@ -13,7 +13,9 @@ use pocketmine\item\StringToItemParser;
 #[Attribute(Attribute::TARGET_CLASS)]
 class ShapedRecipe implements Recipe
 {
-    /** @var non-empty-list<string> */
+    /**
+     * @var non-empty-list<string>
+     */
     private array $shape;
 
     /**

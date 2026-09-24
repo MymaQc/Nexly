@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\Legacy;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -27,6 +29,7 @@ class CameraComponent extends LegacyItemComponent
         private readonly float $pictureDuration,
         private readonly float $slideAwayDuration,
     ) {
+        ComponentValues::finite($blackBarsDuration, $blackBarsScreenRatio, $shutterDuration, $shutterScreenRatio, $pictureDuration, $slideAwayDuration);
     }
 
     /**

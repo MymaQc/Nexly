@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\block\Block;
@@ -23,6 +25,7 @@ class DiggerItemComponent extends DataDrivenItemComponent
         private readonly bool $useEfficiency = false,
         private array $destroySpeeds = []
     ) {
+        ComponentValues::objects($destroySpeeds, CompoundTag::class);
     }
 
     /**
@@ -44,8 +47,8 @@ class DiggerItemComponent extends DataDrivenItemComponent
      */
     public function addBlock(Block $block, int $speed): self
     {
-        if ($speed < 0) {
-            throw new InvalidArgumentException("Destroy speed cannot be negative.");
+        if ($speed < 0 || $speed > 2147483647) {
+            throw new InvalidArgumentException("Destroy speed must fit a non-negative NBT int.");
         }
 
         $blockName = GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId())->getName();
@@ -79,13 +82,19 @@ class DiggerItemComponent extends DataDrivenItemComponent
      */
     public function addTag(array|string $tags, int $speed): self
     {
-        $tags = is_string($tags) ? [$tags] : $tags;
-        if ($tags === [] || in_array("", $tags, true)) {
-            throw new InvalidArgumentException("Tags must contain at least one non-empty string.");
+        $tags = \is_string($tags) ? [$tags] : $tags;
+        ComponentValues::strings($tags);
+        if ($tags === []) {
+            throw new InvalidArgumentException("At least one block tag is required.");
+        }
+        foreach ($tags as $tag) {
+            if (strpbrk($tag, "'\\\\") !== false) {
+                throw new InvalidArgumentException("Block tags cannot contain quotes or backslashes in a Molang expression.");
+            }
         }
 
-        if ($speed < 0) {
-            throw new InvalidArgumentException("Destroy speed cannot be negative.");
+        if ($speed < 0 || $speed > 2147483647) {
+            throw new InvalidArgumentException("Destroy speed must fit a non-negative NBT int.");
         }
 
         $this->destroySpeeds[] = CompoundTag::create()
@@ -101,6 +110,7 @@ class DiggerItemComponent extends DataDrivenItemComponent
      */
     public function toNBT(): CompoundTag
     {
+        ComponentValues::objects($this->destroySpeeds, CompoundTag::class);
         return CompoundTag::create()
             ->setTag("use_efficiency", new ByteTag($this->useEfficiency ? 1 : 0))
             ->setTag("destroy_speeds", new ListTag($this->destroySpeeds, NBT::TAG_Compound));

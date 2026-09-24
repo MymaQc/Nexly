@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\LiquidRule;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -15,12 +16,26 @@ class LiquidDetectionComponent extends BlockComponent
      * @param list<LiquidRule> $rules
      */
     public function __construct(
-        private readonly array $rules = [],
+        private readonly array $rules = [new LiquidRule(false)],
     ) {
+        if ($rules === []) {
+            throw new InvalidArgumentException("Liquid detection requires at least one rule (Bedrock 1.26.10+).");
+        }
+        $types = [];
+        foreach ($rules as $rule) {
+            if (!$rule instanceof LiquidRule) {
+                throw new InvalidArgumentException("Detection rules must be LiquidRule instances.");
+            }
+            $type = $rule->getLiquidType()->value;
+            if (isset($types[$type])) {
+                throw new InvalidArgumentException("Only one detection rule is allowed per liquid type.");
+            }
+            $types[$type] = true;
+        }
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * Returns the registered Bedrock component identifier.
      *
      * @return string
      */

@@ -2,7 +2,10 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
+use Nexly\Items\Components\DataDriven\Types\SoundEvent;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemStartUsing;
 use pocketmine\nbt\tag\ByteTag;
@@ -17,16 +20,20 @@ class UseModifiersItemComponent extends DataDrivenItemComponent
      * @param float $useDuration
      * @param float|null $movementModifier
      * @param bool $emitVibrations
-     * @param string|null $startSound
+     * @param SoundEvent|string|null $startSound
      * @param ItemStartUsing $startUsing
      */
     public function __construct(
         private readonly float $useDuration,
         private readonly ?float $movementModifier = null,
         private readonly bool $emitVibrations = true,
-        private readonly ?string $startSound = null,
+        private readonly SoundEvent|string|null $startSound = null,
         private readonly ItemStartUsing $startUsing = ItemStartUsing::ALWAYS,
     ) {
+        if (\is_string($startSound) && SoundEvent::tryFrom($startSound) === null) {
+            throw new InvalidArgumentException("Unknown built-in start sound; use SoundEvent cases.");
+        }
+        ComponentValues::finite($useDuration, $movementModifier ?? 0.0);
         if ($useDuration < 0.0) {
             throw new InvalidArgumentException("Use duration cannot be negative.");
         }
@@ -63,7 +70,7 @@ class UseModifiersItemComponent extends DataDrivenItemComponent
         }
 
         if ($this->startSound !== null) {
-            $nbt->setTag("start_sound", new StringTag($this->startSound));
+            $nbt->setTag("start_sound", new StringTag($this->startSound instanceof SoundEvent ? $this->startSound->value : $this->startSound));
         }
 
         return $nbt;

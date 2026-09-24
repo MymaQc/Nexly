@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\DamageCause;
@@ -19,10 +21,10 @@ class DamageAbsorptionItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly array $absorbableCauses,
     ) {
+        ComponentValues::objects($absorbableCauses, DamageCause::class);
         if ($absorbableCauses === []) {
             throw new InvalidArgumentException("At least one absorbable damage cause is required.");
         }
-
     }
 
     /**

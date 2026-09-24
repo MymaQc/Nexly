@@ -31,10 +31,14 @@ final class BlockBreakingListener implements Listener
     private const MAX_BLOCK_ACTIONS = 100;
     private const MAX_DIST_SQ = 10_000;
 
-    /** @var WeakMap<Player, SurvivalBlockBreakHandler> */
+    /**
+     * @var WeakMap<Player, SurvivalBlockBreakHandler>
+     */
     private WeakMap $breakHandlers;
 
-    /** Réflexion mise en cache */
+    /**
+     * Réflexion mise en cache
+     */
     private static ?ReflectionProperty $rpPlayerBlockBreakHandler = null;
     private static ?ReflectionProperty $rpHandlerLastBlockAttacked = null;
     private static ?ReflectionProperty $rpAuthInputBlockActions   = null;
@@ -127,7 +131,9 @@ final class BlockBreakingListener implements Listener
         }
 
         if ($this->breakHandlers->offsetExists($player)) {
-            /** @var SurvivalBlockBreakHandler|null $bh */
+            /**
+             * @var SurvivalBlockBreakHandler|null $bh
+             */
             $bh = $this->breakHandlers->offsetGet($player);
             if ($bh !== null) {
                 $bh->update();
@@ -177,10 +183,8 @@ final class BlockBreakingListener implements Listener
                 if (!$player->attackBlock($pos, $face)) {
                     $this->syncBlocksNearby($player, $pos, $face);
                 } else {
-                    // on capture le handler réel pour suivre la progression côté listener
                     $bh = $this->getPlayerBlockBreakHandler($player);
                     if ($bh !== null) {
-                        // on clone pour décorréler de l’instance interne du joueur
                         $this->breakHandlers->offsetSet($player, clone $bh);
                     }
                 }
@@ -236,9 +240,11 @@ final class BlockBreakingListener implements Listener
                 }
 
                 $target = $player->getWorld()->getBlock($pos);
-                $hasBH  = $this->breakHandlers->offsetExists($player);
-                /** @var SurvivalBlockBreakHandler|null $bh */
-                $bh     = $hasBH ? $this->breakHandlers->offsetGet($player) : null;
+                $hasBH = $this->breakHandlers->offsetExists($player);
+                /**
+                 * @var SurvivalBlockBreakHandler|null $bh
+                 */
+                $bh = $hasBH ? $this->breakHandlers->offsetGet($player) : null;
 
                 if (($bh === null) && !$target->getBreakInfo()->breaksInstantly()) {
                     $session->getLogger()->debug("Ignoring action $action on $pos (no BlockBreakHandler)");
@@ -295,7 +301,6 @@ final class BlockBreakingListener implements Listener
             }
             self::$rpAuthInputBlockActions = $rc->getProperty('blockActions');
         }
-        // pas de setAccessible (déprécié). Fonctionne si la prop n’est pas privée.
         self::$rpAuthInputBlockActions->setValue($pk, null);
     }
 
@@ -314,7 +319,9 @@ final class BlockBreakingListener implements Listener
             }
             self::$rpPlayerBlockBreakHandler = $rc->getProperty('blockBreakHandler');
         }
-        /** @var SurvivalBlockBreakHandler|null $bh */
+        /**
+         * @var SurvivalBlockBreakHandler|null $bh
+         */
         $bh = self::$rpPlayerBlockBreakHandler->getValue($player);
         return $bh;
     }
@@ -334,7 +341,9 @@ final class BlockBreakingListener implements Listener
             }
             self::$rpHandlerLastBlockAttacked = $rc->getProperty('lastBlockAttacked');
         }
-        /** @var BlockPosition|null $bp */
+        /**
+         * @var BlockPosition|null $bp
+         */
         $bp = self::$rpHandlerLastBlockAttacked->getValue($handler);
         return $bp;
     }

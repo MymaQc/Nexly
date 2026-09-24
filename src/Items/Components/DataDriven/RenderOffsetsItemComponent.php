@@ -3,11 +3,14 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class RenderOffsetsItemComponent extends DataDrivenItemComponent
 {
@@ -17,6 +20,9 @@ class RenderOffsetsItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly int $resolution = 16,
     ) {
+        if ($resolution <= 0) {
+            throw new InvalidArgumentException("Texture resolution must be positive.");
+        }
     }
 
     /**

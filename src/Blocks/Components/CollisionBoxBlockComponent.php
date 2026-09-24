@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\BoxCollision;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -21,13 +22,21 @@ class CollisionBoxBlockComponent extends BlockComponent
         private readonly bool $enabled,
         private array $collisions = [],
     ) {
+        if (count($collisions) > 16) {
+            throw new InvalidArgumentException("A collision component supports at most 16 boxes.");
+        }
+        foreach ($collisions as $collision) {
+            if (!$collision instanceof BoxCollision) {
+                throw new InvalidArgumentException("Collision boxes must be BoxCollision instances.");
+            }
+        }
         if (empty($this->collisions)) {
             $this->collisions[] = new BoxCollision(new Vector3(-8.0, 0.0, -8.0), new Vector3(16.0, 16.0, 16.0));
         }
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * Returns the registered Bedrock component identifier.
      *
      * @return string
      */

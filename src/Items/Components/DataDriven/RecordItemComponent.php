@@ -2,7 +2,10 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
+use Nexly\Items\Components\DataDriven\Types\SoundEvent;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -13,15 +16,19 @@ use pocketmine\nbt\tag\StringTag;
 class RecordItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param string $soundEvent
+     * @param SoundEvent|string $soundEvent
      * @param float $duration
      * @param int $comparatorSignal
      */
     public function __construct(
-        private readonly string $soundEvent,
+        private readonly SoundEvent|string $soundEvent,
         private readonly float $duration = 0.0,
         private readonly int $comparatorSignal = 1
     ) {
+        if (\is_string($soundEvent) && SoundEvent::tryFrom($soundEvent) === null) {
+            throw new InvalidArgumentException("Unknown built-in sound event; use SoundEvent cases.");
+        }
+        ComponentValues::finite($duration);
         if ($duration < 0.0) {
             throw new InvalidArgumentException("Record duration cannot be negative.");
         }
@@ -49,7 +56,7 @@ class RecordItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("sound_event", new StringTag($this->soundEvent))
+            ->setTag("sound_event", new StringTag($this->soundEvent instanceof SoundEvent ? $this->soundEvent->value : $this->soundEvent))
             ->setTag("duration", new FloatTag($this->duration))
             ->setTag("comparator_signal", new IntTag($this->comparatorSignal));
     }

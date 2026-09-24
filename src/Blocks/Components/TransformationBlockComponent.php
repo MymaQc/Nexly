@@ -4,6 +4,7 @@ namespace Nexly\Blocks\Components;
 
 use Attribute;
 use InvalidArgumentException;
+use Nexly\Validation\ComponentValues;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -21,15 +22,26 @@ class TransformationBlockComponent extends BlockComponent
         private readonly Vector3 $scalePivot = new Vector3(0, 0, 0),
         private readonly bool $hasJsonVersionBeforeValidation = false,
     ) {
-        foreach ([$rotation->getX(), $rotation->getY(), $rotation->getZ()] as $angle) {
+        $this->validate();
+    }
+
+    private function validate(): void
+    {
+        foreach ([$this->rotation, $this->scale, $this->translation, $this->rotationPivot, $this->scalePivot] as $vector) {
+            ComponentValues::finite($vector->getX(), $vector->getY(), $vector->getZ());
+        }
+        foreach ([$this->rotation->getX(), $this->rotation->getY(), $this->rotation->getZ()] as $angle) {
             if (abs(fmod((float) $angle, 90.0)) > PHP_FLOAT_EPSILON) {
                 throw new InvalidArgumentException("Block rotation values must be multiples of 90 degrees.");
+            }
+            if ($angle / 90 < -2147483648 || $angle / 90 > 2147483647) {
+                throw new InvalidArgumentException("Block quarter-turn rotations must fit an NBT int.");
             }
         }
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * The network component name for block transformations.
      *
      * @return string
      */
@@ -45,6 +57,7 @@ class TransformationBlockComponent extends BlockComponent
      */
     public function toNBT(): CompoundTag
     {
+        $this->validate();
         return CompoundTag::create()
             ->setTag("RX", new IntTag(intdiv((int) $this->rotation->getX(), 90)))
             ->setTag("RY", new IntTag(intdiv((int) $this->rotation->getY(), 90)))

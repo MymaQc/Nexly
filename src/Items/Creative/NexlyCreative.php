@@ -64,13 +64,19 @@ use pocketmine\lang\Translatable;
 
 class NexlyCreative
 {
-    /** @var array<string, CreativeGroupPM> */
+    /**
+     * @var array<string, CreativeGroupPM>
+     */
     private static array $groups = [];
 
-    /** @var array<string, CreativeCategory> */
+    /**
+     * @var array<string, CreativeCategory>
+     */
     private static array $groupToCategory = [];
 
-    /** @var array<string, CreativeInventoryEntry|CreativeGroupPM> */
+    /**
+     * @var array<string, CreativeInventoryEntry|CreativeGroupPM>
+     */
     private static array $categoryToGroups = [];
 
     /**
@@ -82,11 +88,10 @@ class NexlyCreative
     {
         if (!empty(self::$categoryToGroups)) {
             return;
-        } // Already loaded
+        }
         if (!empty(self::$groupToCategory)) {
             return;
-        } // Already loaded
-
+        }
         foreach (CreativeInventory::getInstance()->getAllEntries() as $entry) {
             $category = $entry->getCategory();
             $group = $entry->getGroup();
@@ -113,7 +118,9 @@ class NexlyCreative
      */
     public static function add(Item $item, ?CreativeCategory $category = null, CreativeGroup|BackedEnum|null $group = null): void
     {
-        self::loadGroups(); // Ensure groups are loaded
+        self::loadGroups(); /*
+             * Ensure groups are loaded
+             */
 
         $groupValue = $group === null ? null : self::getGroupValue($group);
         if ($category === null && $group !== null) {
@@ -164,7 +171,9 @@ class NexlyCreative
             $item instanceof Record => new CreativeInfo(null, CreativeGroup::GROUP_RECORD),
             $item instanceof GoatHorn => new CreativeInfo(null, CreativeGroup::GROUP_GOAT_HORN),
             $item instanceof Banner => new CreativeInfo(null, CreativeGroup::GROUP_BANNER),
-            //$item instanceof SpawnEgg => new CreativeInfo(null, CreativeGroup::GROUP_MOB_EGGS),
+            /*
+             * $item instanceof SpawnEgg => new CreativeInfo(null, CreativeGroup::GROUP_MOB_EGGS),
+             */
             !$item->getBlock() instanceof Air => self::detectCreativeInfoFromBlock($item->getBlock()),
             default => new CreativeInfo(CreativeCategory::ITEMS),
         };
@@ -215,7 +224,7 @@ class NexlyCreative
 
     private static function getGroupValue(BackedEnum $group): string
     {
-        if (!is_string($group->value)) {
+        if (!\is_string($group->value)) {
             throw new InvalidArgumentException("Creative group enum values must be strings.");
         }
 

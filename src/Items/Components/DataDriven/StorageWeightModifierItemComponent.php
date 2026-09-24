@@ -16,8 +16,8 @@ class StorageWeightModifierItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly int $weightInStorageItem = 4,
     ) {
-        if ($weightInStorageItem < 0) {
-            throw new InvalidArgumentException("Storage weight cannot be negative.");
+        if ($weightInStorageItem < 0 || $weightInStorageItem > 64) {
+            throw new InvalidArgumentException("Storage weight must be between 0 and 64.");
         }
     }
 

@@ -1,0 +1,22 @@
+<?php
+
+namespace Nexly\Blocks\Components\Types;
+
+/**
+ * Biome tint methods supported by minecraft:material_instances (1.21.80+).
+ */
+enum TintMethod: string
+{
+    case NONE = "none";
+    case DEFAULT_FOLIAGE = "default_foliage";
+    case BIRCH_FOLIAGE = "birch_foliage";
+    case EVERGREEN_FOLIAGE = "evergreen_foliage";
+    case DRY_FOLIAGE = "dry_foliage";
+    case GRASS = "grass";
+    case WATER = "water";
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}

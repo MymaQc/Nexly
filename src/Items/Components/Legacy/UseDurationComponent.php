@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\IntTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
@@ -21,6 +22,9 @@ class UseDurationComponent extends LegacyItemComponent
     public function __construct(
         private readonly int $value
     ) {
+        if ($value < 0 || $value > 2147483647) {
+            throw new InvalidArgumentException("Use duration must be a non-negative NBT int.");
+        }
     }
 
     /**

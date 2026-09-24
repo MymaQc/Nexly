@@ -11,7 +11,9 @@ use pocketmine\nbt\tag\StringTag;
 
 readonly class BlockProperty
 {
-    /** @var non-empty-list<string|int|bool> */
+    /**
+     * @var non-empty-list<string|int|bool>
+     */
     private array $values;
 
     /**
@@ -24,6 +26,27 @@ readonly class BlockProperty
     ) {
         if ($values === []) {
             throw new InvalidArgumentException("A block property must define at least one possible value.");
+        }
+
+        if (!array_is_list($values) || count($values) > 16) {
+            throw new InvalidArgumentException("Block states require a list of at most 16 values.");
+        }
+        if ($name === "") {
+            throw new InvalidArgumentException("Block state name cannot be empty.");
+        }
+        $type = get_debug_type($values[0]);
+        $seen = [];
+        foreach ($values as $value) {
+            if ((!is_string($value) && !is_int($value) && !is_bool($value)) || get_debug_type($value) !== $type) {
+                throw new InvalidArgumentException("Block state values must all have the same string, integer or boolean type.");
+            }
+            if (is_int($value) && ($value < -2147483648 || $value > 2147483647)) {
+                throw new InvalidArgumentException("Block state integers must fit an NBT IntTag.");
+            }
+            if (in_array($value, $seen, true)) {
+                throw new InvalidArgumentException("Block state values must be unique.");
+            }
+            $seen[] = $value;
         }
 
         $this->values = $values;
@@ -47,7 +70,9 @@ readonly class BlockProperty
 
     public function toNBT(): CompoundTag
     {
-        /** @var list<StringTag|IntTag|ByteTag> $values */
+        /**
+         * @var list<StringTag|IntTag|ByteTag> $values
+         */
         $values = [];
         foreach ($this->values as $value) {
             if (is_string($value)) {

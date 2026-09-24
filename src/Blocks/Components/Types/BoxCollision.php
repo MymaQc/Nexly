@@ -88,6 +88,11 @@ class BoxCollision
 
     private static function validate(Vector3 $origin, Vector3 $size): void
     {
+        foreach ([$origin->getX(), $origin->getY(), $origin->getZ(), $size->getX(), $size->getY(), $size->getZ()] as $value) {
+            if (!is_finite($value)) {
+                throw new InvalidArgumentException("Box coordinates must be finite.");
+            }
+        }
         if (
             $origin->getX() < -8 || $origin->getX() > 8
             || $origin->getY() < 0 || $origin->getY() > 24
@@ -114,6 +119,7 @@ class BoxCollision
      */
     public function toNBT(bool $latest): CompoundTag
     {
+        self::validate($this->origin, $this->size);
         if ($latest) {
             $minX = 8 + $this->origin->getX();
             $minY = $this->origin->getY();

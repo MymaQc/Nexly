@@ -16,7 +16,9 @@ class BlockMappings
      */
     private array $mappings = [];
 
-    /** @var list<BlockPaletteEntry> */
+    /**
+     * @var list<BlockPaletteEntry>
+     */
     private array $entries = [];
 
     /**
@@ -24,7 +26,7 @@ class BlockMappings
      */
     public function nextRuntimeId(): int
     {
-        return 10000 + count($this->entries);
+        return 10000 + \count($this->entries);
     }
 
     /**

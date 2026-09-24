@@ -82,7 +82,7 @@ class Nexly extends PluginBase
             NexlyRecipes::getInstance()->registers();
             BlockPalette::getInstance()->apply();
 
-            $this->getLogger()->notice("Sending " . count($blocks) . " blocks to worker threads for registration...");
+            $this->getLogger()->notice("Sending " . \count($blocks) . " blocks to worker threads for registration...");
             $pool->addWorkerStartHook(function (int $worker) use ($pool, $blocks): void {
                 $pool->submitTaskToWorker(new AsyncRegisterBlocksTask($blocks), $worker);
             });

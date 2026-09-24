@@ -16,8 +16,8 @@ class EnchantableItemComponent extends DataDrivenItemComponent
         private readonly ItemEnchantSlot $slot,
         private readonly int $value,
     ) {
-        if ($value < 0) {
-            throw new InvalidArgumentException("Value must be non-negative");
+        if ($value < 0 || $value > 2147483647) {
+            throw new InvalidArgumentException("Enchantability must fit a non-negative NBT int.");
         }
     }
 

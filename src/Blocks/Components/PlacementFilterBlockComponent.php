@@ -3,27 +3,29 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
-use pocketmine\nbt\NBT;
+use InvalidArgumentException;
+use Nexly\Blocks\Components\Types\PlacementCondition;
+use Nexly\Validation\ComponentValues;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\StringTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class PlacementFilterBlockComponent extends BlockComponent
 {
     /**
-     * @param list<IntTag> $allowedFaces
-     * @param list<StringTag> $blockFilter
+     * @param list<PlacementCondition> $conditions
      */
     public function __construct(
-        private readonly array $allowedFaces = [],
-        private readonly array $blockFilter = [],
+        private readonly array $conditions,
     ) {
+        ComponentValues::objects($conditions, PlacementCondition::class);
+        if ($conditions === [] || count($conditions) > 64) {
+            throw new InvalidArgumentException('Placement filter requires between 1 and 64 conditions.');
+        }
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * The network component name for block placement conditions.
      *
      * @return string
      */
@@ -40,8 +42,6 @@ class PlacementFilterBlockComponent extends BlockComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("conditions", CompoundTag::create()
-            ->setTag("allowed_faces", new ListTag($this->allowedFaces, NBT::TAG_Int)))
-            ->setTag("block_filter", new ListTag($this->blockFilter, NBT::TAG_String));
+            ->setTag('conditions', new ListTag(array_map(static fn (PlacementCondition $condition): CompoundTag => $condition->toNBT(), $this->conditions)));
     }
 }

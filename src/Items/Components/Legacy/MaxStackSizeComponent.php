@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\nbt\tag\IntTag;
 
 #[Attribute(Attribute::TARGET_CLASS)]
@@ -21,6 +22,9 @@ class MaxStackSizeComponent extends LegacyItemComponent
     public function __construct(
         private readonly int $size
     ) {
+        if ($size < 1 || $size > 64) {
+            throw new InvalidArgumentException("Maximum stack size must be a positive NBT int.");
+        }
     }
 
     /**

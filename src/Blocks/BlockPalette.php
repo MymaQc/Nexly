@@ -19,7 +19,9 @@ final class BlockPalette
 {
     use SingletonTrait;
 
-    /** @var list<BlockStateDictionaryEntry> */
+    /**
+     * @var list<BlockStateDictionaryEntry>
+     */
     private array $states = [];
 
     public function __construct()
@@ -158,8 +160,12 @@ final class BlockPalette
             $states[$state->getStateName()][] = $state;
         }
 
-        // To sort the block palette we first have to split the palette up in to groups of states. We only want to sort
-        // using the name of the block, and keeping the order of the existing states.
+        /*
+         * To sort the block palette we first have to split the palette up in to groups of states. We only want to sort
+         */
+        /*
+         * using the name of the block, and keeping the order of the existing states.
+         */
         foreach ($this->getStates() as $state) {
             $states[$state->getStateName()][] = $state;
         }
@@ -170,8 +176,12 @@ final class BlockPalette
         $dictionary = $translator->getBlockStateDictionary();
         $bedrockKnownStates->setValue($dictionary, $sortedStates);
         $stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookupValue);
-        $idMetaToStateIdLookupCache->setValue($dictionary, null); //set this to null so pm can create a new cache
-        $networkIdCache->setValue($translator, []); //set this to empty-array so pm can create a new cache
+        $idMetaToStateIdLookupCache->setValue($dictionary, null); /*
+             * set this to null so pm can create a new cache
+             */
+        $networkIdCache->setValue($translator, []); /*
+             * set this to empty-array so pm can create a new cache
+             */
         $fallbackStateId->setValue(
             $translator,
             $stateDataToStateIdLookupValue[BlockTypeNames::INFO_UPDATE] ??

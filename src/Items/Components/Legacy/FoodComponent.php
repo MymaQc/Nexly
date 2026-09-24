@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\Legacy;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use BackedEnum;
 use InvalidArgumentException;
@@ -55,6 +57,34 @@ class FoodComponent extends LegacyItemComponent
         private readonly array                                    $effects = [],
         private readonly array                                    $removeEffects = [],
     ) {
+        ComponentValues::finite($saturationModifier);
+        ComponentValues::objects($effects, LegacyEffect::class);
+        if (!array_is_list($onUseRange) || !array_is_list($removeEffects)) {
+            throw new InvalidArgumentException("Legacy food collections must be lists.");
+        }
+        foreach ($onUseRange as $value) {
+            if (!\is_float($value) && !\is_int($value)) {
+                throw new InvalidArgumentException("Legacy food ranges must contain numbers.");
+            }
+            ComponentValues::finite((float) $value);
+        }
+        foreach ($removeEffects as $effectId) {
+            if (!\is_int($effectId) || $effectId < 0 || $effectId > 2147483647) {
+                throw new InvalidArgumentException("Legacy effect ids must be non-negative NBT ints.");
+            }
+        }
+        if ($nutrition < 0 || $nutrition > 2147483647 || $cooldownTick < 0 || $cooldownTick > 2147483647) {
+            throw new InvalidArgumentException("Legacy food values must be non-negative NBT ints.");
+        }
+        if ($saturationModifier < 0.0 || $saturationModifier > 1.0) {
+            throw new InvalidArgumentException("Legacy saturation modifier must be between 0.0 and 1.0.");
+        }
+        if ($cooldownType === "") {
+            throw new InvalidArgumentException("Cooldown type cannot be empty.");
+        }
+        if ($cooldownType instanceof BackedEnum && !\is_string($cooldownType->value)) {
+            throw new InvalidArgumentException("The cooldown type enum must be string-backed.");
+        }
     }
 
     /**
@@ -76,8 +106,12 @@ class FoodComponent extends LegacyItemComponent
      */
     public function toNBT(): CompoundTag
     {
-        $cooldownType = is_string($this->cooldownType) ? $this->cooldownType : $this->cooldownType->value;
-        if (!is_string($cooldownType)) {
+        if ($this->usingConvertsTo === "") {
+            throw new InvalidArgumentException("Converted item identifier cannot be empty.");
+        }
+        ComponentValues::objects($this->effects, LegacyEffect::class);
+        $cooldownType = \is_string($this->cooldownType) ? $this->cooldownType : $this->cooldownType->value;
+        if (!\is_string($cooldownType)) {
             throw new InvalidArgumentException("The cooldown type enum must be backed by a string.");
         }
 

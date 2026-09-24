@@ -16,6 +16,14 @@ use pocketmine\item\Sword;
 
 enum ItemEnchantSlot: string
 {
+    case NONE = "none";
+    case G_ARMOR = "g_armor";
+    case G_TOOL = "g_tool";
+    case G_DIGGING = "g_digging";
+    case SPEAR = "spear";
+    case MELEE_SPEAR = "melee_spear";
+    case CARROT_STICK = "carrot_stick";
+    case COSMETIC_HEAD = "cosmetic_head";
     case SWORD = "sword";
     case HOE = "hoe";
     case SHOVEL = "shovel";
@@ -88,11 +96,17 @@ enum ItemEnchantSlot: string
             $item instanceof Hoe => self::HOE,
             $item instanceof Shovel => self::SHOVEL,
             $item instanceof Bow => self::BOW,
-            //$item instanceof Crossbow => self::CROSSBOW, TODO: Add CrossBow class
-            //$item instanceof Elytra => self::ELYTRA, TODO: Add Elytra class
+            /*
+             * $item instanceof Crossbow => self::CROSSBOW, TODO: Add CrossBow class
+             */
+            /*
+             * $item instanceof Elytra => self::ELYTRA, TODO: Add Elytra class
+             */
             $item instanceof FishingRod => self::FISHING_ROD,
             $item instanceof Shears => self::SHEARS,
-            //$item instanceof Shield => self::SHIELD, TODO: Add Shield class
+            /*
+             * $item instanceof Shield => self::SHIELD, TODO: Add Shield class
+             */
             $item instanceof Armor => self::fromArmorTypeInfo($item->getArmorSlot()),
             default => self::ALL
         };

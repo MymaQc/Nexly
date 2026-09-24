@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\FloatRange;
@@ -28,6 +30,7 @@ class KineticWeaponItemComponent extends DataDrivenItemComponent
         private readonly ?KineticEffectConditions $dismountConditions = null,
         private readonly ?KineticEffectConditions $knockbackConditions = null,
     ) {
+        ComponentValues::finite($hitboxMargin, $damageModifier, $damageMultiplier);
         if ($hitboxMargin < 0.0) {
             throw new InvalidArgumentException("Hitbox margin cannot be negative.");
         }

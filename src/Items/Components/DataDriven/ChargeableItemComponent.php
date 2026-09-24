@@ -2,12 +2,16 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class ChargeableItemComponent extends DataDrivenItemComponent
 {
@@ -15,6 +19,7 @@ class ChargeableItemComponent extends DataDrivenItemComponent
         private readonly float $movementModifier,
         private readonly string $onComplete = "",
     ) {
+        ComponentValues::finite($movementModifier);
     }
 
     /**

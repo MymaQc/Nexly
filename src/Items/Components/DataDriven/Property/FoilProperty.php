@@ -5,7 +5,9 @@ namespace Nexly\Items\Components\DataDriven\Property;
 use Attribute;
 use pocketmine\nbt\tag\ByteTag;
 
-/** @deprecated Use GlintProperty. */
+/**
+ * @deprecated Use GlintProperty.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class FoilProperty extends PropertyItemComponent
 {

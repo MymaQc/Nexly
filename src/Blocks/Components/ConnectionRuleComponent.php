@@ -2,6 +2,8 @@
 
 namespace Nexly\Blocks\Components;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use Nexly\Blocks\Components\Types\ConnectionType;
 use Nexly\Blocks\Components\Types\HorizontalFace;
@@ -20,10 +22,11 @@ class ConnectionRuleComponent extends BlockComponent
         private readonly ConnectionType $from = ConnectionType::ALL,
         private readonly array $enabledDirections = [HorizontalFace::SOUTH, HorizontalFace::NORTH, HorizontalFace::EAST, HorizontalFace::WEST],
     ) {
+        ComponentValues::objects($enabledDirections, HorizontalFace::class);
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * Returns the registered Bedrock component identifier.
      *
      * @return string
      */

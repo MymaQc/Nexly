@@ -2,12 +2,17 @@
 
 namespace Nexly\Blocks\Permutations;
 
+use InvalidArgumentException;
+use Nexly\Blocks\Components\AsyncBlockComponent;
 use Nexly\Blocks\Components\BlockComponent;
+use Nexly\Blocks\Components\GeometryBlockComponent;
 use pocketmine\nbt\tag\CompoundTag;
 
 final class Permutation
 {
-    /** @var array<string, BlockComponent> */
+    /**
+     * @var array<string, BlockComponent>
+     */
     private array $components = [];
 
     public function __construct(
@@ -56,6 +61,15 @@ final class Permutation
      */
     public function addComponent(BlockComponent $component): self
     {
+        if (in_array($component->getName(), ["minecraft:flower_pottable", "minecraft:embedded_visual", "minecraft:redstone_consumer"], true)) {
+            throw new InvalidArgumentException($component->getName() . " is only supported in root block components.");
+        }
+        if ($component instanceof GeometryBlockComponent && $component->hasNWayVisualRotation()) {
+            throw new InvalidArgumentException("minecraft:geometry.n_way_visual_rotation is only supported in root block components.");
+        }
+        if ($component instanceof AsyncBlockComponent && $component->getName() === "minecraft:geometry" && $component->toNBT() instanceof CompoundTag && $component->toNBT()->getTag("n_way_visual_rotation") !== null) {
+            throw new InvalidArgumentException("minecraft:geometry.n_way_visual_rotation is only supported in root block components.");
+        }
         $this->components[$component->getName()] = $component;
         return $this;
     }

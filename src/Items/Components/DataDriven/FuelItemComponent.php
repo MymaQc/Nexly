@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -16,12 +18,9 @@ class FuelItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly float $duration
     ) {
+        ComponentValues::finite($duration);
         if ($this->duration < 0.05) {
             throw new InvalidArgumentException("Duration must be at least 0.05");
-        }
-
-        if ($this->duration > 107374180) {
-            throw new InvalidArgumentException("Duration must be at most 107374180");
         }
     }
 

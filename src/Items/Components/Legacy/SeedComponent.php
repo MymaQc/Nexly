@@ -3,6 +3,8 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use InvalidArgumentException;
+use Nexly\Validation\ComponentValues;
 use Nexly\Items\Components\Legacy\Types\LegacyFace;
 use pocketmine\block\Block;
 use pocketmine\nbt\NBT;
@@ -51,8 +53,28 @@ class SeedComponent extends LegacyItemComponent
         private array $plantAt = [],
         private readonly LegacyFace $plantFace = LegacyFace::UP,
     ) {
-        $this->result = str_replace(["minecraft:", "grass_block", "air"], ["", "grass", "light_block"], strtolower($this->result));
-        $this->plantAt = array_map(static fn (string $block): string => str_replace(["minecraft:", "grass_block"], ["", "grass"], strtolower($block)), $this->plantAt);
+        if ($result === "") {
+            throw new InvalidArgumentException("Seed result cannot be empty.");
+        }
+        ComponentValues::strings($plantAt);
+        $this->result = self::legacyIdentifier($result, true);
+        $this->plantAt = array_map(static fn (string $block): string => self::legacyIdentifier($block, false), $plantAt);
+    }
+
+    private static function legacyIdentifier(string $identifier, bool $crop): string
+    {
+        /*
+         * Legacy aliases apply only to whole vanilla identifiers, never to custom names.
+         */
+        if (str_contains($identifier, ":") && !str_starts_with($identifier, "minecraft:")) {
+            return $identifier;
+        }
+        $name = strtolower(str_starts_with($identifier, "minecraft:") ? substr($identifier, 10) : $identifier);
+        return match ($name) {
+            "grass_block" => "grass",
+            "air" => $crop ? "light_block" : "air",
+            default => $name,
+        };
     }
 
     /**

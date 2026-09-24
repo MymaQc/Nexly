@@ -48,7 +48,7 @@ class ItemMappings
             throw new InvalidArgumentException("Item mapping for " . $entry->getStringId() . " is already registered");
         }
 
-        $this->mappings[$entry->getStringId()] = ["builder" => $builder, "entry" => $entry];
+        $this->mappings[$entry->getStringId()] = compact("builder", "entry");
 
         try {
             self::registerEntry($entry);
@@ -84,17 +84,23 @@ class ItemMappings
         $reflection = new ReflectionClass($dictionary);
 
         $intToString = $reflection->getProperty("intToStringIdMap");
-        /** @var array<int, string> $value */
+        /**
+         * @var array<int, string> $value
+         */
         $value = $intToString->getValue($dictionary);
         $intToString->setValue($dictionary, $value + [$numericId => $stringId]);
 
         $stringToInt = $reflection->getProperty("stringToIntMap");
-        /** @var array<string, int> $value */
+        /**
+         * @var array<string, int> $value
+         */
         $value = $stringToInt->getValue($dictionary);
         $stringToInt->setValue($dictionary, $value + [$stringId => $numericId]);
 
         $itemTypes = $reflection->getProperty("itemTypes");
-        /** @var list<ItemTypeEntry> $value */
+        /**
+         * @var list<ItemTypeEntry> $value
+         */
         $value = $itemTypes->getValue($dictionary);
         $value[] = $entry;
         $itemTypes->setValue($dictionary, $value);

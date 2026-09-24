@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use Nexly\Items\Components\DataDriven\Types\ItemRepair;
 use pocketmine\nbt\NBT;
@@ -19,6 +21,7 @@ class RepairableItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly array $repairItems,
     ) {
+        ComponentValues::objects($repairItems, ItemRepair::class);
     }
 
     /**

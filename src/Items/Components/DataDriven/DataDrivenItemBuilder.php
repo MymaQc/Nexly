@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use BackedEnum;
+use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Property\BlockProperty;
 use Nexly\Items\Components\DataDriven\Property\CanDestroyInCreative;
 use Nexly\Items\Components\DataDriven\Property\DamageProperty;
@@ -12,6 +13,7 @@ use Nexly\Items\Components\DataDriven\Property\HandEquippedProperty;
 use Nexly\Items\Components\DataDriven\Property\IconProperty;
 use Nexly\Items\Components\DataDriven\Property\LiquidClippedProperty;
 use Nexly\Items\Components\DataDriven\Property\MaxStackSizeProperty;
+use Nexly\Items\Components\DataDriven\Property\PropertyComponentIds;
 use Nexly\Items\Components\DataDriven\Property\MiningSpeedProperty;
 use Nexly\Items\Components\DataDriven\Property\PropertyItemComponent;
 use Nexly\Items\Components\DataDriven\Property\ShouldDespawnProperty;
@@ -44,9 +46,14 @@ use ReflectionClass;
 
 class DataDrivenItemBuilder extends ItemBuilder
 {
-    /** @var PropertyItemComponent[] */
+    /**
+     * @var PropertyItemComponent[]
+     */
     private array $properties = [];
-    /** @var DataDrivenItemComponent[] */
+
+    /**
+     * @var DataDrivenItemComponent[]
+     */
     private array $components = [];
 
     public static function create(): self
@@ -103,7 +110,7 @@ class DataDrivenItemBuilder extends ItemBuilder
      */
     public function removeProperty(BackedEnum|string $name): self
     {
-        $key = is_string($name) ? $name : $name->value;
+        $key = \is_string($name) ? $name : $name->value;
         unset($this->properties[$key]);
         return $this;
     }
@@ -157,6 +164,21 @@ class DataDrivenItemBuilder extends ItemBuilder
      */
     public function toNBT(): CompoundTag
     {
+        $storageName = DataDrivenComponentIds::STORAGE->value;
+        $bundleName = DataDrivenComponentIds::BUNDLE_INTERACTION->value;
+        if (isset($this->components[$bundleName]) && !isset($this->components[$storageName])) {
+            throw new InvalidArgumentException("Bundle interaction requires the storage_item component.");
+        }
+        if (isset($this->components[DataDrivenComponentIds::STORAGE_WEIGHT_LIMIT->value]) && !isset($this->components[$storageName])) {
+            throw new InvalidArgumentException("Storage weight limit requires the storage_item component.");
+        }
+        if (isset($this->components[$storageName])) {
+            $stackSize = $this->properties[PropertyComponentIds::MAX_STACK_SIZE->value] ?? null;
+            if (!$stackSize instanceof MaxStackSizeProperty || $stackSize->toNBT()->getValue() !== 1) {
+                throw new InvalidArgumentException("Items with storage_item must have max_stack_size set to 1.");
+            }
+        }
+
         $nbt = CompoundTag::create();
         $properties = CompoundTag::create();
         foreach ($this->getProperties() as $k => $property) {
@@ -236,7 +258,8 @@ class DataDrivenItemBuilder extends ItemBuilder
             if ($item instanceof Armor) {
                 $items[] = ItemRepair::from(RepairableItemComponent::VANILLA_COST_FORMULE, match ($item->getMaterial()) {
                     VanillaArmorMaterials::LEATHER() => VanillaItems::LEATHER(),
-                    VanillaArmorMaterials::IRON() => VanillaItems::IRON_INGOT(),
+                    VanillaArmorMaterials::CHAINMAIL(), VanillaArmorMaterials::IRON() => VanillaItems::IRON_INGOT(),
+                    VanillaArmorMaterials::COPPER() => VanillaItems::COPPER_INGOT(),
                     VanillaArmorMaterials::GOLD() => VanillaItems::GOLD_INGOT(),
                     VanillaArmorMaterials::DIAMOND() => VanillaItems::DIAMOND(),
                     VanillaArmorMaterials::NETHERITE() => VanillaItems::NETHERITE_INGOT(),
@@ -274,7 +297,7 @@ class DataDrivenItemBuilder extends ItemBuilder
 
         if ($item instanceof Dye) {
             $color = $item->getColor()->getRgbValue();
-            $this->addComponent(new DyeableItemComponent(sprintf("#%02X%02X%02X", $color->getR(), $color->getG(), $color->getB())));
+            $this->addComponent(new DyeableItemComponent(\sprintf("#%02X%02X%02X", $color->getR(), $color->getG(), $color->getB())));
         }
 
         if ($item instanceof Food) {

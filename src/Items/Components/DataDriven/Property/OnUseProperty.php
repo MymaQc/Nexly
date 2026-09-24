@@ -5,7 +5,9 @@ namespace Nexly\Items\Components\DataDriven\Property;
 use Attribute;
 use pocketmine\nbt\tag\ByteTag;
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class OnUseProperty extends PropertyItemComponent
 {

@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -15,11 +17,12 @@ use pocketmine\nbt\tag\FloatTag;
 class SwingDurationItemComponent extends DataDrivenItemComponent
 {
     /**
-     * @param float $duration The duration of the swing sound in seconds.
+     * @param float $duration Visual swing animation duration in seconds; does not control attack rate.
      */
     public function __construct(
         private readonly float $duration = 0.3,
     ) {
+        ComponentValues::finite($duration);
         if ($duration < 0.0) {
             throw new InvalidArgumentException("Swing duration cannot be negative.");
         }

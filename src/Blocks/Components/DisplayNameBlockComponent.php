@@ -15,7 +15,7 @@ class DisplayNameBlockComponent extends BlockComponent
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * Returns the registered Bedrock component identifier.
      *
      * @return string
      */

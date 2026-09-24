@@ -20,7 +20,9 @@ class NexlyRecipes
 {
     use SingletonTrait;
 
-    /** @var list<Closure(): Recipe> */
+    /**
+     * @var list<Closure(): Recipe>
+     */
     private array $recipes = [];
 
     public function __construct()
@@ -69,9 +71,9 @@ class NexlyRecipes
 
         $this->addRecipe(function () use ($data): Recipe {
             $output = $data["output"];
-            if (is_string($output)) {
+            if (\is_string($output)) {
                 $output = StringToItemParser::getInstance()->parse($output);
-            } elseif (is_array($output)) {
+            } elseif (\is_array($output)) {
                 if (!isset($output["item"])) {
                     throw new InvalidArgumentException("Invalid 'output' format, missing 'item' key");
                 }
@@ -91,7 +93,7 @@ class NexlyRecipes
                 throw new InvalidArgumentException("Invalid 'output' format");
             }
 
-            if (count($data["ingredients"]) > 9) {
+            if (\count($data["ingredients"]) > 9) {
                 throw new InvalidArgumentException("Too many 'ingredients', maximum is 9");
             }
             if (!isset($data["shape"])) {

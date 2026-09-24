@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\Legacy;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
@@ -36,6 +37,9 @@ class BlockRenderComponent extends LegacyItemComponent
     public function __construct(
         private readonly string $name,
     ) {
+        if ($name === "") {
+            throw new InvalidArgumentException("Block render identifier cannot be empty.");
+        }
     }
 
     /**

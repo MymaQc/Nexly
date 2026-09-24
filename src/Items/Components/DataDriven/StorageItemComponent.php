@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\item\Item;
@@ -28,16 +30,14 @@ class StorageItemComponent extends DataDrivenItemComponent
         private readonly array $allowedItems = [],
         private readonly array $bannedItems = [],
     ) {
-        if ($this->maxSlots < 0) {
-            throw new InvalidArgumentException("Maximum slots cannot be negative.");
+        ComponentValues::strings($allowedItems);
+        ComponentValues::strings($bannedItems);
+        if ($this->maxSlots < 1) {
+            throw new InvalidArgumentException("Storage items must have at least one slot.");
         }
 
         if ($this->maxSlots > 64) {
             throw new InvalidArgumentException("Maximum slots must not exceed 64.");
-        }
-
-        if ($this->allowedItems !== [] && $this->bannedItems !== []) {
-            throw new InvalidArgumentException("Allowed and banned item filters cannot be used together.");
         }
 
         foreach ([...$allowedItems, ...$bannedItems] as $item) {

@@ -43,10 +43,6 @@ enum ItemAnimation: int
      */
     public static function fromInt(int $value): self
     {
-        return match ($value) {
-            1 => self::EAT,
-            2 => self::DRINK,
-            default => self::NONE,
-        };
+        return self::tryFrom($value) ?? self::NONE;
     }
 }

@@ -43,7 +43,15 @@ class GlassPanePermutation
             )->addPermutation(
                 Permutation::create()
                     ->setCondition("q.block_state('mc:n') == 1 && q.block_state('mc:s') == 1 && q.block_state('mc:w') == 1 && q.block_state('mc:e') == 1")
-                    ->addComponent(new CollisionBoxBlockComponent(true/*, new BlockCollision(new Vector3(-2, 0, -2), new Vector3(4, 16, 4))*/)) // IMPOSSIBLE TO REPRODUCE THIS CASE IN-GAME
+                    ->addComponent(new CollisionBoxBlockComponent(
+                        true
+                        /*
+                         * , new BlockCollision(new Vector3(-2, 0, -2), new Vector3(4, 16, 4))
+                         */
+                    ))
+                    /*
+                     * IMPOSSIBLE TO REPRODUCE THIS CASE IN-GAME
+                     */
                     ->addComponent(new SelectionBoxBlockComponent(true))
             )->addPermutation(
                 Permutation::create()

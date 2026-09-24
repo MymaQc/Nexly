@@ -12,7 +12,7 @@ use pocketmine\nbt\tag\StringTag;
 readonly class LiquidRule
 {
     /**
-     * @param list<string> $stopsLiquidFlowingFromDirection
+     * @param list<BlockFace|string> $stopsLiquidFlowingFromDirection
      */
     public function __construct(
         private bool              $canContainLiquid,
@@ -21,10 +21,9 @@ readonly class LiquidRule
         private array             $stopsLiquidFlowingFromDirection = [],
         private bool              $useLiquidClipping = false,
     ) {
-        $validDirections = ["down", "up", "north", "south", "east", "west"];
         foreach ($stopsLiquidFlowingFromDirection as $direction) {
-            if (!in_array($direction, $validDirections, true)) {
-                throw new InvalidArgumentException("Invalid stopped liquid-flow direction: $direction");
+            if (!$direction instanceof BlockFace && (!is_string($direction) || BlockFace::tryFrom($direction) === null)) {
+                throw new InvalidArgumentException("Invalid stopped liquid-flow direction.");
             }
         }
     }
@@ -54,7 +53,7 @@ readonly class LiquidRule
     }
 
     /**
-     * @return list<string>
+     * @return list<BlockFace|string>
      */
     public function stopsLiquidFromDirection(): array
     {
@@ -70,7 +69,7 @@ readonly class LiquidRule
             ->setTag("canContainLiquid", new ByteTag($this->canContainLiquid ? 1 : 0))
             ->setTag("liquidType", new StringTag($this->liquidType->getValue()))
             ->setTag("onLiquidTouches", new StringTag($this->onLiquidTouches->getValue()))
-            ->setTag("stopsLiquidFromDirection", new ListTag(array_map(static fn (string $direction): StringTag => new StringTag($direction), $this->stopsLiquidFlowingFromDirection), NBT::TAG_String))
+            ->setTag("stopsLiquidFromDirection", new ListTag(array_values(array_map(static fn (BlockFace|string $direction): StringTag => new StringTag($direction instanceof BlockFace ? $direction->value : $direction), $this->stopsLiquidFlowingFromDirection)), NBT::TAG_String))
             ->setTag("useLiquidClipping", new ByteTag($this->useLiquidClipping ? 1 : 0));
     }
 }

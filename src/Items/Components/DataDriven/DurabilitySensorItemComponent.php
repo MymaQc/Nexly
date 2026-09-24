@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\DurabilityThreshold;
@@ -18,6 +20,7 @@ class DurabilitySensorItemComponent extends DataDrivenItemComponent
     public function __construct(
         private readonly array $durabilityThresholds,
     ) {
+        ComponentValues::objects($durabilityThresholds, DurabilityThreshold::class);
         if (empty($this->durabilityThresholds)) {
             throw new InvalidArgumentException("Thresholds array cannot be empty.");
         }

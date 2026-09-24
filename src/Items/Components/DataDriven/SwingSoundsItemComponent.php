@@ -3,21 +3,28 @@
 namespace Nexly\Items\Components\DataDriven;
 
 use Attribute;
+use InvalidArgumentException;
+use Nexly\Items\Components\DataDriven\Types\SoundEvent;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 
 /**
  * @see https://learn.microsoft.com/en-us/minecraft/creator/reference/content/itemreference/examples/itemcomponents/minecraft_swing_sounds?view=minecraft-bedrock-stable
- * @since 1.21.120
+ * @since 1.21.130
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 class SwingSoundsItemComponent extends DataDrivenItemComponent
 {
     public function __construct(
-        private readonly string $hit,
-        private readonly string $miss,
-        private readonly string $critical,
+        private readonly SoundEvent|string $hit,
+        private readonly SoundEvent|string $miss,
+        private readonly SoundEvent|string $critical,
     ) {
+        foreach ([$hit, $miss, $critical] as $sound) {
+            if (\is_string($sound) && SoundEvent::tryFrom($sound) === null) {
+                throw new InvalidArgumentException("Unknown built-in swing sound; use SoundEvent cases.");
+            }
+        }
     }
 
     /**
@@ -38,8 +45,8 @@ class SwingSoundsItemComponent extends DataDrivenItemComponent
     public function toNBT(): CompoundTag
     {
         return CompoundTag::create()
-            ->setTag("attack_hit", new StringTag($this->hit))
-            ->setTag("attack_miss", new StringTag($this->miss))
-            ->setTag("attack_critical_hit", new StringTag($this->critical));
+            ->setTag("attack_hit", new StringTag($this->hit instanceof SoundEvent ? $this->hit->value : $this->hit))
+            ->setTag("attack_miss", new StringTag($this->miss instanceof SoundEvent ? $this->miss->value : $this->miss))
+            ->setTag("attack_critical_hit", new StringTag($this->critical instanceof SoundEvent ? $this->critical->value : $this->critical));
     }
 }

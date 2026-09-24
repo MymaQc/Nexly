@@ -9,7 +9,9 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
-/** @deprecated */
+/**
+ * @deprecated
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class ArmorItemComponent extends DataDrivenItemComponent
 {

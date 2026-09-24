@@ -2,6 +2,8 @@
 
 namespace Nexly\Blocks\Components;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -13,13 +15,14 @@ class FrictionBlockComponent extends BlockComponent
     public function __construct(
         private readonly float $value = 0.0,
     ) {
+        ComponentValues::finite($value);
         if ($this->value < 0.0 || $this->value > 0.9) {
             throw new InvalidArgumentException("Friction value must be between 0.0 and 0.9");
         }
     }
 
     /**
-     * Determines whether the block is breathable by defining if the block is treated as a `solid` or as `air`. The default is `solid` if this component is omitted
+     * Returns the registered Bedrock component identifier.
      *
      * @return string
      */

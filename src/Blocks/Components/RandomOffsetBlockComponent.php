@@ -3,6 +3,7 @@
 namespace Nexly\Blocks\Components;
 
 use Attribute;
+use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\RangeOffset;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -16,6 +17,9 @@ class RandomOffsetBlockComponent extends BlockComponent
         private readonly BlockPosition $steps,
         private readonly RangeOffset   $offset,
     ) {
+        if ($steps->getX() < 0 || $steps->getY() < 0 || $steps->getZ() < 0) {
+            throw new InvalidArgumentException("Random offset steps cannot be negative (zero means continuous).");
+        }
     }
 
     /**
@@ -35,6 +39,7 @@ class RandomOffsetBlockComponent extends BlockComponent
      */
     public function toNBT(): CompoundTag
     {
+        $this->validate();
         return CompoundTag::create()
             ->setTag(
                 "x",
@@ -69,5 +74,13 @@ class RandomOffsetBlockComponent extends BlockComponent
                     ->setTag("max", new FloatTag($this->offset->getMax()->getZ()))
                 )
             );
+    }
+
+    private function validate(): void
+    {
+        if ($this->steps->getX() < 0 || $this->steps->getY() < 0 || $this->steps->getZ() < 0) {
+            throw new InvalidArgumentException("Random offset steps cannot be negative (zero means continuous).");
+        }
+        $this->offset->validate();
     }
 }

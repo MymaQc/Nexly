@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\item\Item;
@@ -27,6 +29,7 @@ class FoodItemComponent extends DataDrivenItemComponent
         private readonly bool $canAlwaysEat = false,
         private ?string $usingConvertsTo = null,
     ) {
+        ComponentValues::finite($saturationModifier);
         if ($nutrition < 0) {
             throw new InvalidArgumentException("Nutrition cannot be negative.");
         }

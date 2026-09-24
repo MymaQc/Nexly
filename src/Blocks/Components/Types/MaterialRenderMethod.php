@@ -39,11 +39,6 @@ enum MaterialRenderMethod: string
      */
     public static function fromString(string $value): ?self
     {
-        return match ($value) {
-            self::ALPHA_TEST->value => self::ALPHA_TEST,
-            self::BLEND->value => self::BLEND,
-            self::OPAQUE->value => self::OPAQUE,
-            default => null,
-        };
+        return self::tryFrom($value);
     }
 }

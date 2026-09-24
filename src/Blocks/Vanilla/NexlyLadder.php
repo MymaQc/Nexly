@@ -8,7 +8,7 @@ use pocketmine\block\Ladder;
 
 class NexlyLadder extends Ladder
 {
-    private float $climbSpeed; // Default climb speed
+    private float $climbSpeed;
 
     public function __construct(BlockIdentifier $idInfo, string $name, float $climbSpeed, BlockTypeInfo $typeInfo)
     {
@@ -20,6 +20,7 @@ class NexlyLadder extends Ladder
      * Determines the speed at which a player can climb this ladder.
      *
      * @return float
+     * @noinspection PhpMemberCanBePulledUpInspection
      */
     public function getClimbSpeed(): float
     {

@@ -3,6 +3,7 @@
 namespace Nexly\Items\Components\DataDriven\Property;
 
 use Attribute;
+use InvalidArgumentException;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\IntTag;
 
@@ -12,6 +13,9 @@ class EnchantableValueProperty extends PropertyItemComponent
     public function __construct(
         private readonly int $value
     ) {
+        if ($value < 0 || $value > 2147483647) {
+            throw new InvalidArgumentException("Enchantability must be a non-negative NBT int.");
+        }
     }
 
     /**

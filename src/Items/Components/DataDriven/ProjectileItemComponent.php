@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -19,6 +21,7 @@ class ProjectileItemComponent extends DataDrivenItemComponent
         private readonly string $projectileEntity,
         private readonly float $minimumCriticalPower = 0.0,
     ) {
+        ComponentValues::finite($minimumCriticalPower);
         if ($projectileEntity === "") {
             throw new InvalidArgumentException("Projectile entity identifier cannot be empty.");
         }

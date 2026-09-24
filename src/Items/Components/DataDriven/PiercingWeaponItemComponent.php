@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\FloatRange;
@@ -20,6 +22,7 @@ class PiercingWeaponItemComponent extends DataDrivenItemComponent
         private readonly FloatRange $reach = new FloatRange(0.0, 3.0),
         private readonly ?FloatRange $creativeReach = null,
     ) {
+        ComponentValues::finite($hitboxMargin);
         if ($hitboxMargin < 0.0) {
             throw new InvalidArgumentException("Hitbox margin cannot be negative.");
         }

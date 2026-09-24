@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use Nexly\Items\Components\DataDriven\Types\ItemAmmunition;
@@ -26,6 +28,8 @@ class ShooterItemComponent extends DataDrivenItemComponent
         private readonly float $maxDrawDuration = 0.0,
         private readonly bool  $scalePowerByDrawDuration = false
     ) {
+        ComponentValues::objects($ammunition, ItemAmmunition::class);
+        ComponentValues::finite($maxDrawDuration);
         if ($maxDrawDuration < 0.0) {
             throw new InvalidArgumentException("Maximum draw duration cannot be negative.");
         }

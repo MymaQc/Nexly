@@ -10,33 +10,35 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
+use Nexly\Blocks\Components\Types\BlockDescriptor;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class EntityPlacerItemComponent extends DataDrivenItemComponent
 {
     /**
      * @param string $entity
-     * @param list<string> $dispenseOn
-     * @param list<string> $useOn
+     * @param list<string|BlockDescriptor> $dispenseOn
+     * @param list<string|BlockDescriptor> $useOn
      */
     public function __construct(
         private readonly string $entity,
         private readonly array $dispenseOn = [],
         private readonly array $useOn = [],
     ) {
+        foreach (["use_on" => $useOn, "dispense_on" => $dispenseOn] as $label => $filters) {
+            if (!array_is_list($filters)) {
+                throw new InvalidArgumentException("Entity placer $label filters must be lists.");
+            }
+            foreach ($filters as $filter) {
+                if ((!\is_string($filter) && !$filter instanceof BlockDescriptor) || $filter === "") {
+                    throw new InvalidArgumentException("Entity placer filters must be non-empty block identifiers or BlockDescriptor objects.");
+                }
+            }
+        }
         if ($entity === "") {
             throw new InvalidArgumentException("Entity identifier cannot be empty.");
         }
 
-        if (count($dispenseOn) > 256 || count($useOn) > 256) {
-            throw new InvalidArgumentException("Entity placer filters cannot contain more than 256 entries.");
-        }
-
-        foreach ([...$dispenseOn, ...$useOn] as $filter) {
-            if ($filter === "") {
-                throw new InvalidArgumentException("Entity placer filters must contain non-empty block identifiers.");
-            }
-        }
     }
 
     /**
@@ -81,7 +83,13 @@ class EntityPlacerItemComponent extends DataDrivenItemComponent
     {
         return CompoundTag::create()
             ->setTag("entity", new StringTag($this->entity))
-            ->setTag("dispense_on", new ListTag(array_map(static fn (string $name): StringTag => new StringTag($name), $this->dispenseOn), NBT::TAG_String))
-            ->setTag("use_on", new ListTag(array_map(static fn (string $name): StringTag => new StringTag($name), $this->useOn), NBT::TAG_String));
+            ->setTag("dispense_on", new ListTag(array_map(
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                $this->dispenseOn
+            ), NBT::TAG_Compound))
+            ->setTag("use_on", new ListTag(array_map(
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                $this->useOn
+            ), NBT::TAG_Compound));
     }
 }

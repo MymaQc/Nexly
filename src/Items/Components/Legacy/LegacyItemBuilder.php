@@ -16,7 +16,9 @@ use pocketmine\nbt\tag\CompoundTag;
 
 class LegacyItemBuilder extends ItemBuilder
 {
-    /** @var LegacyItemComponent[] */
+    /**
+     * @var LegacyItemComponent[]
+     */
     private array $components = [];
 
     public static function create(): self
@@ -112,7 +114,7 @@ class LegacyItemBuilder extends ItemBuilder
             if ($item instanceof FoodSource) {
                 $this->addComponent(new FoodComponent(
                     (int) round($item->getFoodRestore()),
-                    $item->getSaturationRestore(),
+                    $item->getFoodRestore() > 0 ? $item->getSaturationRestore() / ($item->getFoodRestore() * 2) : 0.0,
                     !$item->requiresHunger(),
                     cooldownType: $item->getCooldownTag() ?? $this->getStringId(),
                     cooldownTick: $item->getCooldownTicks(),

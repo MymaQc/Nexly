@@ -2,11 +2,14 @@
 
 namespace Nexly\Blocks;
 
+use Nexly\Validation\ComponentValues;
 use Closure;
 use Generator;
 use InvalidArgumentException;
 use Nexly\Blocks\Components\BlockComponent;
 use Nexly\Blocks\Components\BlockComponentIds;
+use Nexly\Compatibility\BedrockComponentVersions;
+use Nexly\Compatibility\ComponentFormatFeatureProvider;
 use Nexly\Blocks\Components\BreathabilityBlockComponent;
 use Nexly\Blocks\Components\CollisionBoxBlockComponent;
 use Nexly\Blocks\Components\ConnectionRuleComponent;
@@ -103,16 +106,26 @@ class BlockBuilder
     private ?CreativeInfo $creativeInfo = null;
     private MaterialType $material = MaterialType::Dirt;
 
-    /** @var list<string> */
+    /**
+     * @var list<string>
+     */
     private array $tags = [];
 
-    /** @var array<string, BlockComponent> */
+    /**
+     * @var array<string, BlockComponent>
+     */
     private array $components = [];
-    /** @var list<Permutation> */
+    /**
+     * @var list<Permutation>
+     */
     private array $permutations = [];
-    /** @var list<MinecraftTrait> */
+    /**
+     * @var list<MinecraftTrait>
+     */
     private array $traits = [];
-    /** @var list<BlockProperty> */
+    /**
+     * @var list<BlockProperty>
+     */
     private array $properties = [];
 
     /**
@@ -141,9 +154,7 @@ class BlockBuilder
      */
     public function setStringId(string $stringId): self
     {
-        if (str_contains($stringId, "minecraft:")) {
-            throw new InvalidArgumentException("Custom block string ID cannot contain the 'minecraft:' namespace.");
-        }
+        ComponentValues::customIdentifier($stringId);
 
         $this->stringId = $stringId;
         return $this;
@@ -308,6 +319,35 @@ class BlockBuilder
     public function getComponents(): array
     {
         return $this->components;
+    }
+
+    /**
+     * Lists known root/permutation components newer than the behavior-pack format you target.
+     * Components without an official published minimum are omitted.
+     *
+     * @return array<string, string> Component/feature ID => minimum format version
+     */
+    public function getUnsupportedFeaturesForFormat(string $targetFormatVersion): array
+    {
+        $features = [];
+        foreach ($this->components as $name => $component) {
+            $features[] = $name;
+            if ($component instanceof ComponentFormatFeatureProvider) {
+                array_push($features, ...$component->getBedrockFormatFeatures());
+            }
+        }
+        if ($this->tags !== []) {
+            $features[] = 'minecraft:tags';
+        }
+        foreach ($this->permutations as $permutation) {
+            foreach ($permutation->getComponents() as $name => $component) {
+                $features[] = $name;
+                if ($component instanceof ComponentFormatFeatureProvider) {
+                    array_push($features, ...$component->getBedrockFormatFeatures());
+                }
+            }
+        }
+        return BedrockComponentVersions::unsupportedFeatures($features, $targetFormatVersion);
     }
 
     /**
@@ -492,15 +532,13 @@ class BlockBuilder
             $components->setTag($component->getName(), $component->toNBT());
         }
 
-        /** @var list<CompoundTag> $properties */
+        /**
+         * @var list<CompoundTag> $properties
+         */
         $properties = [];
         foreach ($this->properties as $property) {
             foreach ($this->traits as $trait) {
-                if ($property->getName() === BlockStateNames::MC_CARDINAL_DIRECTION && $trait->getState()->isCardinal()) {
-                    continue 2;
-                }
-
-                if ($property->getName() === BlockStateNames::FACING_DIRECTION && $trait->getState()->isFacing()) {
+                if (in_array($property->getName(), $trait->getState()->getProvidedStateNames(), true)) {
                     continue 2;
                 }
             }
@@ -592,10 +630,7 @@ class BlockBuilder
             json_encode(array_map(static fn (MinecraftTrait $trait): array => [
                 "identifier" => $trait->getIdentifier()->value,
                 "rotationOffset" => $trait->getRotationOffset(),
-                "state" => [
-                    "cardinal" => $trait->getState()->isCardinal(),
-                    "facing" => $trait->getState()->isFacing(),
-                ],
+                "state" => $trait->getState()->toArray(),
             ], $this->traits), JSON_THROW_ON_ERROR),
             $serializer,
             $deserializer,
@@ -653,7 +688,9 @@ class BlockBuilder
             if (($lightLevel = $block->getLightLevel()) > 0) {
                 $this->addComponent(new LightEmissionBlockComponent($lightLevel));
             }
-            //$this->addComponent(new LiquidDetectionComponent(false)); // TODO: PMMP Implement Liquid Layer
+            /*
+             * $this->addComponent(new LiquidDetectionComponent(false)); // TODO: PMMP Implement Liquid Layer
+             */
             $this->addComponent(new MaterialInstancesBlockComponent([new Material($this->getName(), renderMethod: $block->isTransparent() ? MaterialRenderMethod::ALPHA_TEST_SINGLE_SIDED : MaterialRenderMethod::OPAQUE)]));
             $this->addComponent(new OnPlayerPlacingBlockComponent());
 
@@ -672,7 +709,9 @@ class BlockBuilder
         $ev = new BlockLoaderEvent($this, $block);
         $ev->trigger();
         if ($autoload && !$ev->isAffected()) {
-            $this->detectDefaultComponent($block); // Detect known block types and apply default components
+            $this->detectDefaultComponent($block); /*
+                 * Detect known block types and apply default components
+                 */
         }
 
         $reflection = new ReflectionClass($block);
@@ -734,7 +773,9 @@ class BlockBuilder
         $reflection = new ReflectionClass($blockItemIdMap);
 
         $itemToBlockId = $reflection->getProperty("itemToBlockId");
-        /** @var array<string, string> $value */
+        /**
+         * @var array<string, string> $value
+         */
         $value = $itemToBlockId->getValue($blockItemIdMap);
         $itemToBlockId->setValue($blockItemIdMap, $value + [$stringId => $stringId]);
     }

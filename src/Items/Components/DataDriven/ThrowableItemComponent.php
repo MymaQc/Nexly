@@ -2,6 +2,8 @@
 
 namespace Nexly\Items\Components\DataDriven;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\ByteTag;
@@ -27,12 +29,8 @@ class ThrowableItemComponent extends DataDrivenItemComponent
         private readonly float $minDrawDuration = 0.0,
         private readonly bool  $scalePowerByDrawDuration = false
     ) {
-        if (
-            $launchPowerScale < 0.0
-            || $maxDrawDuration < 0.0
-            || $maxLaunchPower < 0.0
-            || $minDrawDuration < 0.0
-        ) {
+        ComponentValues::finite($launchPowerScale, $maxDrawDuration, $maxLaunchPower, $minDrawDuration);
+        if ($launchPowerScale < 0.0 || $maxDrawDuration < 0.0 || $maxLaunchPower < 0.0 || $minDrawDuration < 0.0) {
             throw new InvalidArgumentException("Throwable power and duration values cannot be negative.");
         }
 

@@ -2,6 +2,8 @@
 
 namespace Nexly\Blocks\Components;
 
+use Nexly\Validation\ComponentValues;
+
 use Attribute;
 use InvalidArgumentException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -13,6 +15,7 @@ class DestructibleByExplosionBlockComponent extends BlockComponent
     public function __construct(
         private readonly float $explosionResistance = 0.0,
     ) {
+        ComponentValues::finite($explosionResistance);
         if ($explosionResistance < 0.0) {
             throw new InvalidArgumentException("Explosion resistance cannot be negative.");
         }

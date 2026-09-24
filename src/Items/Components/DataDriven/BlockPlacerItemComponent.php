@@ -10,15 +10,18 @@ use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use Nexly\Blocks\Components\Types\BlockDescriptor;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
-// PlanterItemComponent in v1.21.111
+/*
+ * PlanterItemComponent in v1.21.111
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class BlockPlacerItemComponent extends DataDrivenItemComponent
 {
     /**
      * @param string $block
-     * @param list<string> $useOn
+     * @param list<string|BlockDescriptor> $useOn
      * @param bool $alignedPlacement
      * @param bool $replaceBlockItem
      */
@@ -28,17 +31,20 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
         private readonly bool $alignedPlacement = false,
         private readonly bool $replaceBlockItem = false,
     ) {
+        if (!array_is_list($useOn)) {
+            throw new InvalidArgumentException("Use-on filters must be a list.");
+        }
         if ($block === "") {
             throw new InvalidArgumentException("Placed block identifier cannot be empty.");
         }
 
-        if (count($useOn) > 256) {
+        if (\count($useOn) > 256) {
             throw new InvalidArgumentException("Use-on filters cannot contain more than 256 entries.");
         }
 
         foreach ($useOn as $filter) {
-            if ($filter === "") {
-                throw new InvalidArgumentException("Use-on filters must contain non-empty block identifiers.");
+            if ((!\is_string($filter) && !$filter instanceof BlockDescriptor) || $filter === "") {
+                throw new InvalidArgumentException("Use-on filters must be non-empty block identifiers or BlockDescriptor objects.");
             }
         }
     }
@@ -90,6 +96,9 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
             ->setTag("block", new StringTag($this->block))
             ->setTag("aligned_placement", new ByteTag($this->alignedPlacement ? 1 : 0))
             ->setTag("replace_block_item", new ByteTag($this->replaceBlockItem ? 1 : 0))
-            ->setTag("use_on", new ListTag(array_map(static fn (string $block): StringTag => new StringTag($block), $this->useOn), NBT::TAG_String));
+            ->setTag("use_on", new ListTag(array_map(
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                $this->useOn
+            ), NBT::TAG_Compound));
     }
 }

@@ -15,7 +15,7 @@ class DurabilityItemComponent extends DataDrivenItemComponent
         private readonly int $damageChanceMin = 100,
         private readonly int $damageChanceMax = 100,
     ) {
-        if ($maxDurability < 0) {
+        if ($maxDurability < 0 || $maxDurability > 2147483647) {
             throw new InvalidArgumentException("Maximum durability cannot be negative.");
         }
 

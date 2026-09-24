@@ -12,8 +12,8 @@ class DamageProperty extends PropertyItemComponent
     public function __construct(
         private readonly int $damage
     ) {
-        if ($this->damage < -32768 || $this->damage > 32767) {
-            throw new InvalidArgumentException("Damage must be between -32768 and 32767");
+        if ($this->damage < 0 || $this->damage > 32767) {
+            throw new InvalidArgumentException("Damage must be between 0 and 32767 (Bedrock 1.26.0+).");
         }
     }
 

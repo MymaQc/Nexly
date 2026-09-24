@@ -29,7 +29,9 @@ class NexlyEventManager
         EventPriority::MONITOR,
     ];
 
-    /** @var array<class-string<Event>, array<int, list<EventReflected>>> */
+    /**
+     * @var array<class-string<Event>, array<int, list<EventReflected>>>
+     */
     private array $handlerCaches = [];
 
     /**
