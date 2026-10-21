@@ -57,7 +57,7 @@ final readonly class PlacementCondition
             $condition->setTag('allowed_faces', new ListTag(array_map(static fn (PlacementFace|string $face): StringTag => new StringTag($face instanceof PlacementFace ? $face->value : $face), $this->allowedFaces), NBT::TAG_String));
         }
         if ($this->blockFilter !== []) {
-            $condition->setTag('block_filter', new ListTag(array_map(static fn (BlockDescriptor|string $filter): CompoundTag => $filter instanceof BlockDescriptor ? $filter->toNBT() : (new BlockDescriptor($filter))->toNBT(), $this->blockFilter), NBT::TAG_Compound));
+            $condition->setTag('block_filter', new ListTag(array_map(static fn (BlockDescriptor|string $filter): CompoundTag => $filter instanceof BlockDescriptor ? $filter->toNBT() : new BlockDescriptor($filter)->toNBT(), $this->blockFilter), NBT::TAG_Compound));
         }
         return $condition;
     }

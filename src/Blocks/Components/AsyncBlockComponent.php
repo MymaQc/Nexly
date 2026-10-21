@@ -13,7 +13,7 @@ class AsyncBlockComponent extends BlockComponent
         private readonly string $name,
         string                  $nbt,
     ) {
-        $this->nbt = (new NetworkNbtSerializer())->read(base64_decode($nbt))->getTag();
+        $this->nbt = new NetworkNbtSerializer()->read(base64_decode($nbt))->getTag();
     }
 
     public function getName(): string

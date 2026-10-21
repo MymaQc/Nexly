@@ -6,11 +6,11 @@ use InvalidArgumentException;
 use Nexly\Validation\ComponentValues;
 use pocketmine\math\Vector3;
 
-class RangeOffset
+readonly class RangeOffset
 {
     public function __construct(
-        private readonly Vector3 $min,
-        private readonly Vector3 $max,
+        private Vector3 $min,
+        private Vector3 $max,
     ) {
         $this->validate();
     }

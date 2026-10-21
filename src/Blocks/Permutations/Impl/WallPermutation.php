@@ -10,10 +10,10 @@ use Nexly\Blocks\Permutations\Permutation;
 use pocketmine\data\bedrock\block\BlockStateNames as StateNames;
 use pocketmine\math\Vector3;
 
-class WallPermutation
+readonly class WallPermutation
 {
     private function __construct(
-        private readonly Builder $builder
+        private Builder $builder
     ) {
     }
 

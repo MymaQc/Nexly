@@ -57,7 +57,6 @@ use pocketmine\item\ItemBlock;
 use pocketmine\item\Pickaxe;
 use pocketmine\item\Record;
 use pocketmine\item\Shovel;
-use pocketmine\item\SpawnEgg;
 use pocketmine\item\SplashPotion;
 use pocketmine\item\Sword;
 use pocketmine\lang\Translatable;

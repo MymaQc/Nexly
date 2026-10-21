@@ -14,7 +14,7 @@ final class BedrockComponentVersions
     /**
      * @var array<string, string>
      */
-    private const MINIMUM_FORMATS = [
+    private const array MINIMUM_FORMATS = [
         'minecraft:crafting_table' => '1.19.50',
         'minecraft:destructible_by_explosion' => '1.19.20',
         'minecraft:destructible_by_mining' => '1.19.20',
@@ -90,7 +90,7 @@ final class BedrockComponentVersions
      * @return void
      */
     private static function versionParts(string $version): void {
-        if (preg_match('/^(\d+)\.(\d+)(?:\.(\d+))?$/D', $version, $matches) !== 1) {
+        if (preg_match('/^(\d+)\.(\d+)(?:\.(\d+))?$/D', $version) !== 1) {
             throw new InvalidArgumentException('Format version must look like 1.21.80.');
         }
     }

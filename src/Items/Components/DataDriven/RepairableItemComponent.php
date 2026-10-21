@@ -13,7 +13,7 @@ use pocketmine\nbt\tag\ListTag;
 #[Attribute(Attribute::TARGET_CLASS)]
 class RepairableItemComponent extends DataDrivenItemComponent
 {
-    public const VANILLA_COST_FORMULE = "math.min(q.remaining_durability + c.other->q.remaining_durability + math.floor(q.max_durability /20), c.other->q.max_durability)";
+    public const string VANILLA_COST_FORMULE = "math.min(q.remaining_durability + c.other->q.remaining_durability + math.floor(q.max_durability /20), c.other->q.max_durability)";
 
     /**
      * @param list<ItemRepair> $repairItems

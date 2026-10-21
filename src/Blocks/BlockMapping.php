@@ -5,11 +5,11 @@ namespace Nexly\Blocks;
 use pocketmine\block\Block;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 
-class BlockMapping
+readonly class BlockMapping
 {
     public function __construct(
-        private readonly BlockBuilder      $builder,
-        private readonly BlockPaletteEntry $entry,
+        private BlockBuilder      $builder,
+        private BlockPaletteEntry $entry,
     ) {
     }
 

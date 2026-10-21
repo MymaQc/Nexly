@@ -92,7 +92,7 @@ final class NexlyPermutations
     public static function makeNetherPlant(Builder $builder, NetherWartPlant $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (NetherWartPlant $block): Writer => (new Writer($stringId))->writeInt(StateNames::AGE, $block->getAge()));
+        $builder->setSerializer(static fn (NetherWartPlant $block): Writer => new Writer($stringId)->writeInt(StateNames::AGE, $block->getAge()));
         $builder->setDeserializer(static fn (Reader $in): NetherWartPlant => (clone $block)->setAge($in->readBoundedInt(StateNames::AGE, 0, 3)));
         $builder->addProperty(new BlockProperty(StateNames::AGE, $ages = range(0, $block::MAX_AGE)));
         $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::NETHER_WART->toString()));
@@ -114,7 +114,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(static function (Stair $block) use ($stringId): Writer {
-            return (new Writer($stringId))
+            return new Writer($stringId)
                 ->writeBool(BlockStateNames::UPSIDE_DOWN_BIT, $block->isUpsideDown())
                 ->write5MinusHorizontalFacing($block->getFacing());
         });
@@ -170,7 +170,7 @@ final class NexlyPermutations
     public static function makeSlab(Builder $builder, Slab $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Slab $block): Writer => (new Writer($stringId))->writeString(StateNames::MC_VERTICAL_HALF, match ($block->getSlabType()) {
+        $builder->setSerializer(static fn (Slab $block): Writer => new Writer($stringId)->writeString(StateNames::MC_VERTICAL_HALF, match ($block->getSlabType()) {
             SlabType::BOTTOM => StateValues::MC_VERTICAL_HALF_BOTTOM,
             SlabType::TOP => StateValues::MC_VERTICAL_HALF_TOP,
             SlabType::DOUBLE => "double",
@@ -231,7 +231,7 @@ final class NexlyPermutations
         $builder->addProperty(new BlockProperty(StateNames::OPEN_BIT, [false, true]));
 
         $builder->addComponent(new CustomComponentsBlockComponent());
-        $builder->addComponent((new GeometryBlockComponent(ExtendedGeometry::DOOR->toString()))
+        $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::DOOR->toString())
             ->add("open", "q.block_state('" . StateNames::OPEN_BIT . "') == 1")
             ->add("close", "q.block_state('" . StateNames::OPEN_BIT . "') == 0"));
 
@@ -283,7 +283,7 @@ final class NexlyPermutations
             $reflection = new ReflectionClass(Fence::class);
             $connections = $reflection->getProperty("connections");
             $co = $connections->getValue($block);
-            return (new Writer($stringId))
+            return new Writer($stringId)
                 ->writeBool("mc:n", isset($co[Facing::NORTH]))
                 ->writeBool("mc:s", isset($co[Facing::SOUTH]))
                 ->writeBool("mc:w", isset($co[Facing::WEST]))
@@ -320,7 +320,7 @@ final class NexlyPermutations
         $material = $builder->getComponent(BlockComponentIds::MATERIAL_INSTANCES);
         $builder->addComponent(new ItemVisualBlockComponent(new GeometryBlockComponent(ExtendedGeometry::FENCE->toString() . "_render"), $material));
         $builder->addComponent(
-            (new GeometryBlockComponent(ExtendedGeometry::FENCE->toString()))
+            new GeometryBlockComponent(ExtendedGeometry::FENCE->toString())
             ->add("n", "q.block_state('mc:n') == 1")
             ->add("s", "q.block_state('mc:s') == 1")
             ->add("w", "q.block_state('mc:w') == 1")
@@ -341,7 +341,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (FenceGate $block): Writer => (new Writer($stringId))
+            static fn (FenceGate $block): Writer => new Writer($stringId)
             ->writeString(StateNames::MC_CARDINAL_DIRECTION, match ($block->getFacing()) {
                 Facing::NORTH => StateValues::MC_CARDINAL_DIRECTION_NORTH,
                 Facing::SOUTH => StateValues::MC_CARDINAL_DIRECTION_SOUTH,
@@ -387,7 +387,7 @@ final class NexlyPermutations
 
                     $permutation = Permutation::create($expr);
                     $permutation->addComponent(
-                        (new GeometryBlockComponent(ExtendedGeometry::FENCE_GATE->toString()))
+                        new GeometryBlockComponent(ExtendedGeometry::FENCE_GATE->toString())
                         ->add("open", "q.block_state('" . StateNames::OPEN_BIT . "') == 1")
                         ->add("close", "q.block_state('" . StateNames::OPEN_BIT . "') == 0")
                     )->addComponent(
@@ -421,7 +421,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Wall $block): Writer => (new Writer($stringId))
+            static fn (Wall $block): Writer => new Writer($stringId)
             ->writeInt(StateNames::WALL_POST_BIT, $block->isPost() ? 1 : 0)
             ->writeInt(StateNames::WALL_CONNECTION_TYPE_NORTH, ($encode = static fn (WallConnectionType|null $v): int => match ($v) {
                 default => 0,
@@ -455,7 +455,7 @@ final class NexlyPermutations
         $material = $builder->getComponent(BlockComponentIds::MATERIAL_INSTANCES);
         $builder->addComponent(new ItemVisualBlockComponent(new GeometryBlockComponent(ExtendedGeometry::WALL->toString() . "_render"), $material));
         $builder->addComponent(
-            (new GeometryBlockComponent(ExtendedGeometry::WALL->toString()))
+            new GeometryBlockComponent(ExtendedGeometry::WALL->toString())
             ->add("n", "q.block_state('" . StateNames::WALL_CONNECTION_TYPE_NORTH . "') != 0")
             ->add("s", "q.block_state('" . StateNames::WALL_CONNECTION_TYPE_SOUTH . "') != 0")
             ->add("w", "q.block_state('" . StateNames::WALL_CONNECTION_TYPE_WEST . "') != 0")
@@ -479,7 +479,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Trapdoor $block): Writer => (new Writer($stringId))
+            static fn (Trapdoor $block): Writer => new Writer($stringId)
             ->write5MinusHorizontalFacing($block->getFacing())
             ->writeInt(StateNames::UPSIDE_DOWN_BIT, $block->isTop() ? 1 : 0)
             ->writeInt(StateNames::OPEN_BIT, $block->isOpen() ? 1 : 0)
@@ -497,12 +497,12 @@ final class NexlyPermutations
 
         $builder->addComponent(new CustomComponentsBlockComponent());
         $builder->addComponent($material = new MaterialInstancesBlockComponent([new Material($builder->getName(), renderMethod: MaterialRenderMethod::ALPHA_TEST_SINGLE_SIDED)]));
-        $builder->addComponent(new ItemVisualBlockComponent((new GeometryBlockComponent(ExtendedGeometry::TRAPDOOR->toString()))
+        $builder->addComponent(new ItemVisualBlockComponent(new GeometryBlockComponent(ExtendedGeometry::TRAPDOOR->toString())
             ->add("open", "false")
             ->add("close", "true"), $material));
 
         $builder->addComponent(
-            (new GeometryBlockComponent(ExtendedGeometry::TRAPDOOR->toString()))
+            new GeometryBlockComponent(ExtendedGeometry::TRAPDOOR->toString())
             ->add("open", "q.block_state('" . StateNames::OPEN_BIT . "') == 1")
             ->add("close", "q.block_state('" . StateNames::OPEN_BIT . "') == 0")
         );
@@ -549,7 +549,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(
-            static fn (Hopper $block): Writer => (new Writer($stringId))
+            static fn (Hopper $block): Writer => new Writer($stringId)
             ->writeInt(StateNames::TOGGLE_BIT, $block->isPowered() ? 1 : 0)
             ->writeFacingWithoutUp($block->getFacing())
         );
@@ -563,7 +563,7 @@ final class NexlyPermutations
         $builder->addProperty(new BlockProperty(StateNames::TOGGLE_BIT, range(0, 1)));
 
         $builder->addComponent(
-            (new GeometryBlockComponent(ExtendedGeometry::HOPPER->toString()))
+            new GeometryBlockComponent(ExtendedGeometry::HOPPER->toString())
             ->add("ground", "q.block_state('" . StateNames::FACING_DIRECTION . "') == 0")
             ->add("north", "q.block_state('" . StateNames::FACING_DIRECTION . "') == 2")
             ->add("south", "q.block_state('" . StateNames::FACING_DIRECTION . "') == 3")
@@ -591,7 +591,7 @@ final class NexlyPermutations
     {
         $stringId = $builder->getStringId();
         $builder->setSerializer(static function (HeadBlock $b) use ($stringId): Writer {
-            return (new Writer($stringId))
+            return new Writer($stringId)
                 ->writeFacingWithoutDown($b->getFacing())
                 ->writeInt(StateNames::ROTATION, $b->getRotation());
         });
@@ -640,7 +640,7 @@ final class NexlyPermutations
     public static function makeLadder(Builder $builder, Ladder $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Ladder $b): Writer => (new Writer($stringId))->writeHorizontalFacing($b->getFacing()));
+        $builder->setSerializer(static fn (Ladder $b): Writer => new Writer($stringId)->writeHorizontalFacing($b->getFacing()));
         $builder->setDeserializer(static fn (Reader $in): Ladder => (clone $block)->setFacing($in->readHorizontalFacing()));
 
         $builder->addProperty(new BlockProperty(StateNames::FACING_DIRECTION, $facings = range(2, 5)));
@@ -671,7 +671,7 @@ final class NexlyPermutations
     public static function makeFarmland(Builder $builder, Farmland $block): void
     {
         $stringId = $builder->getStringId();
-        $builder->setSerializer(static fn (Farmland $b): Writer => (new Writer($stringId))->writeInt(StateNames::MOISTURIZED_AMOUNT, $b->getWetness()));
+        $builder->setSerializer(static fn (Farmland $b): Writer => new Writer($stringId)->writeInt(StateNames::MOISTURIZED_AMOUNT, $b->getWetness()));
         $builder->setDeserializer(static fn (Reader $in): Farmland => (clone $block)->setWetness($in->readInt(StateNames::MOISTURIZED_AMOUNT)));
 
         $builder->addProperty(new BlockProperty(StateNames::MOISTURIZED_AMOUNT, range(0, Farmland::MAX_WETNESS)));
@@ -733,7 +733,7 @@ final class NexlyPermutations
             $reflection = new ReflectionClass(GlassPane::class);
             $connections = $reflection->getProperty("connections");
             $co = $connections->getValue($block);
-            return (new Writer($stringId))
+            return new Writer($stringId)
                 ->writeInt("mc:n", isset($co[Facing::NORTH]) ? 1 : 0)
                 ->writeInt("mc:s", isset($co[Facing::SOUTH]) ? 1 : 0)
                 ->writeInt("mc:w", isset($co[Facing::WEST]) ? 1 : 0)
@@ -767,7 +767,7 @@ final class NexlyPermutations
             ->addProperty(new BlockProperty("mc:e", range(0, 1)));
 
         $builder->addComponent(
-            $geometry = (new GeometryBlockComponent(ExtendedGeometry::GLASS_PANE->toString()))
+            $geometry = new GeometryBlockComponent(ExtendedGeometry::GLASS_PANE->toString())
                 ->add("n", "q.block_state('mc:n') == 1")
                 ->add("s", "q.block_state('mc:s') == 1")
                 ->add("w", "q.block_state('mc:w') == 1")
@@ -834,7 +834,7 @@ final class NexlyPermutations
             StateValues::LEVER_DIRECTION_EAST
         ]));
         $builder->addProperty(new BlockProperty(StateNames::OPEN_BIT, [false, true]));
-        $builder->addComponent((new GeometryBlockComponent(ExtendedGeometry::LEVER->toString()))
+        $builder->addComponent(new GeometryBlockComponent(ExtendedGeometry::LEVER->toString())
         ->add("open", "q.block_state('" . StateNames::OPEN_BIT . "') == 1")
         ->add("close", "q.block_state('" . StateNames::OPEN_BIT . "') == 0"));
 

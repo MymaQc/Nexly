@@ -20,7 +20,7 @@ class NexlyEventManager
 {
     use SingletonTrait;
 
-    private const PRIORITY_ORDER = [
+    private const array PRIORITY_ORDER = [
         EventPriority::LOWEST,
         EventPriority::LOW,
         EventPriority::NORMAL,

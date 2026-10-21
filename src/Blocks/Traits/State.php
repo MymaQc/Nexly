@@ -40,7 +40,7 @@ readonly class State
 
     public static function fromArray(array $values): self
     {
-        $defaults = (new self())->toArray();
+        $defaults = new self()->toArray();
         foreach ($values as $name => $value) {
             if (!\array_key_exists($name, $defaults) || !\is_bool($value)) {
                 throw new InvalidArgumentException("Unknown trait state or non-boolean state flag.");

@@ -9,10 +9,10 @@ use Nexly\Blocks\Components\Types\BoxCollision;
 use Nexly\Blocks\Permutations\Permutation;
 use pocketmine\math\Vector3;
 
-class GlassPanePermutation
+readonly class GlassPanePermutation
 {
     private function __construct(
-        private readonly Builder $builder
+        private Builder $builder
     ) {
     }
 

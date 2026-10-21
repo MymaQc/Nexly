@@ -41,6 +41,9 @@ class StorageItemComponent extends DataDrivenItemComponent
         }
 
         foreach ([...$allowedItems, ...$bannedItems] as $item) {
+            /**
+             * @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection
+             */
             if ($item === "") {
                 throw new InvalidArgumentException("Storage item filters must contain non-empty item identifiers.");
             }

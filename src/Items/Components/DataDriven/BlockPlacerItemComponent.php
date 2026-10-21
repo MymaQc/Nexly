@@ -97,7 +97,7 @@ class BlockPlacerItemComponent extends DataDrivenItemComponent
             ->setTag("aligned_placement", new ByteTag($this->alignedPlacement ? 1 : 0))
             ->setTag("replace_block_item", new ByteTag($this->replaceBlockItem ? 1 : 0))
             ->setTag("use_on", new ListTag(array_map(
-                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : new BlockDescriptor($block)->toNBT(),
                 $this->useOn
             ), NBT::TAG_Compound));
     }

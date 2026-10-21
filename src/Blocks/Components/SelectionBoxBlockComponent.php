@@ -6,7 +6,6 @@ use Attribute;
 use InvalidArgumentException;
 use Nexly\Blocks\Components\Types\BoxCollision;
 use pocketmine\block\Beetroot;
-use pocketmine\block\Block;
 use pocketmine\block\Carrot;
 use pocketmine\block\Crops;
 use pocketmine\block\NetherWartPlant;

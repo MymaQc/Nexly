@@ -6,7 +6,6 @@ use Nexly\Blocks\Components\LightDampeningBlockComponent;
 use Nexly\Validation\ComponentValues;
 use Closure;
 use Generator;
-use InvalidArgumentException;
 use Nexly\Blocks\Components\BlockComponent;
 use Nexly\Blocks\Components\BlockComponentIds;
 use Nexly\Compatibility\BedrockComponentVersions;
@@ -14,7 +13,6 @@ use Nexly\Compatibility\ComponentFormatFeatureProvider;
 use Nexly\Blocks\Components\BreathabilityBlockComponent;
 use Nexly\Blocks\Components\CollisionBoxBlockComponent;
 use Nexly\Blocks\Components\ConnectionRuleComponent;
-use Nexly\Blocks\Components\CustomComponentsBlockComponent;
 use Nexly\Blocks\Components\DestructibleByExplosionBlockComponent;
 use Nexly\Blocks\Components\DestructibleByMiningBlockComponent;
 use Nexly\Blocks\Components\DisplayNameBlockComponent;
@@ -69,7 +67,6 @@ use pocketmine\block\Stair;
 use pocketmine\block\tile\Container;
 use pocketmine\block\Trapdoor;
 use pocketmine\block\Wall;
-use pocketmine\data\bedrock\block\BlockStateNames;
 use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter;
 use pocketmine\data\bedrock\item\BlockItemIdMap;
@@ -81,7 +78,6 @@ use pocketmine\item\StringToItemParser;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
@@ -621,12 +617,12 @@ class BlockBuilder
                 "condition" => $permutation->getCondition(),
                 "components" => array_map(static fn (BlockComponent $component): array => [
                     "name" => $component->getName(),
-                    "nbt" => base64_encode((new CacheableNbt($component->toNBT()))->getEncodedNbt())
+                    "nbt" => base64_encode(new CacheableNbt($component->toNBT())->getEncodedNbt())
                 ], $permutation->getComponents())
             ], $this->permutations), JSON_THROW_ON_ERROR),
             json_encode(array_map(static fn (BlockComponent $component): array => [
                 "name" => $component->getName(),
-                "nbt" => base64_encode((new CacheableNbt($component->toNBT()))->getEncodedNbt())
+                "nbt" => base64_encode(new CacheableNbt($component->toNBT())->getEncodedNbt())
             ], $this->getComponents()), JSON_THROW_ON_ERROR),
             json_encode(array_map(static fn (MinecraftTrait $trait): array => [
                 "identifier" => $trait->getIdentifier()->value,

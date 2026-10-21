@@ -10,7 +10,6 @@ use Nexly\Items\Creative\NexlyCreative;
 use Nexly\Mappings\ItemMappings;
 use Nexly\Recipes\NexlyRecipes;
 use Nexly\Recipes\Types\Recipe;
-use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\item\Item;

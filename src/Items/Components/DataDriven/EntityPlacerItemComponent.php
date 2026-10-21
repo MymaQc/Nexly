@@ -84,11 +84,11 @@ class EntityPlacerItemComponent extends DataDrivenItemComponent
         return CompoundTag::create()
             ->setTag("entity", new StringTag($this->entity))
             ->setTag("dispense_on", new ListTag(array_map(
-                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : new BlockDescriptor($block)->toNBT(),
                 $this->dispenseOn
             ), NBT::TAG_Compound))
             ->setTag("use_on", new ListTag(array_map(
-                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : (new BlockDescriptor($block))->toNBT(),
+                static fn (BlockDescriptor|string $block): CompoundTag => $block instanceof BlockDescriptor ? $block->toNBT() : new BlockDescriptor($block)->toNBT(),
                 $this->useOn
             ), NBT::TAG_Compound));
     }
