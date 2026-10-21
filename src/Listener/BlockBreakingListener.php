@@ -14,8 +14,6 @@ use pocketmine\network\mcpe\protocol\PlayerActionPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\PlayerAction;
-use pocketmine\network\mcpe\protocol\types\PlayerBlockActionStopBreak;
-use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 use pocketmine\network\PacketHandlingException;
 use pocketmine\player\Player;
 use pocketmine\player\SurvivalBlockBreakHandler;
@@ -120,11 +118,7 @@ final class BlockBreakingListener implements Listener
             }
 
             foreach ($actions as $action) {
-                if ($action instanceof PlayerBlockActionStopBreak) {
-                    $this->handleAction($player, $handler, $action->getActionType(), new BlockPosition(0, 0, 0), Facing::DOWN);
-                } elseif ($action instanceof PlayerBlockActionWithBlockInfo) {
-                    $this->handleAction($player, $handler, $action->getActionType(), $action->getBlockPosition(), $action->getFace());
-                }
+                $this->handleAction($player, $handler, $action->getActionType(), $action->getBlockPosition(), $action->getFace());
             }
 
             $this->clearAuthInputBlockActions($pk);
