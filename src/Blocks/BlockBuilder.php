@@ -2,6 +2,7 @@
 
 namespace Nexly\Blocks;
 
+use Nexly\Blocks\Components\LightDampeningBlockComponent;
 use Nexly\Validation\ComponentValues;
 use Closure;
 use Generator;
@@ -665,7 +666,7 @@ class BlockBuilder
             }
         }
 
-        if ($creative) {
+        if ($creative && !$creativeInfo?->isHidden()) {
             NexlyCreative::add($block->asItem(), $creativeInfo?->getCategory(), $creativeInfo?->getGroup());
         }
         return $this;
@@ -682,14 +683,13 @@ class BlockBuilder
             $this->addComponent(new BreathabilityBlockComponent($block->isTransparent() ? BreathabilityType::AIR : BreathabilityType::SOLID));
             $this->addComponent(new CollisionBoxBlockComponent(!empty($block->getCollisionBoxes())));
             $this->addComponent(new DestructibleByExplosionBlockComponent($block->getBreakInfo()->getBlastResistance()));
-            $this->addComponent(new DestructibleByMiningBlockComponent($block->getBreakInfo()->getHardness() * 3.33334));
+            $this->addComponent(new DestructibleByMiningBlockComponent($block->getBreakInfo()->getHardness() * 3.33334)); // PHP_INT_MAX ?
             $this->addComponent(new DisplayNameBlockComponent("tile." . $this->getStringId() . ".name"));
             $this->addComponent(new FrictionBlockComponent(max(0, 1 - $block->getFrictionFactor())));
-            if (($lightLevel = $block->getLightLevel()) > 0) {
-                $this->addComponent(new LightEmissionBlockComponent($lightLevel));
-            }
+            $this->addComponent(new LightEmissionBlockComponent($block->getLightLevel()));
+            $this->addComponent(new LightDampeningBlockComponent($block->getLightFilter()));
             // $this->addComponent(new LiquidDetectionComponent(false)); TODO: PMMP Implement Liquid Layer
-            $this->addComponent(new MaterialInstancesBlockComponent([new Material($this->getName(), renderMethod: $block->isTransparent() ? MaterialRenderMethod::ALPHA_TEST_SINGLE_SIDED : MaterialRenderMethod::OPAQUE)]));
+            $this->addComponent(new MaterialInstancesBlockComponent([new Material($this->getName(), renderMethod: $block->isTransparent() ? MaterialRenderMethod::ALPHA_TEST_SINGLE_SIDED : MaterialRenderMethod::ALPHA_TEST_TO_OPAQUE)]));
             $this->addComponent(new OnPlayerPlacingBlockComponent());
 
             if ($block instanceof Flowable) {
