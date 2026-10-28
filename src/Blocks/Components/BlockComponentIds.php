@@ -57,6 +57,9 @@ enum BlockComponentIds: string
     case TICK = "minecraft:tick";
     case ENTITY_FALL_ON = "minecraft:entity_fall_on";
     case LEASHABLE = "minecraft:leashable";
+    case ENCHANTMENT_POWER_TRANSMITTER = "minecraft:enchantment_power_transmitter";
+    case NEIGHBOR_CHANGE = "minecraft:neighbor_change";
+    case VIBRATION_PROPERTIES = "minecraft:vibration_properties";
 
     /**
      * Returns the name of the component.

@@ -21,8 +21,9 @@ class SwingSoundsItemComponent extends DataDrivenItemComponent
         private readonly SoundEvent|string $critical,
     ) {
         foreach ([$hit, $miss, $critical] as $sound) {
-            if (\is_string($sound) && SoundEvent::tryFrom($sound) === null) {
-                throw new InvalidArgumentException("Unknown built-in swing sound; use SoundEvent cases.");
+            // Since format 1.26.50, any sound_definitions.json name is accepted besides the built-in events
+            if ($sound === "") {
+                throw new InvalidArgumentException("Swing sound name cannot be empty.");
             }
         }
     }

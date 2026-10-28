@@ -50,6 +50,11 @@ final class BedrockComponentVersions
         'minecraft:redstone_consumer' => '1.21.130',
         'minecraft:placement_filter' => '1.26.20',
         'minecraft:instrument_sound' => '1.26.40',
+        'minecraft:block_entity.container.title' => '1.26.60',
+        'minecraft:block_entity.entity_storage' => '1.26.60',
+        'minecraft:enchantment_power_transmitter' => '1.26.60',
+        'minecraft:neighbor_change' => '1.26.60',
+        'minecraft:vibration_properties' => '1.26.60',
     ];
 
     public static function minimumFormatVersion(string $feature): ?string

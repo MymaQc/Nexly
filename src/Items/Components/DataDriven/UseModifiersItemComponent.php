@@ -30,8 +30,9 @@ class UseModifiersItemComponent extends DataDrivenItemComponent
         private readonly SoundEvent|string|null $startSound = null,
         private readonly ItemStartUsing $startUsing = ItemStartUsing::ALWAYS,
     ) {
-        if (\is_string($startSound) && SoundEvent::tryFrom($startSound) === null) {
-            throw new InvalidArgumentException("Unknown built-in start sound; use SoundEvent cases.");
+        // Since format 1.26.50, any sound_definitions.json name is accepted besides the built-in events
+        if ($startSound === "") {
+            throw new InvalidArgumentException("Start sound name cannot be empty.");
         }
         ComponentValues::finite($useDuration, $movementModifier ?? 0.0);
         if ($useDuration < 0.0) {

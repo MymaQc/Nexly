@@ -53,6 +53,21 @@ class BoxCollision
     }
 
     /**
+     * Builds a box from the min/max format (pixels from the bottom north-west corner), as accepted in 1.26.60.
+     *
+     * @param Vector3 $min
+     * @param Vector3 $max
+     * @return self
+     */
+    public static function fromMinMax(Vector3 $min, Vector3 $max): self
+    {
+        if ($max->getX() < $min->getX() || $max->getY() < $min->getY() || $max->getZ() < $min->getZ()) {
+            throw new InvalidArgumentException("Collision-box max must be greater than or equal to min.");
+        }
+        return new self(new Vector3($min->getX() - 8, $min->getY(), $min->getZ() - 8), $max->subtractVector($min));
+    }
+
+    /**
      * @return Vector3
      */
     public function getOrigin(): Vector3

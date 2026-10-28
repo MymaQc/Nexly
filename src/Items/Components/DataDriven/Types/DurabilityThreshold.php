@@ -17,8 +17,9 @@ readonly class DurabilityThreshold
         if ($durability < 0 || $durability > 2147483647) {
             throw new InvalidArgumentException("Durability threshold cannot be negative.");
         }
-        if (\is_string($soundEvent) && SoundEvent::tryFrom($soundEvent) === null) {
-            throw new InvalidArgumentException("Unknown built-in sound event; use SoundEvent cases.");
+        // Since format 1.26.50, any sound_definitions.json name is accepted besides the built-in events
+        if ($soundEvent === "") {
+            throw new InvalidArgumentException("Sound event name cannot be empty.");
         }
         if (\is_string($particleType) && ParticleType::tryFrom($particleType) === null) {
             throw new InvalidArgumentException("Unknown built-in particle type; use ParticleType cases.");
