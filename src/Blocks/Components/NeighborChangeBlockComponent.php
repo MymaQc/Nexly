@@ -2,10 +2,9 @@
 
 namespace Nexly\Blocks\Components;
 
-use Nexly\Validation\ComponentValues;
-
 use Attribute;
 use Nexly\Blocks\Components\Types\BlockFace;
+use Nexly\Validation\ComponentValues;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
